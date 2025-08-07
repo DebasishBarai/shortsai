@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
+import { generateScript } from "@/lib/ai";
+import { convertValueToLabel } from "@/lib/functions";
 
 export async function POST(request: Request) {
   try {
@@ -48,13 +50,35 @@ export async function POST(request: Request) {
       );
     }
 
+    const aiPrompt = `Generate a script for each scene to generate a ${convertValueToLabel({ type: "VideoDuration", input: duration })} video. Give me the result in JSON format with imagePrompt, and contentText as fields, no plain text or no other text or fields. imagePrompt is the detailed prompt to generate the image with AI. contenText is script which will be played while the image generated from the respective imagePrompt is shown. Topic of the video: ${prompt}`;
+
     // generate video image prompt and script with AI
-    // convert script to audio mp3
-    // save the caption file .srt
-    // generate AI images and save them in imagelist
-    // create video
-    // console.log("Created reminder:", video); // Debug log
-    return NextResponse.json({ success: true, data: video });
+    const script: string = await generateScript({ prompt: aiPrompt }) as string;
+
+    if (!script) {
+      return NextResponse.json(
+        { error: "Failed to generate script" },
+        { status: 500 }
+      );
+    }
+
+    const data = JSON.parse(script.replace(/```json\s*/g, '').replace(/```\s*$/g, '').trim());
+    console.log({ data }); // Debug log
+
+    const video = await prisma.video.create({
+      data: {
+        userId: user.id,
+        frames: data,
+        prompt: prompt,
+        contentType: contentType,
+        style: style,
+        voiceType: voiceType,
+        aspectRatio: aspectRatio,
+        duration: duration,
+      }
+    });
+
+    return NextResponse.json({ success: true, data, videoId: video.id });
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to create video" },

@@ -22,7 +22,10 @@ import {
 } from '@/components/ui/select';
 import { ContentType, VideoStyle, VideoDuration, VoiceType, AspectRatio } from '@prisma/client';
 import { convertValueToLabel } from '@/lib/functions';
-import { Textarea } from './ui/textarea';
+import { Textarea } from '@/components/ui/textarea';
+import axios from 'axios';
+
+import { videoScript } from '@/lib/objects';
 
 export default function CreateVideoForm() {
   const { data: session, status } = useSession({ required: true });
@@ -41,7 +44,7 @@ export default function CreateVideoForm() {
 
   const voiceType = Object.values(VoiceType).map(type => ({
     value: type,
-    label: convertValueToLabel({ type: "VideoStyle", input: type as string }),
+    label: convertValueToLabel({ type: "VoiceType", input: type as string }),
   }))
 
   const aspectRatio = Object.values(AspectRatio).map(ratio => ({
@@ -72,19 +75,59 @@ export default function CreateVideoForm() {
     setIsLoading(true);
 
     try {
-      const res = await fetch('/api/create-video', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
+      /* const res = await axios.post('/api/generate-script',
+        JSON.stringify(formData),
+      );
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData?.error || 'Failed to create video');
+      if (res.status !== 200) {
+        const errorData = await res.data;
+        throw new Error(errorData?.error || 'Failed to generate script');
       }
 
-      toast.success('Video created successfully!');
-      router.push('/dashboard');
+      const videoId = res.data.videoId
+      const videoScript = res.data.data;
+      console.log({ videoScript });
+
+      // generate script to generate the audio
+      let audioScript = '';
+      videoScript.forEach((scene: any) => audioScript += `${scene.contentText} `)
+
+      console.log({ audioScript })
+
+      // generate audio
+      const audioRes = await axios.post('/api/generate-audio', {
+        videoId: videoId,
+        script: audioScript,
+        voice: formData.voiceType,
+      });
+
+      if (audioRes.status !== 200) {
+        const errorData = await audioRes.data;
+        throw new Error(errorData?.error || 'Failed to generate audio');
+      }
+
+      const audioUrl = audioRes.data.audioUrl
+      console.log({ audioUrl });
+      */
+
+      const videoId = 'cme19lxfm000ba1wacfj72jwo'
+
+      // generate images
+      const imageRes = await axios.post('/api/generate-images', {
+        videoId: videoId,
+        videoScript: videoScript,
+        style: formData.style,
+        aspectRatio: convertValueToLabel({ type: "AspectRatio", input: formData.aspectRatio as string }),
+      });
+
+      if (imageRes.status !== 200) {
+        const errorData = await imageRes.data;
+        throw new Error(errorData?.error || 'Failed to generate images');
+      }
+
+      const uploadResults = imageRes.data.uploadResults;
+      console.log({ uploadResults });
+
     } catch (error) {
       console.error(error);
       toast.error(error instanceof Error ? error.message : 'Something went wrong');
