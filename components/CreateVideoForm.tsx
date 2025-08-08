@@ -127,7 +127,21 @@ export default function CreateVideoForm() {
 
       const uploadResults = imageRes.data.uploadResults;
       console.log({ uploadResults });
+      
+      //generate captions file for captions
+      const captionRes = await axios.post('/api/generate-caption-file', {
+        videoId: videoId,
+        audioUrl: audioUrl
+      })
 
+      if (audioRes.status !== 200) {
+        const errorData = await imageRes.data;
+        throw new Error(errorData?.error || 'Failed to generate images');
+      }
+
+      const captionUrl = audioRes.data.captionUrl
+
+      console.log({ captionUrl })
     } catch (error) {
       console.error(error);
       toast.error(error instanceof Error ? error.message : 'Something went wrong');
