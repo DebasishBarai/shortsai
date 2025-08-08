@@ -139,9 +139,9 @@ export default function CreateVideoForm() {
         throw new Error(errorData?.error || 'Failed to generate images');
       }
 
-      const captionUrl = captionRes.data.captionUrl
+      const caption = captionRes.data.caption
 
-      console.log({ captionUrl })
+      console.log({ caption })
     } catch (error) {
       console.error(error);
       toast.error(error instanceof Error ? error.message : 'Something went wrong');
