@@ -134,12 +134,12 @@ export default function CreateVideoForm() {
         audioUrl: audioUrl
       })
 
-      if (audioRes.status !== 200) {
-        const errorData = await imageRes.data;
+      if (captionRes.status !== 200) {
+        const errorData = await captionRes.data;
         throw new Error(errorData?.error || 'Failed to generate images');
       }
 
-      const captionUrl = audioRes.data.captionUrl
+      const captionUrl = captionRes.data.captionUrl
 
       console.log({ captionUrl })
     } catch (error) {
