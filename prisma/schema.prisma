@@ -124,8 +124,8 @@ model Video {
   frames      Json?
   script      String?
   audioUrl    String?
-  caption     String?        @db.Text
-  ImagesUrl   String[]
+  caption     Json?
+  imagesUrl   String[]
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
 }

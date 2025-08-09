@@ -104,7 +104,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Failed to upload images", uploadResults });
     }
 
-    return NextResponse.json({ success: true, videoId: videoId, uploadResults });
+    const imagesUrl = uploadResults.map(result => result.url!);
+    console.log({ imagesUrl });
+
+    const video = await prisma.video.update({
+      where: { id: videoId },
+      data: {
+        audioUrl: `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/shortsai/${user.id}/${videoId}/audio.mp3`,
+        imagesUrl: imagesUrl,
+      },
+    });
+
+    if (!video) {
+      return NextResponse.json({ error: "Failed to update video", status: 500 });
+    }
+
+    return NextResponse.json({ success: true, videoId: videoId, imagesUrl });
   } catch (error) {
     console.log({ error });
     return NextResponse.json(

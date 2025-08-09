@@ -2,13 +2,11 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
-import { VoiceType } from "@prisma/client";
 
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import { AssemblyAI } from "assemblyai";
+import { AssemblyAI, SpeechModel } from "assemblyai";
 
 const captionClient = new AssemblyAI({
-  apiKey: process.env.ASSEMBLYAI_API_KEY,
+  apiKey: process.env.ASSEMBLYAI_API_KEY as string,
 });
 
 export async function POST(request: Request) {
@@ -43,10 +41,14 @@ export async function POST(request: Request) {
     console.log({ videoId, audioUrl });
 
     // generate caption file with assemblyai
-    const captionResponse = await captionClient.send({
-      audio: audioUrl,
-      speech_model: "universal",
-    });
+    const speechModel: SpeechModel = "universal"
+    const params = {
+      audio: audioUrl as string,
+      speech_model: speechModel,
+    }
+
+    const captionResponse = await captionClient.transcripts.transcribe(params);
+
 
     if (!captionResponse.words) {
       return NextResponse.json(
@@ -55,14 +57,21 @@ export async function POST(request: Request) {
       );
     }
 
-    const video = prisma.video.update({
+    const caption = captionResponse.words
+    console.log(caption);
+    console.log(Array.isArray(caption));
+    console.log(typeof caption)
+
+    const video = await prisma.video.update({
       where: {
         id: videoId,
       },
       data: {
-        caption: captionResponse.words
+        caption: caption
       }
     })
+
+    console.log({ video });
 
     if (!video) {
       return NextResponse.json(
@@ -73,7 +82,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      caption: captionResponse.words,
+      caption: caption,
       videoId
     });
   } catch (error) {

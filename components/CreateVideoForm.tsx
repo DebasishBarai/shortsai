@@ -24,13 +24,14 @@ import { ContentType, VideoStyle, VideoDuration, VoiceType, AspectRatio } from '
 import { convertValueToLabel } from '@/lib/functions';
 import { Textarea } from '@/components/ui/textarea';
 import axios from 'axios';
-
-import { videoScript } from '@/lib/objects';
+import { PlayerDialog } from './player-dialog';
 
 export default function CreateVideoForm() {
   const { data: session, status } = useSession({ required: true });
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [playVideo, setPlayVideo] = useState(false);
+  const [playVideoId, setPlayVideoId] = useState('');
 
   const contentType = Object.values(ContentType).map(type => ({
     value: type,
@@ -75,7 +76,7 @@ export default function CreateVideoForm() {
     setIsLoading(true);
 
     try {
-      /* const res = await axios.post('/api/generate-script',
+      const res = await axios.post('/api/generate-script',
         JSON.stringify(formData),
       );
 
@@ -108,9 +109,6 @@ export default function CreateVideoForm() {
 
       const audioUrl = audioRes.data.audioUrl
       console.log({ audioUrl });
-      */
-
-      const videoId = 'cme19lxfm000ba1wacfj72jwo'
 
       // generate images
       const imageRes = await axios.post('/api/generate-images', {
@@ -125,11 +123,11 @@ export default function CreateVideoForm() {
         throw new Error(errorData?.error || 'Failed to generate images');
       }
 
-      const uploadResults = imageRes.data.uploadResults;
-      console.log({ uploadResults });
-      
+      const imagesUrl = imageRes.data.imagesUrl;
+      console.log({ imagesUrl });
+
       //generate captions file for captions
-      const captionRes = await axios.post('/api/generate-caption-file', {
+      const captionRes = await axios.post('/api/generate-caption', {
         videoId: videoId,
         audioUrl: audioUrl
       })
@@ -142,6 +140,10 @@ export default function CreateVideoForm() {
       const caption = captionRes.data.caption
 
       console.log({ caption })
+
+      setPlayVideo(true)
+      setPlayVideoId(videoId)
+
     } catch (error) {
       console.error(error);
       toast.error(error instanceof Error ? error.message : 'Something went wrong');
@@ -222,6 +224,7 @@ export default function CreateVideoForm() {
           </form>
         </CardContent>
       </Card>
+      <PlayerDialog playVideo={playVideo} videoId={playVideoId} />
     </div>
   );
 }
