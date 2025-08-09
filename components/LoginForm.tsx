@@ -92,18 +92,18 @@ export function LoginForm() {
         )}
         <div className="text-center space-y-2">
           <h1 className="text-2xl font-bold">
-            {isRegistering ? "Create an Account" : "Login to RemindMe"}
+            {isRegistering ? "Create an Account" : "Login to your account"}
           </h1>
           <p className="text-muted-foreground">
-            {isRegistering 
-              ? "Fill in your details to create an account" 
+            {isRegistering
+              ? "Fill in your details to create an account"
               : "Choose your preferred login method"}
           </p>
         </div>
 
         {!isRegistering && (
           <>
-            <Button 
+            <Button
               variant="outline"
               className="w-full"
               onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
@@ -151,7 +151,7 @@ export function LoginForm() {
               </span>
             </div>
           )}
-          
+
           {isRegistering && (
             <div className="space-y-2">
               <Label htmlFor="name">Name</Label>
@@ -190,13 +190,13 @@ export function LoginForm() {
             />
           </div>
 
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             className="w-full"
             disabled={isLoading}
           >
-            {isLoading 
-              ? (isRegistering ? "Creating account..." : "Signing in...") 
+            {isLoading
+              ? (isRegistering ? "Creating account..." : "Signing in...")
               : (isRegistering ? "Create Account" : "Sign in with Email")}
           </Button>
         </form>
@@ -211,8 +211,8 @@ export function LoginForm() {
             }}
             className="text-primary hover:underline"
           >
-            {isRegistering 
-              ? "Already have an account? Sign in" 
+            {isRegistering
+              ? "Already have an account? Sign in"
               : "Don't have an account? Create one"}
           </button>
         </div>
