@@ -10,7 +10,7 @@ import { PollyClient, SynthesizeSpeechCommand } from '@aws-sdk/client-polly';
 const polly = new PollyClient({
   region: process.env.AWS_REGION,
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY || '',
+    accessKeyId: process.env.AWS_PUBLIC_ACCESS_KEY || '',
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
   }
 })
@@ -18,7 +18,7 @@ const polly = new PollyClient({
 const s3 = new S3Client({
   region: 'ap-south-1',
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY || '',
+    accessKeyId: process.env.AWS_PUBLIC_ACCESS_KEY || '',
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
   }
 })
