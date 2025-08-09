@@ -100,7 +100,7 @@ export async function POST(request: Request) {
 
     const uploadResults = await Promise.all(s3UploadPromises);
 
-    if (!uploadResults.some(result => !result.success)) {
+    if (!uploadResults.every(result => result.success)) {
       return NextResponse.json({ error: "Failed to upload images", uploadResults });
     }
 

@@ -59,6 +59,7 @@ export async function POST(request: Request) {
     }
 
     console.log({ videoId, script, voice });
+
     // Validate voice type
     if (!Object.values(VoiceType).includes(voice as VoiceType)) {
       return NextResponse.json(

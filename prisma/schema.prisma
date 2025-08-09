@@ -123,9 +123,7 @@ model Video {
   duration    VideoDuration? @default(DURATION_60)
   frames      Json?
   script      String?
-  audioUrl    String?
   caption     Json?
-  imagesUrl   String[]
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
 }

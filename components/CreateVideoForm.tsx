@@ -86,12 +86,12 @@ export default function CreateVideoForm() {
       }
 
       const videoId = res.data.videoId
-      const videoScript = res.data.data;
-      console.log({ videoScript });
+      const frames = res.data.frames;
+      console.log({ frames });
 
       // generate script to generate the audio
       let audioScript = '';
-      videoScript.forEach((scene: any) => audioScript += `${scene.contentText} `)
+      frames.forEach((scene: any) => audioScript += `${scene.contentText} `)
 
       console.log({ audioScript })
 
@@ -113,7 +113,7 @@ export default function CreateVideoForm() {
       // generate images
       const imageRes = await axios.post('/api/generate-images', {
         videoId: videoId,
-        videoScript: videoScript,
+        videoScript: frames,
         style: formData.style,
         aspectRatio: convertValueToLabel({ type: "AspectRatio", input: formData.aspectRatio as string }),
       });

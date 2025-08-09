@@ -65,13 +65,13 @@ export async function POST(request: Request) {
       );
     }
 
-    const data = JSON.parse(script.replace(/```json\s*/g, '').replace(/```\s*$/g, '').trim());
-    console.log({ data }); // Debug log
+    const frames = JSON.parse(script.replace(/```json\s*/g, '').replace(/```\s*$/g, '').trim());
+    console.log({ data: frames }); // Debug log
 
     const video = await prisma.video.create({
       data: {
         userId: user.id,
-        frames: data,
+        frames: frames,
         prompt: prompt,
         contentType: contentType,
         style: style,
@@ -87,7 +87,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Failed to create video" });
     }
 
-    return NextResponse.json({ success: true, data, videoId: video.id });
+    return NextResponse.json({ success: true, frames, videoId: video.id });
   } catch (error) {
     console.log(error); // Debug log
     return NextResponse.json(
