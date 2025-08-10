@@ -24,7 +24,7 @@ import { ContentType, VideoStyle, VideoDuration, VoiceType, AspectRatio } from '
 import { convertValueToLabel } from '@/lib/functions';
 import { Textarea } from '@/components/ui/textarea';
 import axios from 'axios';
-import { PlayerDialog } from './player-dialog';
+import { VideoDialog } from './VideoDialog';
 
 export default function CreateVideoForm() {
   const { data: session, status } = useSession({ required: true });
@@ -224,7 +224,11 @@ export default function CreateVideoForm() {
           </form>
         </CardContent>
       </Card>
-      <PlayerDialog playVideo={playVideo} videoId={playVideoId} />
+      <VideoDialog
+        triggerText="🎬 Watch Video"
+        title="The Journey of Human Evolution"
+        description="Experience billions of years of evolution in this immersive video journey"
+      />
     </div>
   );
 }
