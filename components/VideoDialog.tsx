@@ -9,6 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import { VideoPlayer } from './VideoPlayer';
 import { cn } from '@/lib/utils';
 
@@ -28,22 +29,22 @@ export const VideoDialog: React.FC<VideoDialogProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <button className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5">
+        <Button className="w-full h-11 sm:h-12 text-sm sm:text-base font-medium">
           {triggerText}
-        </button>
+        </Button>
       </DialogTrigger>
       <DialogContent
-        className={cn("max-w-[95vw] max-h-[95vh] w-fit p-4 overflow-auto flex flex-col items-center")}
+        className={cn("max-w-[95vw] max-h-[95vh] w-fit p-3 sm:p-4 md:p-6 overflow-auto flex flex-col items-center")}
       >
-        <DialogHeader className="pb-4 w-full">
-          <DialogTitle className="text-center text-lg">{title}</DialogTitle>
-          <DialogDescription className="text-center text-sm">
+        <DialogHeader className="pb-3 sm:pb-4 w-full">
+          <DialogTitle className="text-center text-base sm:text-lg md:text-xl">{title}</DialogTitle>
+          <DialogDescription className="text-center text-xs sm:text-sm md:text-base">
             {description}
           </DialogDescription>
         </DialogHeader>
 
         <div className="flex justify-center items-center w-full">
-          <VideoPlayer width={380} height={675} />
+          <VideoPlayer width={280} height={495} />
         </div>
       </DialogContent>
     </Dialog>

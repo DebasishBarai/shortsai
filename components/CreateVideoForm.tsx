@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -25,13 +25,23 @@ import { convertValueToLabel } from '@/lib/functions';
 import { Textarea } from '@/components/ui/textarea';
 import axios from 'axios';
 import { VideoDialog } from './VideoDialog';
+import { Play, Square } from 'lucide-react';
+import Image from 'next/image';
+import { cn } from '@/lib/utils';
 
 export default function CreateVideoForm() {
   const { data: session, status } = useSession({ required: true });
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [playVideo, setPlayVideo] = useState(false);
-  const [playVideoId, setPlayVideoId] = useState('');
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [isVideoReady, setIsVideoReady] = useState(false)
+  const [videoTitle, setVideoTitle] = useState('')
+  const [videoDescription, setVideoDescription] = useState('')
+  const [videoScenes, setVideoScenes] = useState([])
+  const [audioScriptUrl, setAudioScriptUrl] = useState('')
+  const [videoImagesUrl, setVideoImagesUrl] = useState([])
+  const [videoCaption, setVideoCaption] = useState([])
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   const contentType = Object.values(ContentType).map(type => ({
     value: type,
@@ -63,12 +73,45 @@ export default function CreateVideoForm() {
     contentType: contentType[0].value,
     style: videoStyle[0].value,
     voiceType: voiceType[0].value,
-    aspectRatio: aspectRatio[0].value,
+    aspectRatio: 'RATIO_9_16', // Default to 9:16 for short videos
     duration: videoDuration[0].value,
   });
 
   const handleChange = (key: string, value: string) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const playVoicePreview = (voiceType: string) => {
+    if (audioRef.current) {
+      // Stop any currently playing audio
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+
+      // Set the source to the corresponding audio file
+      const audioFileName = voiceType.toLowerCase() + '.mp3';
+      audioRef.current.src = `/${audioFileName}`;
+
+      // Play the audio
+      audioRef.current.play().then(() => {
+        setIsPlayingAudio(true);
+      }).catch((error) => {
+        console.error('Error playing audio:', error);
+        toast.error('Failed to play voice preview');
+      });
+    }
+  };
+
+  const stopVoicePreview = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      setIsPlayingAudio(false);
+    }
+  };
+
+  // Handle audio ended event
+  const handleAudioEnded = () => {
+    setIsPlayingAudio(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -86,12 +129,22 @@ export default function CreateVideoForm() {
       }
 
       const videoId = res.data.videoId
-      const frames = res.data.frames;
-      console.log({ frames });
+      const script = res.data.script;
+      console.log({ script });
+
+      const title = script?.title
+
+      setVideoTitle(title)
+
+      const description = script?.description
+
+      setVideoDescription(description)
+
+      setVideoScenes(script?.scenes)
 
       // generate script to generate the audio
       let audioScript = '';
-      frames.forEach((scene: any) => audioScript += `${scene.contentText} `)
+      script?.scenes?.forEach((scene: any) => audioScript += `${scene.contentText} `)
 
       console.log({ audioScript })
 
@@ -110,10 +163,12 @@ export default function CreateVideoForm() {
       const audioUrl = audioRes.data.audioUrl
       console.log({ audioUrl });
 
+      setAudioScriptUrl(audioUrl)
+
       // generate images
       const imageRes = await axios.post('/api/generate-images', {
         videoId: videoId,
-        videoScript: frames,
+        videoScript: script?.scenes,
         style: formData.style,
         aspectRatio: convertValueToLabel({ type: "AspectRatio", input: formData.aspectRatio as string }),
       });
@@ -125,6 +180,8 @@ export default function CreateVideoForm() {
 
       const imagesUrl = imageRes.data.imagesUrl;
       console.log({ imagesUrl });
+
+      setVideoImagesUrl(imagesUrl)
 
       //generate captions file for captions
       const captionRes = await axios.post('/api/generate-caption', {
@@ -141,8 +198,9 @@ export default function CreateVideoForm() {
 
       console.log({ caption })
 
-      setPlayVideo(true)
-      setPlayVideoId(videoId)
+      setVideoCaption(caption)
+
+      setIsVideoReady(true)
 
     } catch (error) {
       console.error(error);
@@ -153,81 +211,169 @@ export default function CreateVideoForm() {
   };
 
   return (
-    <div className="container mx-auto p-6">
-      <Card className="max-w-2xl mx-auto">
-        <CardHeader>
-          <CardTitle>Create New Video</CardTitle>
-          <CardDescription>
+    <div className="w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+      <Card className="w-full">
+        <CardHeader className="px-4 sm:px-6 lg:px-8 pb-4 sm:pb-6">
+          <CardTitle className="text-xl sm:text-2xl lg:text-3xl text-center">
+            Create New Video
+          </CardTitle>
+          <CardDescription className="text-sm sm:text-base text-center mt-2 sm:mt-3">
             Fill in the details to generate your AI short video.
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {formData.contentType === 'customPrompt' && (
-              <div className="space-y-2">
-                <Label htmlFor="prompt">Prompt</Label>
-                <Textarea
-                  id="prompt"
-                  value={formData.prompt}
-                  onChange={(e) => handleChange('prompt', e.target.value)}
-                  placeholder='Enter your prompt here'
-                  required
-                />
+        <CardContent className="px-4 sm:px-6 lg:px-8 pb-6 sm:pb-8">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6 lg:space-y-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:items-start">
+              {/* Left Column - Form Fields */}
+              <div className="space-y-4 sm:space-y-6">
+                {formData.contentType === 'customPrompt' && (
+                  <div className="space-y-2 sm:space-y-3">
+                    <Label htmlFor="prompt" className="text-sm sm:text-base font-medium">
+                      Prompt
+                    </Label>
+                    <Textarea
+                      id="prompt"
+                      value={formData.prompt}
+                      onChange={(e) => handleChange('prompt', e.target.value)}
+                      placeholder='Enter your prompt here'
+                      required
+                      className="min-h-[100px] sm:min-h-[120px] text-sm sm:text-base"
+                    />
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
+                  <SelectInput
+                    label="Content Type"
+                    id="contentType"
+                    value={formData.contentType}
+                    options={contentType}
+                    onChange={(val) => handleChange('contentType', val)}
+                  />
+
+                  <SelectInput
+                    label="Video Style"
+                    id="style"
+                    value={formData.style}
+                    options={videoStyle}
+                    onChange={(val) => handleChange('style', val)}
+                  />
+
+                  <div className="space-y-2 sm:space-y-3">
+                    <Label htmlFor="voiceType" className="text-sm sm:text-base font-medium">
+                      Voice Type
+                    </Label>
+                    <div className="flex gap-2">
+                      <Select
+                        value={formData.voiceType}
+                        onValueChange={(val) => handleChange('voiceType', val)}
+                      >
+                        <SelectTrigger className="h-10 sm:h-11 text-sm sm:text-base flex-1">
+                          <SelectValue placeholder="Select voice type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {voiceType.map((opt) => (
+                            <SelectItem key={opt.value} value={opt.value} className="text-sm sm:text-base">
+                              {opt.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        className="h-10 sm:h-11 w-10 sm:w-11"
+                        onClick={() => isPlayingAudio ? stopVoicePreview() : playVoicePreview(formData.voiceType)}
+                        title={isPlayingAudio ? "Stop preview" : "Play voice preview"}
+                      >
+                        {isPlayingAudio ? (
+                          <Square className="h-4 w-4" />
+                        ) : (
+                          <Play className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+
+                  <SelectInput
+                    label="Duration"
+                    id="duration"
+                    value={formData.duration}
+                    options={videoDuration}
+                    onChange={(val) => handleChange('duration', val)}
+                  />
+                </div>
+
+                {isVideoReady ? (
+                  <div className="pt-2 sm:pt-4">
+                    <Button
+                      type="submit"
+                      className={cn("w-full h-11 sm:h-12 text-sm sm:text-base font-medium")}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? 'Creating...' : 'Create Video'}
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="mt-6 sm:mt-8 flex justify-center">
+                    <VideoDialog
+                      triggerText="🎬 Watch Video"
+                      title={videoTitle}
+                      description={videoDescription}
+                    // frames={videoScenes}
+                    // audioUrl={audioScriptUrl}
+                    // imagesUrl={videoImagesUrl}
+                    // caption={videoCaption}
+                    />
+                  </div>
+                )}
               </div>
-            )}
 
-            <div className="grid grid-cols-2 gap-4">
-              <SelectInput
-                label="Content Type"
-                id="contentType"
-                value={formData.contentType}
-                options={contentType}
-                onChange={(val) => handleChange('contentType', val)}
-              />
-
-              <SelectInput
-                label="Video Style"
-                id="style"
-                value={formData.style}
-                options={videoStyle}
-                onChange={(val) => handleChange('style', val)}
-              />
-
-              <SelectInput
-                label="Voice Type"
-                id="voiceType"
-                value={formData.voiceType}
-                options={voiceType}
-                onChange={(val) => handleChange('voiceType', val)}
-              />
-
-              <SelectInput
-                label="Aspect Ratio"
-                id="aspectRatio"
-                value={formData.aspectRatio}
-                options={aspectRatio}
-                onChange={(val) => handleChange('aspectRatio', val)}
-              />
-
-              <SelectInput
-                label="Duration"
-                id="duration"
-                value={formData.duration}
-                options={videoDuration}
-                onChange={(val) => handleChange('duration', val)}
-              />
+              {/* Right Column - Style Preview */}
+              <div className="lg:block mt-6 lg:mt-0">
+                <div className="space-y-3">
+                  <Label className="text-sm font-medium text-muted-foreground">
+                    Style Preview
+                  </Label>
+                  <div className="relative w-full max-w-[320px] mx-auto lg:mx-0">
+                    <div className="aspect-[9/16] w-full rounded-lg overflow-hidden border border-border bg-muted">
+                      <Image
+                        src={`/${formData.style}.png`}
+                        alt={`${formData.style} style preview`}
+                        height={240}
+                        width={240}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          target.nextElementSibling?.classList.remove('hidden');
+                        }}
+                      />
+                      <div className="hidden absolute inset-0 items-center justify-center text-muted-foreground text-sm">
+                        <div className="text-center">
+                          <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-muted-foreground/20 flex items-center justify-center">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2z" />
+                            </svg>
+                          </div>
+                          <p>Preview not available</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Creating...' : 'Create Video'}
-            </Button>
           </form>
         </CardContent>
       </Card>
-      <VideoDialog
-        triggerText="🎬 Watch Video"
-        title="The Journey of Human Evolution"
-        description="Experience billions of years of evolution in this immersive video journey"
+
+      {/* Hidden audio element for voice previews */}
+      <audio
+        ref={audioRef}
+        onEnded={handleAudioEnded}
+        preload="none"
       />
     </div>
   );
@@ -250,21 +396,23 @@ function SelectInput({
   const isObjectOptions = options.length > 0 && typeof options[0] === 'object';
 
   return (
-    <div className="space-y-2">
-      <Label htmlFor={id}>{label}</Label>
+    <div className="space-y-2 sm:space-y-3">
+      <Label htmlFor={id} className="text-sm sm:text-base font-medium">
+        {label}
+      </Label>
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger>
+        <SelectTrigger className="h-10 sm:h-11 text-sm sm:text-base">
           <SelectValue placeholder={`Select ${label.toLowerCase()}`} />
         </SelectTrigger>
         <SelectContent>
           {isObjectOptions
             ? (options as { value: string; label: string }[]).map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
+              <SelectItem key={opt.value} value={opt.value} className="text-sm sm:text-base">
                 {opt.label}
               </SelectItem>
             ))
             : (options as string[]).map((opt) => (
-              <SelectItem key={opt} value={opt}>
+              <SelectItem key={opt} value={opt} className="text-sm sm:text-base">
                 {opt}
               </SelectItem>
             ))

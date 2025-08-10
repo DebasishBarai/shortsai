@@ -1,494 +1,449 @@
-export const frames = [
-  {
-    "imagePrompt": "A single-celled organism, glowing faintly in primordial soup, with gentle bubbles rising around it. The background is a murky, warm-toned liquid.",
-    "contentText": "Billions of years ago, life began as simple cells in ancient oceans."
-  },
-  {
-    "imagePrompt": "A lush, dense primeval forest with large ferns and the silhouette of a small, agile ape-like creature swinging through the trees in the background. The lighting is dappled and green.",
-    "contentText": "Over eons, these simple forms evolved into complex creatures, including our primate ancestors."
-  },
-  {
-    "imagePrompt": "An early hominid, perhaps Australopithecus, standing upright on an African savanna, looking curious and alert. The sun is setting, casting warm orange and purple hues.",
-    "contentText": "Around 6 million years ago, a pivotal shift occurred: upright walking."
-  },
-  {
-    "imagePrompt": "A small group of Homo erectus around a simple campfire, with rudimentary tools scattered nearby. Their faces show signs of intelligence and cooperation. The scene is at night, lit by firelight.",
-    "contentText": "This led to larger brains, tool-making, and the mastery of fire, fundamentally changing our survival."
-  },
-  {
-    "imagePrompt": "A diverse group of modern humans, symbolizing different ethnicities, looking confidently into the future. They are standing on a stylized globe with a subtle glow, representing our global presence and interconnectedness. The background is a bright, optimistic sky.",
-    "contentText": "From ancient plains to global dominance, we continue to evolve, shaping our destiny."
-  }
-]
+export const frames = {
+  "title": "Cleopatra & Antony: A Love Forged in Power",
+  "description": "Witness the legendary romance of Cleopatra, the seductive Queen of Egypt, and Mark Antony, the Roman general. A tale of passion, politics, and a love that defied empires, ultimately leading to their tragic end.",
+  "scenes": [
+    {
+      "imagePrompt": "A regal Cleopatra, in her prime, with an ornate gold headdress and flowing silk robes, sitting on a luxurious throne in a lavish Egyptian palace. The background shows hints of hieroglyphs and ancient Egyptian architecture. The lighting is soft and warm, emphasizing her beauty and power. Focus on her confident expression.",
+      "contentText": "In the heart of ancient Egypt, a queen unlike any other reigned: Cleopatra."
+    },
+    {
+      "imagePrompt": "A strong and charismatic Mark Antony, in Roman military attire, with a stern yet thoughtful expression, standing on a grand marble balcony overlooking a bustling Roman forum. The background features classical Roman buildings and statues. The lighting is strong and directional, highlighting his features.",
+      "contentText": "Across the sea, a powerful Roman general, Mark Antony, shaped an empire."
+    },
+    {
+      "imagePrompt": "Cleopatra and Mark Antony, in an intimate and passionate embrace, looking into each other's eyes, within a beautifully decorated Egyptian barge on the Nile River. The setting sun casts a golden glow, reflecting on the water. Their expressions show deep affection and connection. Focus on their intertwined hands.",
+      "contentText": "Their worlds collided, forging a love story that defied empires."
+    },
+    {
+      "imagePrompt": "A dramatic depiction of a naval battle, with ancient warships clashing on a turbulent sea under a stormy sky. Smoke rises from burning ships. Focus on the chaos and intensity of the battle, hinting at the political turmoil surrounding their love.",
+      "contentText": "But their passion sparked a war, threatening their very existence."
+    },
+    {
+      "imagePrompt": "Cleopatra and Mark Antony, standing side-by-side, looking into the distance with a mixture of determination and somber resolve, against a backdrop of crumbling ancient ruins bathed in moonlight. The scene conveys a sense of their shared fate and ultimate demise. Focus on their unified stance.",
+      "contentText": "A legend of love, power, and a tragic end, forever etched in history."
+    }
+  ]
+}
 
 export const aspectRatio = "RATIO_9_16"
 
-export const audioScript = "Billions of years ago, life began as simple cells in ancient oceans. Over eons, these simple forms evolved into complex creatures, including our primate ancestors. Around 6 million years ago, a pivotal shift occurred: upright walking. This led to larger brains, tool-making, and the mastery of fire, fundamentally changing our survival. From ancient plains to global dominance, we continue to evolve, shaping our destiny. "
+export const audioScript = "In the heart of ancient Egypt, a queen unlike any other reigned: Cleopatra. Across the sea, a powerful Roman general, Mark Antony, shaped an empire. Their worlds collided, forging a love story that defied empires. But their passion sparked a war, threatening their very existence. A legend of love, power, and a tragic end, forever etched in history. "
 
-export const audioUrl = "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme3zdd2m0003dtu99pal18jb/audio.mp3"
+export const audioUrl = "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme5j5zd0000513mrokd4mxlv/audio.mp3"
 
 export const imagesUrl = [
-  "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme3zdd2m0003dtu99pal18jb/images/0.png",
-  "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme3zdd2m0003dtu99pal18jb/images/1.png",
-  "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme3zdd2m0003dtu99pal18jb/images/2.png",
-  "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme3zdd2m0003dtu99pal18jb/images/3.png",
-  "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme3zdd2m0003dtu99pal18jb/images/4.png"
+  "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme5j5zd0000513mrokd4mxlv/images/0.png",
+  "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme5j5zd0000513mrokd4mxlv/images/1.png",
+  "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme5j5zd0000513mrokd4mxlv/images/2.png",
+  "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme5j5zd0000513mrokd4mxlv/images/3.png",
+  "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme5j5zd0000513mrokd4mxlv/images/4.png"
 ]
 
 export const caption = [
   {
-    "text": "Billions",
+    "text": "In",
     "start": 160,
-    "end": 560,
-    "confidence": 0.9987793,
+    "end": 240,
+    "confidence": 0.9951172,
+    "speaker": null
+  },
+  {
+    "text": "the",
+    "start": 240,
+    "end": 320,
+    "confidence": 1,
+    "speaker": null
+  },
+  {
+    "text": "heart",
+    "start": 320,
+    "end": 440,
+    "confidence": 1,
     "speaker": null
   },
   {
     "text": "of",
-    "start": 560,
-    "end": 680,
-    "confidence": 0.9995117,
-    "speaker": null
-  },
-  {
-    "text": "years",
-    "start": 680,
-    "end": 920,
-    "confidence": 0.9995117,
-    "speaker": null
-  },
-  {
-    "text": "ago,",
-    "start": 920,
-    "end": 1280,
-    "confidence": 0.9995117,
-    "speaker": null
-  },
-  {
-    "text": "life",
-    "start": 1440,
-    "end": 1800,
+    "start": 440,
+    "end": 600,
     "confidence": 1,
-    "speaker": null
-  },
-  {
-    "text": "began",
-    "start": 1800,
-    "end": 2160,
-    "confidence": 1,
-    "speaker": null
-  },
-  {
-    "text": "as",
-    "start": 2160,
-    "end": 2360,
-    "confidence": 0.9941406,
-    "speaker": null
-  },
-  {
-    "text": "simple",
-    "start": 2360,
-    "end": 2720,
-    "confidence": 1,
-    "speaker": null
-  },
-  {
-    "text": "cells",
-    "start": 2720,
-    "end": 3080,
-    "confidence": 0.99902344,
-    "speaker": null
-  },
-  {
-    "text": "in",
-    "start": 3080,
-    "end": 3240,
-    "confidence": 0.9682617,
     "speaker": null
   },
   {
     "text": "ancient",
-    "start": 3240,
-    "end": 3600,
-    "confidence": 1,
+    "start": 600,
+    "end": 1040,
+    "confidence": 0.99527997,
     "speaker": null
   },
   {
-    "text": "oceans.",
-    "start": 3600,
-    "end": 4160,
+    "text": "Egypt,",
+    "start": 1040,
+    "end": 1640,
+    "confidence": 0.9881592,
+    "speaker": null
+  },
+  {
+    "text": "a",
+    "start": 1640,
+    "end": 1880,
+    "confidence": 0.99902344,
+    "speaker": null
+  },
+  {
+    "text": "queen",
+    "start": 1880,
+    "end": 2160,
+    "confidence": 0.9814453,
+    "speaker": null
+  },
+  {
+    "text": "unlike",
+    "start": 2160,
+    "end": 2600,
     "confidence": 0.9996745,
     "speaker": null
   },
   {
-    "text": "Over",
-    "start": 4400,
-    "end": 4720,
-    "confidence": 0.99902344,
+    "text": "any",
+    "start": 2600,
+    "end": 2760,
+    "confidence": 1,
     "speaker": null
   },
   {
-    "text": "eons,",
-    "start": 4720,
-    "end": 5280,
-    "confidence": 0.82543945,
+    "text": "other",
+    "start": 2760,
+    "end": 3040,
+    "confidence": 0.99853516,
     "speaker": null
   },
   {
-    "text": "these",
-    "start": 5360,
-    "end": 5720,
-    "confidence": 0.99902344,
+    "text": "reigned",
+    "start": 3040,
+    "end": 3560,
+    "confidence": 0.9663086,
     "speaker": null
   },
   {
-    "text": "simple",
-    "start": 5720,
+    "text": "Cleopatra.",
+    "start": 3560,
+    "end": 4480,
+    "confidence": 0.9980469,
+    "speaker": null
+  },
+  {
+    "text": "Across",
+    "start": 4800,
+    "end": 5160,
+    "confidence": 1,
+    "speaker": null
+  },
+  {
+    "text": "the",
+    "start": 5160,
+    "end": 5440,
+    "confidence": 1,
+    "speaker": null
+  },
+  {
+    "text": "sea,",
+    "start": 5440,
+    "end": 5840,
+    "confidence": 0.99853516,
+    "speaker": null
+  },
+  {
+    "text": "a",
+    "start": 5840,
     "end": 6120,
-    "confidence": 1,
+    "confidence": 0.9980469,
     "speaker": null
   },
   {
-    "text": "forms",
+    "text": "powerful",
     "start": 6120,
-    "end": 6440,
+    "end": 6480,
     "confidence": 1,
     "speaker": null
   },
   {
-    "text": "evolved",
-    "start": 6440,
-    "end": 6800,
-    "confidence": 0.81689453,
+    "text": "Roman",
+    "start": 6480,
+    "end": 6880,
+    "confidence": 0.9851074,
     "speaker": null
   },
   {
-    "text": "into",
-    "start": 6800,
-    "end": 7040,
+    "text": "general,",
+    "start": 6880,
+    "end": 7280,
     "confidence": 1,
     "speaker": null
   },
   {
-    "text": "complex",
-    "start": 7040,
-    "end": 7480,
-    "confidence": 0.99625653,
+    "text": "Mark",
+    "start": 7520,
+    "end": 7920,
+    "confidence": 0.6870117,
     "speaker": null
   },
   {
-    "text": "creatures,",
-    "start": 7480,
-    "end": 8000,
-    "confidence": 0.99975586,
+    "text": "Antony,",
+    "start": 7920,
+    "end": 8560,
+    "confidence": 0.9929199,
     "speaker": null
   },
   {
-    "text": "including",
-    "start": 8320,
-    "end": 8720,
+    "text": "shaped",
+    "start": 8720,
+    "end": 9160,
+    "confidence": 1,
+    "speaker": null
+  },
+  {
+    "text": "an",
+    "start": 9160,
+    "end": 9360,
     "confidence": 0.9995117,
     "speaker": null
   },
   {
-    "text": "our",
-    "start": 8720,
-    "end": 9040,
+    "text": "empire.",
+    "start": 9360,
+    "end": 9840,
+    "confidence": 0.9404297,
+    "speaker": null
+  },
+  {
+    "text": "Their",
+    "start": 10080,
+    "end": 10360,
     "confidence": 1,
     "speaker": null
   },
   {
-    "text": "primate",
-    "start": 9040,
-    "end": 9440,
-    "confidence": 0.99975586,
+    "text": "worlds",
+    "start": 10360,
+    "end": 10840,
+    "confidence": 0.81103516,
     "speaker": null
   },
   {
-    "text": "ancestors.",
-    "start": 9440,
-    "end": 10240,
-    "confidence": 0.9133301,
+    "text": "collided,",
+    "start": 10840,
+    "end": 11280,
+    "confidence": 1,
     "speaker": null
   },
   {
-    "text": "Around",
-    "start": 10720,
-    "end": 11120,
+    "text": "forging",
+    "start": 11440,
+    "end": 11960,
     "confidence": 0.99902344,
     "speaker": null
   },
   {
-    "text": "6",
-    "start": 11120,
-    "end": 11440,
+    "text": "a",
+    "start": 11960,
+    "end": 12080,
     "confidence": 1,
     "speaker": null
   },
   {
-    "text": "million",
-    "start": 11440,
-    "end": 11720,
+    "text": "love",
+    "start": 12080,
+    "end": 12280,
     "confidence": 1,
     "speaker": null
   },
   {
-    "text": "years",
-    "start": 11720,
-    "end": 12040,
-    "confidence": 0.9995117,
+    "text": "story",
+    "start": 12280,
+    "end": 12600,
+    "confidence": 1,
     "speaker": null
   },
   {
-    "text": "ago,",
-    "start": 12040,
-    "end": 12400,
+    "text": "that",
+    "start": 12600,
+    "end": 12840,
+    "confidence": 1,
+    "speaker": null
+  },
+  {
+    "text": "defied",
+    "start": 12840,
+    "end": 13320,
+    "confidence": 0.99975586,
+    "speaker": null
+  },
+  {
+    "text": "empires.",
+    "start": 13320,
+    "end": 14000,
+    "confidence": 0.9998372,
+    "speaker": null
+  },
+  {
+    "text": "But",
+    "start": 14080,
+    "end": 14400,
+    "confidence": 0.7055664,
+    "speaker": null
+  },
+  {
+    "text": "their",
+    "start": 14400,
+    "end": 14640,
+    "confidence": 1,
+    "speaker": null
+  },
+  {
+    "text": "passion",
+    "start": 14640,
+    "end": 15080,
+    "confidence": 0.73254395,
+    "speaker": null
+  },
+  {
+    "text": "sparked",
+    "start": 15080,
+    "end": 15480,
     "confidence": 1,
     "speaker": null
   },
   {
     "text": "a",
-    "start": 12480,
-    "end": 12760,
-    "confidence": 1,
-    "speaker": null
-  },
-  {
-    "text": "pivotal",
-    "start": 12760,
-    "end": 13240,
-    "confidence": 1,
-    "speaker": null
-  },
-  {
-    "text": "shift",
-    "start": 13240,
-    "end": 13520,
-    "confidence": 1,
-    "speaker": null
-  },
-  {
-    "text": "occurred.",
-    "start": 13520,
-    "end": 14040,
-    "confidence": 0.8610026,
-    "speaker": null
-  },
-  {
-    "text": "Upright",
-    "start": 14040,
-    "end": 14640,
-    "confidence": 0.9941406,
-    "speaker": null
-  },
-  {
-    "text": "walking.",
-    "start": 14640,
-    "end": 15200,
-    "confidence": 0.99975586,
-    "speaker": null
-  },
-  {
-    "text": "This",
-    "start": 15280,
+    "start": 15480,
     "end": 15600,
-    "confidence": 0.9995117,
+    "confidence": 0.99902344,
     "speaker": null
   },
   {
-    "text": "led",
+    "text": "war",
     "start": 15600,
-    "end": 15800,
-    "confidence": 0.9941406,
-    "speaker": null
-  },
-  {
-    "text": "to",
-    "start": 15800,
-    "end": 15999,
-    "confidence": 0.9995117,
-    "speaker": null
-  },
-  {
-    "text": "larger",
-    "start": 15999,
-    "end": 16440,
+    "end": 15840,
     "confidence": 1,
     "speaker": null
   },
   {
-    "text": "brains,",
-    "start": 16440,
-    "end": 16880,
-    "confidence": 0.9992676,
-    "speaker": null
-  },
-  {
-    "text": "tool",
-    "start": 16960,
-    "end": 17360,
+    "text": "threatening",
+    "start": 15919,
+    "end": 16480,
     "confidence": 0.9995117,
     "speaker": null
   },
   {
-    "text": "making",
-    "start": 17360,
-    "end": 17760,
-    "confidence": 0.59521484,
+    "text": "their",
+    "start": 16480,
+    "end": 16640,
+    "confidence": 1,
     "speaker": null
   },
   {
-    "text": "and",
-    "start": 17840,
+    "text": "very",
+    "start": 16640,
+    "end": 16880,
+    "confidence": 0.99902344,
+    "speaker": null
+  },
+  {
+    "text": "existence.",
+    "start": 16880,
+    "end": 17600,
+    "confidence": 0.91780597,
+    "speaker": null
+  },
+  {
+    "text": "A",
+    "start": 17920,
     "end": 18160,
-    "confidence": 0.8803711,
-    "speaker": null
-  },
-  {
-    "text": "the",
-    "start": 18160,
-    "end": 18360,
     "confidence": 0.99853516,
     "speaker": null
   },
   {
-    "text": "mastery",
-    "start": 18360,
-    "end": 18760,
+    "text": "legend",
+    "start": 18160,
+    "end": 18440,
     "confidence": 1,
     "speaker": null
   },
   {
     "text": "of",
-    "start": 18760,
+    "start": 18440,
+    "end": 18640,
+    "confidence": 1,
+    "speaker": null
+  },
+  {
+    "text": "love,",
+    "start": 18640,
     "end": 18960,
     "confidence": 1,
     "speaker": null
   },
   {
-    "text": "fire,",
-    "start": 18960,
-    "end": 19280,
+    "text": "power,",
+    "start": 19200,
+    "end": 19600,
+    "confidence": 1,
+    "speaker": null
+  },
+  {
+    "text": "and",
+    "start": 19600,
+    "end": 19920,
+    "confidence": 0.9458008,
+    "speaker": null
+  },
+  {
+    "text": "a",
+    "start": 19920,
+    "end": 20120,
     "confidence": 0.99902344,
     "speaker": null
   },
   {
-    "text": "fundamentally",
-    "start": 19600,
-    "end": 20280,
+    "text": "tragic",
+    "start": 20120,
+    "end": 20640,
+    "confidence": 0.97998047,
+    "speaker": null
+  },
+  {
+    "text": "end",
+    "start": 20640,
+    "end": 20960,
+    "confidence": 0.9995117,
+    "speaker": null
+  },
+  {
+    "text": "forever",
+    "start": 21040,
+    "end": 21520,
     "confidence": 1,
     "speaker": null
   },
   {
-    "text": "changing",
-    "start": 20280,
-    "end": 20720,
-    "confidence": 0.95751953,
+    "text": "etched",
+    "start": 21520,
+    "end": 21920,
+    "confidence": 0.94958496,
     "speaker": null
   },
   {
-    "text": "our",
-    "start": 20720,
-    "end": 20920,
-    "confidence": 1,
-    "speaker": null
-  },
-  {
-    "text": "survival",
-    "start": 20920,
-    "end": 21440,
-    "confidence": 0.9998372,
-    "speaker": null
-  },
-  {
-    "text": "from",
-    "start": 21760,
+    "text": "in",
+    "start": 21920,
     "end": 22040,
     "confidence": 1,
     "speaker": null
   },
   {
-    "text": "ancient",
+    "text": "history.",
     "start": 22040,
-    "end": 22400,
-    "confidence": 0.8833008,
-    "speaker": null
-  },
-  {
-    "text": "plains",
-    "start": 22400,
-    "end": 22800,
-    "confidence": 0.7437744,
-    "speaker": null
-  },
-  {
-    "text": "to",
-    "start": 22800,
-    "end": 23000,
-    "confidence": 1,
-    "speaker": null
-  },
-  {
-    "text": "global",
-    "start": 23000,
-    "end": 23280,
-    "confidence": 1,
-    "speaker": null
-  },
-  {
-    "text": "dominance.",
-    "start": 23280,
-    "end": 24000,
-    "confidence": 0.9197998,
-    "speaker": null
-  },
-  {
-    "text": "We",
-    "start": 24000,
-    "end": 24320,
-    "confidence": 1,
-    "speaker": null
-  },
-  {
-    "text": "continue",
-    "start": 24320,
-    "end": 24640,
-    "confidence": 0.9995117,
-    "speaker": null
-  },
-  {
-    "text": "to",
-    "start": 24720,
-    "end": 25000,
-    "confidence": 0.9995117,
-    "speaker": null
-  },
-  {
-    "text": "evolve,",
-    "start": 25000,
-    "end": 25440,
-    "confidence": 0.8364258,
-    "speaker": null
-  },
-  {
-    "text": "shaping",
-    "start": 25680,
-    "end": 26120,
-    "confidence": 0.9996745,
-    "speaker": null
-  },
-  {
-    "text": "our",
-    "start": 26120,
-    "end": 26280,
-    "confidence": 0.9995117,
-    "speaker": null
-  },
-  {
-    "text": "destiny.",
-    "start": 26280,
-    "end": 26800,
-    "confidence": 0.9918213,
+    "end": 22320,
+    "confidence": 0.99658203,
     "speaker": null
   }
 ]

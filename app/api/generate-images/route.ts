@@ -6,7 +6,7 @@ import { generateImageWithFlash } from "@/lib/ai";
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 const s3 = new S3Client({
-  region: 'ap-south-1',
+  region: process.env.AWS_REGION,
   credentials: {
     accessKeyId: process.env.AWS_PUBLIC_ACCESS_KEY || '',
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    console.log("Request body:", body); // Debug log
+    console.log("generate images request body:", body); // Debug log
 
     const { videoId, videoScript, style, aspectRatio } = body;
 
@@ -56,7 +56,7 @@ export async function POST(request: Request) {
     // Wait for all images to be generated
     const imageList = await Promise.all(
       videoScript.map(async (element: { contentText: string; imagePrompt: string }, index: number) => {
-        const image = await generateImageWithFlash({ prompt: element.imagePrompt, aspectRatio: aspectRatio });
+        const image = await generateImageWithFlash({ prompt: element.imagePrompt, style: style, aspectRatio: aspectRatio });
         if (!image || !image.data) {
           throw new Error(`No image generated for element ${index}`);
         }

@@ -27,10 +27,11 @@ export async function generateScript({ prompt }: { prompt: string }) {
 // generate image with google imagen client
 interface GenerateImageOptions {
   prompt: string;
+  style: "realistic" | "cartoon" | "watercolor" | "sketch"
   aspectRatio: "1:1" | "9:16" | "16:9" | "4:3" | "3:4";
 }
 
-export async function generateImage({ prompt, aspectRatio }: GenerateImageOptions) {
+export async function generateImage({ prompt, style, aspectRatio }: GenerateImageOptions) {
   try {
     const response = await genai.models.generateImages({
       model: "imagen-4.0-generate-preview-06-06",
@@ -49,14 +50,24 @@ export async function generateImage({ prompt, aspectRatio }: GenerateImageOption
 
 // generate image with google flash client
 
-export async function generateImageWithFlash({ prompt, aspectRatio }: GenerateImageOptions) {
+export async function generateImageWithFlash({ prompt, style, aspectRatio }: GenerateImageOptions) {
   try {
     // Include aspect ratio instruction in the prompt
-    const fullPrompt = `Create an image with aspect ratio ${aspectRatio}: ${prompt}`;
+    const getStyleDescription = ({ style }: { style: "realistic" | "cartoon" | "watercolor" | "sketch" }) => {
+      const styles = {
+        realistic: "photorealistic, high-quality photography style with natural lighting and detailed textures",
+        cartoon: "vibrant cartoon illustration with bold colors, clean lines, and animated style",
+        watercolor: "soft watercolor painting with flowing colors, gentle brushstrokes, and artistic texture",
+        sketch: "hand-drawn pencil sketch with detailed line work, shading, and artistic sketching"
+      };
+      return styles[style] || styles.realistic;
+    };
+
+    const imagePrompt = `Create a ${getStyleDescription({ style })} image with aspect ratio ${aspectRatio}: ${prompt}`;
 
     const response = await genai.models.generateContent({
       model: "gemini-2.0-flash-preview-image-generation",
-      contents: fullPrompt,
+      contents: imagePrompt,
       config: {
         responseModalities: [Modality.TEXT, Modality.IMAGE],
       },

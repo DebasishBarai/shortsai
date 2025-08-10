@@ -37,7 +37,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
         <Player
           component={VideoComposition}
           inputProps={{
-            frames,
+            frames: frames.scenes,
             audioUrl,
             caption,
           }}
