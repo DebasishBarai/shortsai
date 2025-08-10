@@ -305,7 +305,7 @@ export default function CreateVideoForm() {
                   />
                 </div>
 
-                {isVideoReady ? (
+                {!isVideoReady ? (
                   <div className="pt-2 sm:pt-4">
                     <Button
                       type="submit"
@@ -321,10 +321,10 @@ export default function CreateVideoForm() {
                       triggerText="🎬 Watch Video"
                       title={videoTitle}
                       description={videoDescription}
-                    // frames={videoScenes}
-                    // audioUrl={audioScriptUrl}
-                    // imagesUrl={videoImagesUrl}
-                    // caption={videoCaption}
+                      frames={videoScenes}
+                      audioUrl={audioScriptUrl}
+                      imagesUrl={videoImagesUrl}
+                      caption={videoCaption}
                     />
                   </div>
                 )}

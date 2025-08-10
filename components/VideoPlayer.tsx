@@ -3,19 +3,23 @@
 import React, { useState, useEffect } from 'react';
 import { Player } from '@remotion/player';
 import { VideoComposition } from '@/remotion/VideoComposition';
-import { frames, audioUrl, caption } from '@/lib/objects';
-
-// Calculate total duration from audio captions
-const totalDurationInFrames = Math.ceil((caption[caption.length - 1]?.end || 27000) / 1000 * 30); // 30fps
 
 interface VideoPlayerProps {
   width?: number;
   height?: number;
+  frames?: any[];
+  audioUrl?: string;
+  imagesUrl?: any[];
+  caption?: any[];
 }
 
 export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   width = 380,
   height = 675,
+  frames = [],
+  audioUrl = "",
+  imagesUrl = [],
+  caption = [],
 }) => {
   const [dimensions, setDimensions] = useState({ width, height });
 
@@ -31,15 +35,19 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
     return () => window.removeEventListener('resize', updateDimensions);
   }, [width, height]);
 
+  // Calculate total duration from audio captions
+  const totalDurationInFrames = frames.length > 0 ? frames.length * 90 : 270; // 90 frames per scene (3 seconds at 30fps)
+
   return (
     <div className="flex flex-col items-center justify-center w-full">
       <div className="relative flex justify-center items-center">
         <Player
           component={VideoComposition}
           inputProps={{
-            frames: frames.scenes,
+            frames: frames,
             audioUrl,
             caption,
+            imagesUrl,
           }}
           durationInFrames={totalDurationInFrames}
           fps={30}

@@ -17,12 +17,20 @@ interface VideoDialogProps {
   triggerText?: string;
   title?: string;
   description?: string;
+  frames?: any[];
+  audioUrl?: string;
+  imagesUrl?: any[];
+  caption?: any[];
 }
 
 export const VideoDialog: React.FC<VideoDialogProps> = ({
   triggerText = "Play Video",
   title = "Evolution Video",
   description = "Watch the story of human evolution unfold",
+  frames = [],
+  audioUrl = "",
+  imagesUrl = [],
+  caption = [],
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -44,7 +52,14 @@ export const VideoDialog: React.FC<VideoDialogProps> = ({
         </DialogHeader>
 
         <div className="flex justify-center items-center w-full">
-          <VideoPlayer width={280} height={495} />
+          <VideoPlayer 
+            width={280} 
+            height={495}
+            frames={frames}
+            audioUrl={audioUrl}
+            imagesUrl={imagesUrl}
+            caption={caption}
+          />
         </div>
       </DialogContent>
     </Dialog>

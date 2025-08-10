@@ -8,7 +8,6 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from 'remotion';
-import { imagesUrl } from '@/lib/objects';
 
 interface CaptionItem {
   text: string;
@@ -35,6 +34,7 @@ export const VideoComposition: React.FC<VideoCompositionProps> = ({
   audioUrl,
   caption,
   zoomEffect = 'none',
+  imagesUrl
 }) => {
   const { durationInFrames, fps } = useVideoConfig();
   const frame = useCurrentFrame();
