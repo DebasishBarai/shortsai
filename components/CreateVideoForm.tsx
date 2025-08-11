@@ -191,7 +191,7 @@ export default function CreateVideoForm() {
 
       if (captionRes.status !== 200) {
         const errorData = await captionRes.data;
-        throw new Error(errorData?.error || 'Failed to generate images');
+        throw new Error(errorData?.error || 'Failed to generate captions');
       }
 
       const caption = captionRes.data.caption

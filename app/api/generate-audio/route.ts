@@ -104,6 +104,13 @@ export async function POST(request: Request) {
 
     const audioUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${audioFile}`
 
+    // Update the video record with the audioUrl
+    await prisma.video.update({
+      where: { id: videoId },
+      data: {
+        audioUrl: audioUrl,
+      },
+    });
 
     return NextResponse.json({ success: true, audioUrl });
   } catch (error) {
