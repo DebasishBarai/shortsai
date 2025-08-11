@@ -25,7 +25,7 @@ import { convertValueToLabel } from '@/lib/functions';
 import { Textarea } from '@/components/ui/textarea';
 import axios from 'axios';
 import { VideoDialog } from './VideoDialog';
-import { Play, Square } from 'lucide-react';
+import { Play, Square, Coins } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
@@ -119,6 +119,41 @@ export default function CreateVideoForm() {
     setIsLoading(true);
 
     try {
+      // Calculate required credits based on video duration
+      const getRequiredCredits = (duration: string) => {
+        switch (duration) {
+          case 'DURATION_15':
+            return 5;
+          case 'DURATION_30':
+            return 10;
+          case 'DURATION_60':
+            return 20;
+          default:
+            return 5;
+        }
+      };
+
+      const requiredCredits = getRequiredCredits(formData.duration);
+
+      // Check if user has enough credits for the selected duration
+      const creditCheckRes = await axios.post('/api/check-credits', {
+        requiredCredits: requiredCredits
+      });
+
+      if (creditCheckRes.status !== 200) {
+        throw new Error('Failed to check credits');
+      }
+
+      const { hasEnoughCredits, currentCredits } = creditCheckRes.data;
+
+      if (!hasEnoughCredits) {
+        const durationLabel = convertValueToLabel({ type: "VideoDuration", input: formData.duration as string });
+        toast.error(`Insufficient credits. You have ${currentCredits} credits but need ${requiredCredits} credits to create a ${durationLabel} video. Please purchase more credits.`);
+        setIsLoading(false);
+        return;
+      }
+
+      // generate script
       const res = await axios.post('/api/generate-script',
         JSON.stringify(formData),
       );
@@ -201,6 +236,10 @@ export default function CreateVideoForm() {
       setVideoCaption(caption)
 
       setIsVideoReady(true)
+
+      // Show success message with remaining credits
+      const durationLabel = convertValueToLabel({ type: "VideoDuration", input: formData.duration as string });
+      toast.success(`${durationLabel} video created successfully! You have ${currentCredits - requiredCredits} credits remaining.`);
 
     } catch (error) {
       console.error(error);
@@ -303,6 +342,16 @@ export default function CreateVideoForm() {
                     options={videoDuration}
                     onChange={(val) => handleChange('duration', val)}
                   />
+
+                  {/* Credit Requirement Indicator */}
+                  <div className="col-span-2 flex items-center justify-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <Coins className="h-5 w-5 text-blue-600 dark:text-blue-400 mr-2" />
+                    <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
+                      {formData.duration === 'DURATION_15' ? '5 credits' :
+                        formData.duration === 'DURATION_30' ? '10 credits' :
+                          formData.duration === 'DURATION_60' ? '20 credits' : '5 credits'} required for this video duration
+                    </span>
+                  </div>
                 </div>
 
                 {!isVideoReady ? (

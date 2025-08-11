@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Menu, Users, UserPlus, Video, Plus, LayoutDashboardIcon } from "lucide-react";
+import { Menu, Users, UserPlus, Video, Plus, LayoutDashboardIcon, Coins } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -12,7 +12,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { UpgradeDialog } from "@/components/UpgradeDialog";
+import { GetCreditsDialog } from "@/components/GetCreditsDialog";
 
 const Navbar = () => {
   const { data: session, status } = useSession();
@@ -56,12 +56,18 @@ const Navbar = () => {
           {/*     Groups */}
           {/*   </Button> */}
           {/* </Link> */}
-          {session.user?.subscriptionType !== 'premium' && (
-            <UpgradeDialog
-              currentPlan={session.user?.subscriptionType || 'free'}
-              isTrialExpired={false} // You might want to pass this from session
-            />
-          )}
+          
+          {/* Credits Display */}
+          <div className="flex items-center gap-2 px-3 py-2 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+            <Coins className="h-4 w-4 text-green-600 dark:text-green-400" />
+            <span className="text-sm font-medium text-green-700 dark:text-green-300">
+              {session.user?.credits || 0} Credits
+            </span>
+          </div>
+
+          {/* Get Credits Button */}
+          <GetCreditsDialog />
+          
           <Button
             onClick={handleSignOut}
             variant="ghost"

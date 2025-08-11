@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { CalendarDays, Bell, Settings, Plus, Trash2, Users, UserPlus } from 'lucide-react';
+import { CalendarDays, Bell, Settings, Plus, Trash2, Users, UserPlus, Video, Play } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
@@ -26,35 +26,30 @@ import { UpgradePrompt } from '@/components/UpgradePrompt';
 import { SubscriptionType } from "@prisma/client";
 import { UpgradeOptions } from "@/components/UpgradeOptions";
 import { Badge } from '@/components/ui/badge';
+import Image from 'next/image';
+import { VideoDialog } from '@/components/VideoDialog';
+import { convertValueToLabel } from '@/lib/functions';
 
-interface Contact {
-  id: string;
-  name: string;
-  phone: string;
-}
-
-interface Group {
-  id: string;
-  name: string;
-  contacts: Contact[];
-}
-
-interface Reminder {
+interface Video {
   id: string;
   title: string;
-  message: string;
-  dateTime: string;
-  frequency: string;
-  phone: string;
-  sent: boolean;
+  description: string;
+  imagesUrl: string[];
   createdAt: string;
-  Group: Group | null;
+  contentType: string;
+  style: string;
+  voiceType: string;
+  duration: string;
+  frames?: any;
+  audioUrl?: string;
+  caption?: any;
 }
 
 interface User {
   subscriptionType: SubscriptionType;
   subscriptionEndDate: string | null;
   createdAt: string;
+  credits: number;
 }
 
 export default function DashboardPage() {
@@ -65,7 +60,7 @@ export default function DashboardPage() {
     },
   });
 
-  const [reminders, setReminders] = useState<Reminder[]>([]);
+  const [videos, setVideos] = useState<Video[]>([]);
   const [userData, setUserData] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -77,16 +72,20 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [remindersRes, userRes] = await Promise.all([
-          fetch('/api/reminders'),
+        const [videosRes, userRes] = await Promise.all([
+          fetch('/api/user/videos'),
           fetch('/api/user')
         ]);
 
-        const remindersData = await remindersRes.json();
+        const videosData = await videosRes.json();
         const userData = await userRes.json();
 
-        if (Array.isArray(remindersData)) {
-          setReminders(remindersData);
+        if (Array.isArray(videosData)) {
+          // Sort videos by creation date (newest first)
+          const sortedVideos = videosData.sort((a: Video, b: Video) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+          setVideos(sortedVideos);
         }
         if (userData) {
           console.log(userData);
@@ -102,32 +101,21 @@ export default function DashboardPage() {
     fetchData();
   }, []);
 
-  const activeReminders = reminders.filter(r => !r.sent);
-  const upcomingReminders = reminders.filter(r => {
-    const reminderDate = new Date(r.dateTime);
-    const now = new Date();
-    const sevenDaysFromNow = new Date();
-    sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
-    return reminderDate > now && reminderDate <= sevenDaysFromNow;
-  });
-  const totalSent = reminders.filter(r => r.sent).length;
-  const groupReminders = reminders.filter(r => r.Group !== null);
-
-  const deleteReminder = async (id: string) => {
+  const deleteVideo = async (id: string) => {
     try {
-      const res = await fetch(`/api/reminders/${id}`, {
+      const res = await fetch(`/api/user/videos/${id}`, {
         method: 'DELETE',
       });
 
       if (!res.ok) {
-        throw new Error('Failed to delete reminder');
+        throw new Error('Failed to delete video');
       }
 
-      setReminders(reminders.filter(reminder => reminder.id !== id));
-      toast.success('Reminder deleted successfully');
+      setVideos(videos.filter(video => video.id !== id));
+      toast.success('Video deleted successfully');
     } catch (error) {
-      console.error('Error deleting reminder:', error);
-      toast.error('Failed to delete reminder');
+      console.error('Error deleting video:', error);
+      toast.error('Failed to delete video');
     }
   };
 
@@ -146,14 +134,14 @@ export default function DashboardPage() {
         <div className="space-y-2">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">Welcome back, {session?.user?.name}</h1>
           <p className="text-sm sm:text-base text-muted-foreground">
-            {userData?.subscriptionType === 'free' && !trialStatus.isExpired && (
-              <span className="text-primary">
-                {trialStatus.daysLeft} days left in trial
+            {userData?.credits !== undefined && (
+              <span className="text-primary font-medium">
+                {userData.credits} credits remaining
               </span>
             )}
           </p>
         </div>
-        <SubscriptionBadge type={userData?.subscriptionType || 'free'} />
+        {/* <SubscriptionBadge type={userData?.subscriptionType || 'free'} /> */}
       </div>
 
       {/* Show upgrade prompt if trial expired */}
@@ -177,65 +165,78 @@ export default function DashboardPage() {
               {/*   <Button variant="outline"> */}
               {/*     <UserPlus className="mr-2 h-4 w-4" /> */}
               {/*     Manage Contacts */}
-              {/*   </Button> */}
+              {/* </Button> */}
               {/* </Link> */}
               {/* <Link href="/groups"> */}
               {/*   <Button variant="outline"> */}
               {/*     <Users className="mr-2 h-4 w-4" /> */}
               {/*     Manage Groups */}
-              {/*   </Button> */}
+              {/* </Button> */}
               {/* </Link> */}
             </div>
           </div>
 
           {/* Stats Cards */}
-          {/* <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"> */}
-          {/*   <Card> */}
-          {/*     <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0"> */}
-          {/*     <CardTitle className="text-sm font-medium">Active Reminders</CardTitle> */}
-          {/*     <Bell className="h-4 w-4 text-muted-foreground" /> */}
-          {/*     </CardHeader> */}
-          {/*     <CardContent> */}
-          {/*       <div className="text-2xl font-bold">{activeReminders.length}</div> */}
-          {/*       <p className="text-xs text-muted-foreground">Currently active</p> */}
-          {/*     </CardContent> */}
-          {/*   </Card> */}
-          {/**/}
-          {/*   <Card> */}
-          {/*     <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0"> */}
-          {/*     <CardTitle className="text-sm font-medium">Upcoming Reminders</CardTitle> */}
-          {/*     <CalendarDays className="h-4 w-4 text-muted-foreground" /> */}
-          {/*     </CardHeader> */}
-          {/*     <CardContent> */}
-          {/*       <div className="text-2xl font-bold">{upcomingReminders.length}</div> */}
-          {/*       <p className="text-xs text-muted-foreground">Next 7 days</p> */}
-          {/*     </CardContent> */}
-          {/*   </Card> */}
-          {/**/}
-          {/*   <Card> */}
-          {/*     <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0"> */}
-          {/*     <CardTitle className="text-sm font-medium">Group Reminders</CardTitle> */}
-          {/*     <Users className="h-4 w-4 text-muted-foreground" /> */}
-          {/*     </CardHeader> */}
-          {/*     <CardContent> */}
-          {/*       <div className="text-2xl font-bold">{groupReminders.length}</div> */}
-          {/*       <p className="text-xs text-muted-foreground">Multiple recipients</p> */}
-          {/*     </CardContent> */}
-          {/*   </Card> */}
-          {/**/}
-          {/*   <Card> */}
-          {/*     <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0"> */}
-          {/*     <CardTitle className="text-sm font-medium">Total Sent</CardTitle> */}
-          {/*     <Settings className="h-4 w-4 text-muted-foreground" /> */}
-          {/*     </CardHeader> */}
-          {/*     <CardContent> */}
-          {/*       <div className="text-2xl font-bold">{totalSent}</div> */}
-          {/*       <p className="text-xs text-muted-foreground">All time</p> */}
-          {/*     </CardContent> */}
-          {/*   </Card> */}
-          {/* </div> */}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                <CardTitle className="text-sm font-medium">Total Videos</CardTitle>
+                <Video className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{videos.length}</div>
+                <p className="text-xs text-muted-foreground">All time</p>
+              </CardContent>
+            </Card>
 
-          {/* Recent Reminders */}
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                <CardTitle className="text-sm font-medium">Remaining Credits</CardTitle>
+                <div className="h-4 w-4 text-muted-foreground">💰</div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{userData?.credits || 0}</div>
+                <p className="text-xs text-muted-foreground">Available</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                <CardTitle className="text-sm font-medium">This Month</CardTitle>
+                <CalendarDays className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {videos.filter(video => {
+                    const videoDate = new Date(video.createdAt);
+                    const now = new Date();
+                    return videoDate.getMonth() === now.getMonth() && videoDate.getFullYear() === now.getFullYear();
+                  }).length}
+                </div>
+                <p className="text-xs text-muted-foreground">Videos created</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                <CardTitle className="text-sm font-medium">Recent Activity</CardTitle>
+                <Bell className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {videos.filter(video => {
+                    const videoDate = new Date(video.createdAt);
+                    const now = new Date();
+                    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                    return videoDate >= sevenDaysAgo;
+                  }).length}
+                </div>
+                <p className="text-xs text-muted-foreground">Last 7 days</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Recent Videos */}
           <Card>
             <CardHeader className="px-4 sm:px-6 lg:px-8">
               <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
@@ -244,51 +245,96 @@ export default function DashboardPage() {
                   <Button variant="ghost" size="sm" className="w-full sm:w-auto">View All</Button>
                 </Link>
               </div>
-              <CardDescription className="text-sm sm:text-base">Your recently created videos</CardDescription>
+              <CardDescription className="text-sm sm:text-base">Your recently created AI videos</CardDescription>
             </CardHeader>
             <CardContent className="px-4 sm:px-6 lg:px-8">
-              {reminders.length === 0 ? (
+              {videos.length === 0 ? (
                 <div className="text-center py-8 sm:py-10 text-muted-foreground">
+                  <Video className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
                   <p className="text-sm sm:text-base">No videos yet</p>
-                  <p className="text-xs sm:text-sm">Create your first video to get started</p>
+                  <p className="text-xs sm:text-sm">Create your first AI video to get started</p>
+                  <Link href="/create">
+                    <Button className="mt-4">
+                      <Plus className="mr-2 h-4 w-4" />
+                      Create Your First Video
+                    </Button>
+                  </Link>
                 </div>
               ) : (
-                <div className="space-y-3 sm:space-y-4">
-                  {reminders.slice(0, 5).map((reminder) => (
+                <div className="space-y-4 sm:space-y-6">
+                  {videos.slice(0, 6).map((video) => (
                     <div
-                      key={reminder.id}
-                      className="flex flex-col sm:flex-row gap-3 sm:gap-4 p-3 sm:p-4 rounded-lg border"
+                      key={video.id}
+                      className="flex flex-col sm:flex-row gap-4 p-4 rounded-lg border hover:shadow-sm transition-shadow"
                     >
-                      <div className="flex-1 space-y-2 sm:space-y-3">
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                          <h3 className="font-medium text-sm sm:text-base">{reminder.title}</h3>
-                          {reminder.Group && (
-                            <Badge variant="outline" className="flex items-center gap-1 w-fit text-xs">
-                              <Users className="h-3 w-3" />
-                              {reminder.Group.name}
-                            </Badge>
-                          )}
-                        </div>
-                        <p className="text-xs sm:text-sm text-muted-foreground">{reminder.message}</p>
-                        <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-                          <span>{format(new Date(reminder.dateTime), 'PPp')}</span>
-                          {reminder.Group ? (
-                            <span className="flex items-center gap-1">
-                              <Users className="h-3 w-3" />
-                              {reminder.Group.contacts.length} recipients
-                            </span>
+                      {/* Video Thumbnail */}
+                      <div className="relative w-full sm:w-32 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                        <div className="aspect-[9/16] w-full">
+                          {video.imagesUrl && video.imagesUrl.length > 0 ? (
+                            <Image
+                              src={video.imagesUrl[0]}
+                              alt={video.title || 'Video thumbnail'}
+                              fill
+                              className="object-cover"
+                              sizes="(max-width: 640px) 100vw, 128px"
+                            />
                           ) : (
-                            <span>{reminder.phone}</span>
+                            <div className="w-full h-full flex items-center justify-center">
+                              <Video className="h-8 w-8 text-muted-foreground" />
+                            </div>
                           )}
+                          <div className="absolute inset-0 bg-black/20 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <Play className="h-8 w-8 text-white" />
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 sm:gap-4">
-                        <span className={`px-2 py-1 rounded-full text-xs ${reminder.sent
-                          ? 'bg-green-100 text-green-800 dark:bg-green-800/20 dark:text-green-400'
-                          : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800/20 dark:text-yellow-400'
-                          }`}>
-                          {reminder.sent ? 'Sent' : 'Pending'}
-                        </span>
+
+                      {/* Video Details */}
+                      <div className="flex-1 space-y-3">
+                        <div className="space-y-2">
+                          <h3 className="font-semibold text-lg sm:text-xl line-clamp-2">
+                            {video.title || 'Untitled Video'}
+                          </h3>
+                          {video.description && (
+                            <p className="text-sm text-muted-foreground line-clamp-2">
+                              {video.description}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Video Metadata */}
+                        <div className="flex flex-wrap gap-2 text-xs">
+                          <Badge variant="secondary" className="text-xs">
+                            {video.style ? convertValueToLabel({ type: "VideoStyle", input: video.style as string }) : 'Unknown Style'}
+                          </Badge>
+                          <Badge variant="outline" className="text-xs">
+                            {video.voiceType ? convertValueToLabel({ type: "VoiceType", input: video.voiceType as string }) : 'Unknown Voice'}
+                          </Badge>
+                          <Badge variant="outline" className="text-xs">
+                            {video.duration ? convertValueToLabel({ type: "VideoDuration", input: video.duration as string }) : 'Unknown Duration'}
+                          </Badge>
+                          <Badge variant="outline" className="text-xs">
+                            {video.contentType ? convertValueToLabel({ type: "ContentType", input: video.contentType as string }) : 'Unknown Type'}
+                          </Badge>
+                        </div>
+
+                        {/* Creation Date */}
+                        <div className="text-xs text-muted-foreground">
+                          Created on {format(new Date(video.createdAt), 'PPP')}
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex items-center gap-2 ">
+                        <VideoDialog
+                          triggerText="Watch"
+                          title={video.title || 'Untitled Video'}
+                          description={video.description || ''}
+                          frames={video.frames || []}
+                          audioUrl={video.audioUrl || ''}
+                          imagesUrl={video.imagesUrl || []}
+                          caption={video.caption || []}
+                        />
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
                             <Button
@@ -301,15 +347,15 @@ export default function DashboardPage() {
                           </AlertDialogTrigger>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Delete Reminder</AlertDialogTitle>
+                              <AlertDialogTitle>Delete Video</AlertDialogTitle>
                               <AlertDialogDescription>
-                                Are you sure you want to delete this reminder? This action cannot be undone.
+                                Are you sure you want to delete this video? This action cannot be undone.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                               <AlertDialogCancel>Cancel</AlertDialogCancel>
                               <AlertDialogAction
-                                onClick={() => deleteReminder(reminder.id)}
+                                onClick={() => deleteVideo(video.id)}
                                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                               >
                                 Delete

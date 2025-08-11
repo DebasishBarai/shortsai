@@ -32,36 +32,30 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Trash2, Search, Plus, Users } from 'lucide-react';
+import { Trash2, Search, Plus, Video, Play, Eye, Calendar, Clock, Mic, Palette } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
+import Image from 'next/image';
+import { VideoDialog } from '@/components/VideoDialog';
 
-interface Contact {
-  id: string;
-  name: string;
-  phone: string;
-}
-
-interface Group {
-  id: string;
-  name: string;
-  contacts: Contact[];
-}
-
-interface Reminder {
+interface Video {
   id: string;
   title: string;
-  message: string;
-  dateTime: string;
-  frequency: string;
-  phone: string;
-  sent: boolean;
+  description: string;
+  imagesUrl: string[];
   createdAt: string;
-  Group: Group | null;
+  contentType: string;
+  style: string;
+  voiceType: string;
+  duration: string;
+  prompt?: string;
+  frames?: any;
+  audioUrl?: string;
+  caption?: any;
 }
 
-export default function RemindersPage() {
+export default function VideosPage() {
   const { data: session, status } = useSession({
     required: true,
     onUnauthenticated() {
@@ -69,66 +63,97 @@ export default function RemindersPage() {
     },
   });
 
-  const [reminders, setReminders] = useState<Reminder[]>([]);
+  const [videos, setVideos] = useState<Video[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [typeFilter, setTypeFilter] = useState('all');
+  const [styleFilter, setStyleFilter] = useState('all');
+  const [durationFilter, setDurationFilter] = useState('all');
+  const [contentTypeFilter, setContentTypeFilter] = useState('all');
 
   useEffect(() => {
-    const fetchReminders = async () => {
+    const fetchVideos = async () => {
       try {
-        const res = await fetch('/api/reminders');
+        const res = await fetch('/api/user/videos');
         const data = await res.json();
         if (Array.isArray(data)) {
-          setReminders(data);
+          // Sort videos by creation date (newest first)
+          const sortedVideos = data.sort((a: Video, b: Video) => 
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+          setVideos(sortedVideos);
         }
       } catch (error) {
-        console.error('Error fetching reminders:', error);
-        toast.error('Failed to fetch reminders');
+        console.error('Error fetching videos:', error);
+        toast.error('Failed to fetch videos');
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchReminders();
+    fetchVideos();
   }, []);
 
-  const deleteReminder = async (id: string) => {
+  const deleteVideo = async (id: string) => {
     try {
-      const res = await fetch(`/api/reminders/${id}`, {
+      const res = await fetch(`/api/user/videos/${id}`, {
         method: 'DELETE',
       });
 
       if (!res.ok) {
-        throw new Error('Failed to delete reminder');
+        throw new Error('Failed to delete video');
       }
 
-      setReminders(reminders.filter(reminder => reminder.id !== id));
-      toast.success('Reminder deleted successfully');
+      setVideos(videos.filter(video => video.id !== id));
+      toast.success('Video deleted successfully');
     } catch (error) {
-      console.error('Error deleting reminder:', error);
-      toast.error('Failed to delete reminder');
+      console.error('Error deleting video:', error);
+      toast.error('Failed to delete video');
     }
   };
 
-  const filteredReminders = reminders.filter(reminder => {
+  const filteredVideos = videos.filter(video => {
     const matchesSearch =
-      reminder.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      reminder.message.toLowerCase().includes(searchTerm.toLowerCase());
+      (video.title?.toLowerCase().includes(searchTerm.toLowerCase()) || false) ||
+      (video.description?.toLowerCase().includes(searchTerm.toLowerCase()) || false) ||
+      (video.prompt?.toLowerCase().includes(searchTerm.toLowerCase()) || false);
 
-    const matchesStatus =
-      statusFilter === 'all' ||
-      (statusFilter === 'sent' && reminder.sent) ||
-      (statusFilter === 'pending' && !reminder.sent);
+    const matchesStyle =
+      styleFilter === 'all' || video.style === styleFilter;
 
-    const matchesType =
-      typeFilter === 'all' ||
-      (typeFilter === 'individual' && !reminder.Group) ||
-      (typeFilter === 'group' && reminder.Group);
+    const matchesDuration =
+      durationFilter === 'all' || video.duration === durationFilter;
 
-    return matchesSearch && matchesStatus && matchesType;
+    const matchesContentType =
+      contentTypeFilter === 'all' || video.contentType === contentTypeFilter;
+
+    return matchesSearch && matchesStyle && matchesDuration && matchesContentType;
   });
+
+  // Get unique values for filters
+  const uniqueStyles = Array.from(new Set(videos.map(v => v.style).filter(Boolean)));
+  const uniqueDurations = Array.from(new Set(videos.map(v => v.duration).filter(Boolean)));
+  const uniqueContentTypes = Array.from(new Set(videos.map(v => v.contentType).filter(Boolean)));
+
+  const getDurationLabel = (duration: string) => {
+    switch (duration) {
+      case 'DURATION_15': return '15s';
+      case 'DURATION_30': return '30s';
+      case 'DURATION_60': return '60s';
+      default: return duration;
+    }
+  };
+
+  const getContentTypeLabel = (contentType: string) => {
+    switch (contentType) {
+      case 'customPrompt': return 'Custom Prompt';
+      case 'productShowcase': return 'Product Showcase';
+      case 'tutorial': return 'Tutorial';
+      case 'story': return 'Story';
+      case 'news': return 'News';
+      case 'educational': return 'Educational';
+      default: return contentType;
+    }
+  };
 
   if (status === "loading" || isLoading) {
     return (
@@ -149,12 +174,6 @@ export default function RemindersPage() {
               Create Video
             </Button>
           </Link>
-          {/* <Link href="/groups"> */}
-          {/*   <Button variant="outline"> */}
-          {/*     <Users className="mr-2 h-4 w-4" /> */}
-          {/*     Manage Groups */}
-          {/*   </Button> */}
-          {/* </Link> */}
         </div>
       </div>
 
@@ -162,105 +181,175 @@ export default function RemindersPage() {
         <div className="relative flex-1 w-full">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search videos..."
+            placeholder="Search videos by title, description, or prompt..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-8 w-full"
           />
         </div>
-        {/* <div className="flex gap-2 w-full sm:w-auto"> */}
-        {/*   <Select */}
-        {/*     value={statusFilter} */}
-        {/*     onValueChange={setStatusFilter} */}
-        {/*   > */}
-        {/*     <SelectTrigger className="w-full sm:w-[140px]"> */}
-        {/*       <SelectValue placeholder="Status" /> */}
-        {/*     </SelectTrigger> */}
-        {/*     <SelectContent> */}
-        {/*       <SelectItem value="all">All Status</SelectItem> */}
-        {/*       <SelectItem value="pending">Pending</SelectItem> */}
-        {/*       <SelectItem value="sent">Sent</SelectItem> */}
-        {/*     </SelectContent> */}
-        {/*   </Select> */}
-        {/*   <Select */}
-        {/*     value={typeFilter} */}
-        {/*     onValueChange={setTypeFilter} */}
-        {/*   > */}
-        {/*     <SelectTrigger className="w-full sm:w-[140px]"> */}
-        {/*       <SelectValue placeholder="Type" /> */}
-        {/*     </SelectTrigger> */}
-        {/*     <SelectContent> */}
-        {/*       <SelectItem value="all">All Types</SelectItem> */}
-        {/*       <SelectItem value="individual">Individual</SelectItem> */}
-        {/*       <SelectItem value="group">Group</SelectItem> */}
-        {/*     </SelectContent> */}
-        {/*   </Select> */}
-        {/* </div> */}
+        <div className="flex gap-2 w-full sm:w-auto">
+          <Select
+            value={styleFilter}
+            onValueChange={setStyleFilter}
+          >
+            <SelectTrigger className="w-full sm:w-[140px]">
+              <SelectValue placeholder="Style" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Styles</SelectItem>
+              {uniqueStyles.map((style) => (
+                <SelectItem key={style} value={style}>
+                  {style.charAt(0).toUpperCase() + style.slice(1)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
+            value={durationFilter}
+            onValueChange={setDurationFilter}
+          >
+            <SelectTrigger className="w-full sm:w-[140px]">
+              <SelectValue placeholder="Duration" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Durations</SelectItem>
+              {uniqueDurations.map((duration) => (
+                <SelectItem key={duration} value={duration}>
+                  {getDurationLabel(duration)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
+            value={contentTypeFilter}
+            onValueChange={setContentTypeFilter}
+          >
+            <SelectTrigger className="w-full sm:w-[140px]">
+              <SelectValue placeholder="Type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Types</SelectItem>
+              {uniqueContentTypes.map((contentType) => (
+                <SelectItem key={contentType} value={contentType}>
+                  {getContentTypeLabel(contentType)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {/* Mobile Card View */}
-      <div className="block sm:hidden space-y-3">
-        {filteredReminders.length === 0 ? (
+      <div className="block sm:hidden space-y-4">
+        {filteredVideos.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
-            <p className="text-sm">No Videos found</p>
+            <Video className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
+            <p className="text-sm">No videos found</p>
+            <p className="text-xs text-muted-foreground">Try adjusting your filters or create a new video</p>
           </div>
         ) : (
-          filteredReminders.map((reminder) => (
-            <div key={reminder.id} className="border rounded-lg p-4 space-y-3">
-              <div className="flex items-start justify-between">
+          filteredVideos.map((video) => (
+            <div key={video.id} className="border rounded-lg p-4 space-y-4 hover:shadow-sm transition-shadow">
+              {/* Video Thumbnail */}
+              <div className="relative w-full h-48 rounded-lg overflow-hidden bg-muted">
+                {video.imagesUrl && video.imagesUrl.length > 0 ? (
+                  <Image
+                    src={video.imagesUrl[0]}
+                    alt={video.title || 'Video thumbnail'}
+                    fill
+                    className="object-cover"
+                    sizes="100vw"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <Video className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-black/20 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <Play className="h-8 w-8 text-white" />
+                </div>
+              </div>
+
+              {/* Video Details */}
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <h3 className="font-semibold text-lg line-clamp-2">
+                    {video.title || 'Untitled Video'}
+                  </h3>
+                  {video.description && (
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {video.description}
+                    </p>
+                  )}
+                </div>
+
+                {/* Video Metadata */}
+                <div className="flex flex-wrap gap-2 text-xs">
+                  <Badge variant="secondary" className="text-xs">
+                    <Palette className="h-3 w-3 mr-1" />
+                    {video.style || 'Unknown Style'}
+                  </Badge>
+                  <Badge variant="outline" className="text-xs">
+                    <Mic className="h-3 w-3 mr-1" />
+                    {video.voiceType || 'Unknown Voice'}
+                  </Badge>
+                  <Badge variant="outline" className="text-xs">
+                    <Clock className="h-3 w-3 mr-1" />
+                    {getDurationLabel(video.duration)}
+                  </Badge>
+                  <Badge variant="outline" className="text-xs">
+                    {getContentTypeLabel(video.contentType)}
+                  </Badge>
+                </div>
+
+                {/* Creation Date */}
+                <div className="text-xs text-muted-foreground flex items-center gap-1">
+                  <Calendar className="h-3 w-3" />
+                  Created on {format(new Date(video.createdAt), 'PPP')}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center gap-2">
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <h3 className="font-medium text-sm">{reminder.title}</h3>
-                    {reminder.Group && (
-                      <Badge variant="outline" className="flex items-center gap-1 text-xs">
-                        <Users className="h-3 w-3" />
-                        Group
-                      </Badge>
-                    )}
-                  </div>
-                  <p className="text-xs text-muted-foreground mb-2">{reminder.message}</p>
-                  <div className="space-y-1 text-xs text-muted-foreground">
-                    <div>Created: {format(new Date(reminder.dateTime), 'PPp')}</div>
-                    <div>Voice: {reminder.frequency}</div>
-                    <div>Aspect Ratio: {reminder.Group ? reminder.Group.name : 'Individual'}</div>
-                  </div>
+                  <VideoDialog
+                    triggerText="Watch Video"
+                    title={video.title || 'Untitled Video'}
+                    description={video.description || ''}
+                    frames={video.frames || []}
+                    audioUrl={video.audioUrl || ''}
+                    imagesUrl={video.imagesUrl || []}
+                    caption={video.caption || []}
+                  />
                 </div>
-                <div className="flex flex-col items-end gap-2">
-                  <span className={`px-2 py-1 rounded-full text-xs ${reminder.sent
-                    ? 'bg-green-100 text-green-800 dark:bg-green-800/20 dark:text-green-400'
-                    : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800/20 dark:text-yellow-400'
-                    }`}>
-                    {reminder.sent ? 'Sent' : 'Pending'}
-                  </span>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete Video</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to delete this video? This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => deleteVideo(video.id)}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                       >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Delete Video</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Are you sure you want to delete this video? This action cannot be undone.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => deleteReminder(reminder.id)}
-                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                        >
-                          Delete
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </div>
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </div>
           ))
@@ -272,86 +361,115 @@ export default function RemindersPage() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="text-sm">Thumbnail</TableHead>
               <TableHead className="text-sm">Title</TableHead>
               <TableHead className="text-sm">Description</TableHead>
-              <TableHead className="text-sm">Created At</TableHead>
+              <TableHead className="text-sm">Style</TableHead>
+              <TableHead className="text-sm">Duration</TableHead>
               <TableHead className="text-sm">Voice</TableHead>
-              <TableHead className="text-sm">Aspect Ratio</TableHead>
-              <TableHead className="text-sm">Status</TableHead>
+              <TableHead className="text-sm">Created</TableHead>
               <TableHead className="text-right text-sm">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredReminders.length === 0 ? (
+            {filteredVideos.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-10 text-muted-foreground">
-                  No Videos found
+                <TableCell colSpan={8} className="text-center py-10 text-muted-foreground">
+                  <div className="flex flex-col items-center gap-2">
+                    <Video className="h-8 w-8 text-muted-foreground/50" />
+                    <p>No videos found</p>
+                    <p className="text-sm">Try adjusting your filters or create a new video</p>
+                  </div>
                 </TableCell>
               </TableRow>
             ) : (
-              filteredReminders.map((reminder) => (
-                <TableRow key={reminder.id}>
-                  <TableCell className="font-medium">
-                    <div className="flex items-center gap-2">
-                      {reminder.title}
-                      {reminder.Group && (
-                        <Badge variant="outline" className="flex items-center gap-1">
-                          <Users className="h-3 w-3" />
-                          Group
-                        </Badge>
+              filteredVideos.map((video) => (
+                <TableRow key={video.id} className="hover:bg-muted/50">
+                  <TableCell>
+                    <div className="relative w-16 h-24 rounded-lg overflow-hidden bg-muted">
+                      {video.imagesUrl && video.imagesUrl.length > 0 ? (
+                        <Image
+                          src={video.imagesUrl[0]}
+                          alt={video.title || 'Video thumbnail'}
+                          fill
+                          className="object-cover"
+                          sizes="64px"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Video className="h-6 w-6 text-muted-foreground" />
+                        </div>
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="text-sm">{reminder.message}</TableCell>
-                  <TableCell className="text-sm">{format(new Date(reminder.dateTime), 'PPp')}</TableCell>
-                  <TableCell className="capitalize text-sm">{reminder.frequency}</TableCell>
-                  <TableCell className="text-sm">
-                    <span className={`px-2 py-1 rounded-full text-xs ${reminder.sent
-                      ? 'bg-green-100 text-green-800 dark:bg-green-800/20 dark:text-green-400'
-                      : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800/20 dark:text-yellow-400'
-                      }`}>
-                      {reminder.sent ? 'Sent' : 'Pending'}
-                    </span>
+                  <TableCell className="font-medium max-w-[200px]">
+                    <div className="line-clamp-2">
+                      {video.title || 'Untitled Video'}
+                    </div>
                   </TableCell>
-                  <TableCell className="text-sm">
-                    {reminder.Group ? (
-                      <div className="flex items-center gap-1">
-                        <Users className="h-4 w-4 text-muted-foreground" />
-                        <span>{reminder.Group.name}</span>
-                      </div>
-                    ) : (
-                      'Individual'
-                    )}
+                  <TableCell className="max-w-[250px]">
+                    <div className="text-sm text-muted-foreground line-clamp-2">
+                      {video.description || 'No description'}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="secondary" className="text-xs">
+                      {video.style || 'Unknown'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className="text-xs">
+                      {getDurationLabel(video.duration)}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className="text-xs">
+                      {video.voiceType || 'Unknown'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-sm text-muted-foreground">
+                    {format(new Date(video.createdAt), 'PP')}
                   </TableCell>
                   <TableCell className="text-right">
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Delete Video</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Are you sure you want to delete this video? This action cannot be undone.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={() => deleteReminder(reminder.id)}
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    <div className="flex items-center justify-end gap-2">
+                      <VideoDialog
+                        triggerText="Watch"
+                        title={video.title || 'Untitled Video'}
+                        description={video.description || ''}
+                        frames={video.frames || []}
+                        audioUrl={video.audioUrl || ''}
+                        imagesUrl={video.imagesUrl || []}
+                        caption={video.caption || []}
+                      />
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-muted-foreground hover:text-destructive"
                           >
-                            Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Video</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete this video? This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => deleteVideo(video.id)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))

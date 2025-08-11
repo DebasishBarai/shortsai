@@ -7,12 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum SubscriptionType {
-  free
-  basic
-  premium
-}
-
 enum ContentType {
   customPrompt
   randomAiStory
@@ -64,8 +58,7 @@ model User {
   hashedPassword      String?
   isVerified          Boolean          @default(false)
   verifyToken         String?          @unique
-  subscriptionType    SubscriptionType @default(free)
-  subscriptionEndDate DateTime?
+  credits             Int              @default(0) // Number of available credits
   createdAt           DateTime         @default(now())
   updatedAt           DateTime         @updatedAt
   accounts            Account[]
