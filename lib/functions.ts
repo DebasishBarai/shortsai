@@ -1,5 +1,5 @@
 interface ValueToLabelOptions {
-  type: "SubscriptionType" | "ContentType" | "VideoStyle" | "VideoDuration" | "VoiceType" | "AspectRatio";
+  type: "ContentType" | "VideoStyle" | "VideoDuration" | "VoiceType" | "AspectRatio";
   input: string;
 }
 

@@ -7,7 +7,6 @@ const PAYPAL_API = process.env.NODE_ENV === 'production'
   ? 'https://api-m.paypal.com'
   : 'https://api-m.sandbox.paypal.com';
 
-// Use appropriate credentials based on environment
 const PAYPAL_CLIENT_ID = process.env.NODE_ENV === 'production'
   ? process.env.PAYPAL_CLIENT_ID
   : process.env.SANDBOX_PAYPAL_CLIENT_ID;
@@ -15,13 +14,6 @@ const PAYPAL_CLIENT_ID = process.env.NODE_ENV === 'production'
 const PAYPAL_SECRET_KEY = process.env.NODE_ENV === 'production'
   ? process.env.PAYPAL_SECRET_KEY
   : process.env.PAYPAL_SANDBOX_SECRET_KEY;
-
-type PlanType = 'basic' | 'premium';
-
-const PLAN_PRICES: Record<PlanType, number> = {
-  basic: 19,
-  premium: 29,
-} as const;
 
 async function getPayPalAccessToken() {
   try {
@@ -57,10 +49,11 @@ async function getPayPalAccessToken() {
   }
 }
 
+// Create PayPal order for credits
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-    console.log('🔵 Initiating payment process for user:', session?.user?.email);
+    console.log('🔵 Initiating credit payment for user:', session?.user?.email);
 
     if (!session?.user?.email) {
       console.log('🔴 Unauthorized payment attempt');
@@ -70,18 +63,16 @@ export async function POST(request: Request) {
       );
     }
 
-    const { plan } = await request.json();
-    console.log('🔵 Selected plan:', plan);
+    const { credits, price } = await request.json();
+    console.log('🔵 Credits to purchase:', credits, 'Price:', price);
 
-    if (!plan || !['basic', 'premium'].includes(plan)) {
-      console.log('🔴 Invalid plan selected:', plan);
+    if (!credits || !price || typeof credits !== 'number' || typeof price !== 'number' || credits <= 0 || price <= 0) {
+      console.log('🔴 Invalid credits or price:', credits, price);
       return NextResponse.json(
-        { error: "Invalid plan selected" },
+        { error: "Invalid credits or price" },
         { status: 400 }
       );
     }
-
-    const selectedPlan = plan as PlanType;
 
     // Get PayPal access token
     console.log('🔵 Getting PayPal access token...');
@@ -102,16 +93,16 @@ export async function POST(request: Request) {
           {
             amount: {
               currency_code: 'USD',
-              value: PLAN_PRICES[selectedPlan].toString(),
+              value: price.toFixed(2),
             },
-            description: `RemindMe ${selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)} Plan`,
+            description: `${credits} AI Video Credits`,
           },
         ],
         application_context: {
-          return_url: `${process.env.NEXTAUTH_URL}/payment/success`,
+          return_url: `${process.env.NEXTAUTH_URL}/payment/success?credits=${credits}&price=${price}`,
           cancel_url: `${process.env.NEXTAUTH_URL}/payment/cancel`,
           user_action: 'PAY_NOW',
-          brand_name: 'RemindMe',
+          brand_name: 'ShortsAI',
         },
       }),
     });
@@ -134,10 +125,11 @@ export async function POST(request: Request) {
   }
 }
 
+// Capture PayPal payment for credits
 export async function PUT(request: Request) {
   try {
     const session = await getServerSession(authOptions);
-    console.log('🔵 Processing payment completion for user:', session?.user?.email);
+    console.log('🔵 Processing credit payment completion for user:', session?.user?.email);
 
     if (!session?.user?.email) {
       console.log('🔴 Unauthorized payment completion attempt');
@@ -147,8 +139,15 @@ export async function PUT(request: Request) {
       );
     }
 
-    const { orderID, plan } = await request.json();
-    console.log('🔵 Capturing payment for order:', orderID);
+    const { orderID, credits } = await request.json();
+    console.log('🔵 Capturing payment for order:', orderID, 'Credits:', credits);
+
+    if (!orderID || !credits || typeof credits !== 'number' || credits <= 0) {
+      return NextResponse.json(
+        { error: "Invalid orderID or credits" },
+        { status: 400 }
+      );
+    }
 
     // Get PayPal access token
     console.log('🔵 Getting PayPal access token for capture...');
@@ -174,18 +173,19 @@ export async function PUT(request: Request) {
 
     if (data.status === 'COMPLETED') {
       console.log('✅ Payment completed successfully');
-      console.log(`✅ Upgrading user ${session.user.email} to ${plan} plan`);
+      console.log(`✅ Adding ${credits} credits to user ${session.user.email}`);
 
-      // Update user subscription
+      // Add credits to user
       await prisma.user.update({
         where: { email: session.user.email },
         data: {
-          subscriptionType: plan.toUpperCase(),
-          subscriptionEndDate: null,
+          credits: {
+            increment: credits
+          }
         },
       });
 
-      console.log('✅ User subscription updated successfully');
+      console.log('✅ User credits updated successfully');
       return NextResponse.json({ success: true });
     } else {
       console.log('🔴 Payment status not completed:', data.status);

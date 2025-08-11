@@ -3,7 +3,6 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
-import { SubscriptionType } from "@prisma/client";
 import { compare } from "bcrypt";
 
 declare module "next-auth" {
@@ -13,8 +12,8 @@ declare module "next-auth" {
       name?: string | null;
       email?: string | null;
       image?: string | null;
-      subscriptionType?: SubscriptionType;
       createdAt?: Date;
+      credits?: number;
     }
   }
 }
@@ -75,23 +74,23 @@ export const authOptions: NextAuthOptions = {
           where: { id: user.id },
           select: {
             id: true,
-            subscriptionType: true,
             createdAt: true,
+            credits: true,
           },
         });
 
         // Add user data to token
         token.id = user.id;
-        token.subscriptionType = userData?.subscriptionType;
         token.createdAt = userData?.createdAt;
+        token.credits = userData?.credits;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
-        session.user.subscriptionType = token.subscriptionType as SubscriptionType;
         session.user.createdAt = token.createdAt as Date;
+        session.user.credits = token.credits as number;
       }
       return session;
     },

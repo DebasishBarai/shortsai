@@ -21,8 +21,7 @@ export async function GET() {
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
       select: {
-        subscriptionType: true,
-        subscriptionEndDate: true,
+        credits: true,
         createdAt: true,
       },
     });

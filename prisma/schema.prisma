@@ -7,6 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum SubscriptionType {
+  free
+  basic
+  premium
+}
+
 enum ContentType {
   customPrompt
   randomAiStory
@@ -50,20 +56,20 @@ enum AspectRatio {
 }
 
 model User {
-  id                  String           @id @default(cuid())
-  name                String?
-  email               String?          @unique
-  emailVerified       DateTime?
-  image               String?
-  hashedPassword      String?
-  isVerified          Boolean          @default(false)
-  verifyToken         String?          @unique
-  credits             Int              @default(0) // Number of available credits
-  createdAt           DateTime         @default(now())
-  updatedAt           DateTime         @updatedAt
-  accounts            Account[]
-  sessions            Session[]
-  videos              Video[]
+  id             String    @id @default(cuid())
+  name           String?
+  email          String?   @unique
+  emailVerified  DateTime?
+  image          String?
+  hashedPassword String?
+  isVerified     Boolean   @default(false)
+  verifyToken    String?   @unique
+  credits        Int       @default(0) // Number of available credits
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  accounts       Account[]
+  sessions       Session[]
+  videos         Video[]
 }
 
 model Account {
