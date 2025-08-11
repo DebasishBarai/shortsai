@@ -26,6 +26,7 @@ interface VideoCompositionProps extends Record<string, unknown> {
   frames: Frame[];
   audioUrl: string;
   caption: CaptionItem[];
+  imagesUrl: string[];
   zoomEffect?: 'none' | 'in' | 'out';
 }
 

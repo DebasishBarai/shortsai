@@ -122,6 +122,8 @@ model Video {
   aspectRatio AspectRatio?   @default(RATIO_9_16)
   duration    VideoDuration? @default(DURATION_60)
   frames      Json?
+  audioUrl    String?
+  imagesUrl   String[]
   script      String?
   caption     Json?
   createdAt   DateTime       @default(now())
