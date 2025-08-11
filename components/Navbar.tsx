@@ -13,6 +13,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { GetCreditsDialog } from "@/components/GetCreditsDialog";
+import Image from 'next/image';
 
 const Navbar = () => {
   const { data: session, status } = useSession();
@@ -93,8 +94,16 @@ const Navbar = () => {
   return (
     <nav className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
       <div className="container mx-auto flex justify-between items-center px-4 py-4">
-        <Link href="/" className="text-2xl font-bold">
-          Shorts AI
+        <Link href="/" className="flex items-center gap-3">
+          <Image
+            src="/logo.png"
+            alt="Shorts AI Logo"
+            width={120}
+            height={40}
+            className="h-10 w-auto"
+            priority
+          />
+          <span className="text-2xl font-bold">Shorts AI</span>
         </Link>
 
         {/* Desktop Navigation */}
