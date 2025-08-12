@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
 
-export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(request: Request, { params }: { params: { id: string } }) {
   try {
     const session = await getServerSession(authOptions);
     console.log("Session:", session); // Debug log
@@ -15,9 +15,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
       );
     }
 
-    const { id } = await params
-
-    const videoId = id;
+    const videoId = params.id;
     console.log("Deleting video:", videoId); // Debug log
 
     // Get user
