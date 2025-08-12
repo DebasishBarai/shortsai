@@ -40,22 +40,49 @@ export const VideoComposition: React.FC<VideoCompositionProps> = ({
   const { durationInFrames, fps } = useVideoConfig();
   const frame = useCurrentFrame();
 
-  // Calculate frames per image (equal distribution)
-  const framesPerImage = Math.floor(durationInFrames / frames.length);
+  // Debug logging to help identify issues
+  if (frame === 0) {
+    console.log('VideoComposition Debug Info:', {
+      durationInFrames,
+      fps,
+      framesLength: frames?.length || 0,
+      captionLength: caption?.length || 0,
+      imagesUrlLength: imagesUrl?.length || 0
+    });
+  }
 
-  // Determine current image index
-  const currentImageIndex = Math.min(
-    Math.floor(frame / framesPerImage),
-    frames.length - 1
-  );
+  // Calculate frames per image (equal distribution)
+  // Add validation to prevent NaN values
+  const framesPerImage = frames && frames.length > 0 
+    ? Math.floor(durationInFrames / frames.length) 
+    : durationInFrames; // If no frames, use full duration
+
+  // Debug logging for framesPerImage
+  if (frame === 0) {
+    console.log('framesPerImage calculation:', {
+      framesLength: frames?.length || 0,
+      durationInFrames,
+      framesPerImage
+    });
+  }
+
+  // Determine current image index with safety checks
+  const currentImageIndex = frames && frames.length > 0
+    ? Math.min(
+        Math.floor(frame / framesPerImage),
+        frames.length - 1
+      )
+    : 0;
 
   // Get current time in milliseconds
   const currentTimeMs = (frame / fps) * 1000;
 
   // Find current caption words
-  const currentWords = caption.filter(
-    (word) => word.start <= currentTimeMs && word.end > currentTimeMs
-  );
+  const currentWords = caption && Array.isArray(caption) && caption.length > 0
+    ? caption.filter(
+        (word) => word.start <= currentTimeMs && word.end > currentTimeMs
+      )
+    : [];
 
   // Get current word to display
   const getCurrentWord = () => {
@@ -64,17 +91,20 @@ export const VideoComposition: React.FC<VideoCompositionProps> = ({
   };
 
   // Animation for image transitions and zoom effect
-  const imageOpacity = interpolate(
-    frame % framesPerImage,
-    [0, 10, framesPerImage - 10, framesPerImage],
-    [0, 1, 1, 0],
-    { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
-  );
+  // Add safety checks to prevent NaN in interpolate
+  const imageOpacity = frames && frames.length > 0
+    ? interpolate(
+        frame % framesPerImage,
+        [0, 10, framesPerImage - 10, framesPerImage],
+        [0, 1, 1, 0],
+        { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
+      )
+    : 1; // Default opacity if no frames
 
   // Zoom effect based on parameter
   const getImageScale = () => {
-    if (zoomEffect === 'none') {
-      return 1.0; // No zoom
+    if (zoomEffect === 'none' || !frames || frames.length === 0) {
+      return 1.0; // No zoom or no frames
     }
 
     const startScale = zoomEffect === 'in' ? 1.0 : 1.1;
@@ -97,17 +127,33 @@ export const VideoComposition: React.FC<VideoCompositionProps> = ({
 
       {/* Background Image */}
       <AbsoluteFill>
-        <Img
-          src={imagesUrl[currentImageIndex]}
-          style={{
+        {imagesUrl && imagesUrl.length > 0 && imagesUrl[currentImageIndex] ? (
+          <Img
+            src={imagesUrl[currentImageIndex]}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              opacity: imageOpacity,
+              transform: `scale(${imageScale})`,
+              transition: 'transform 0.1s ease-out',
+            }}
+          />
+        ) : (
+          // Fallback background if no images
+          <div style={{
             width: '100%',
             height: '100%',
-            objectFit: 'cover',
-            opacity: imageOpacity,
-            transform: `scale(${imageScale})`,
-            transition: 'transform 0.1s ease-out',
-          }}
-        />
+            backgroundColor: '#000',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+            fontSize: '24px'
+          }}>
+            No Image Available
+          </div>
+        )}
       </AbsoluteFill>
 
       {/* Current Word Overlay */}
