@@ -1,9 +1,28 @@
 import { Composition } from 'remotion';
 import { VideoComposition } from './VideoComposition';
-import { frames, audioUrl, caption } from '@/lib/objects';
+import { frames, audioUrl, caption } from '../lib/objects';
 
 // Calculate total duration from audio captions
-const totalDurationInFrames = Math.ceil((caption[caption.length - 1]?.end || 27000) / 1000 * 30); // 30fps
+// Find the last word's end time and convert to frames
+const calculateDurationFromCaptions = () => {
+  if (caption && caption.length > 0) {
+    // Find the last word with the highest end time
+    const lastWord = caption.reduce((latest, current) => 
+      current.end > latest.end ? current : latest
+    );
+    
+    // Convert milliseconds to frames (30fps)
+    const durationInSeconds = lastWord.end / 1000;
+    const durationInFrames = Math.ceil(durationInSeconds * 30);
+    
+    return durationInFrames;
+  }
+  
+  // Fallback to frame-based calculation if no captions
+  return frames.scenes && frames.scenes.length > 0 ? frames.scenes.length * 90 : 270; // 90 frames per scene (3 seconds at 30fps)
+};
+
+const totalDurationInFrames = calculateDurationFromCaptions();
 
 export const RemotionRoot: React.FC = () => {
   return (

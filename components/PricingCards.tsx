@@ -18,13 +18,12 @@ export function PricingCards() {
       features: [
         "25 AI Video Credits",
         "5 x 15-second videos, OR",
-        "2 x 30-second videos, OR", 
+        "2 x 30-second videos, OR",
         "1 x 60-second video",
         "All Video Styles (Realistic, Cartoon, Watercolor, Sketch)",
         "All Voice Types (8 Premium Voices)",
         "9:16 Aspect Ratio for Short Videos",
         "No Watermark",
-        "Priority Support",
         "Perfect for beginners"
       ]
     },
@@ -42,8 +41,6 @@ export function PricingCards() {
         "All Voice Types (8 Premium Voices)",
         "9:16 Aspect Ratio for Short Videos",
         "No Watermark",
-        "Priority Support",
-        "Bulk Export Options",
         "Best value for creators"
       ]
     },
@@ -61,9 +58,6 @@ export function PricingCards() {
         "All Voice Types (8 Premium Voices)",
         "9:16 Aspect Ratio for Short Videos",
         "No Watermark",
-        "Priority Support",
-        "Bulk Export Options",
-        "Custom Branding",
         "Perfect for businesses"
       ]
     }
@@ -76,12 +70,12 @@ export function PricingCards() {
           Simple, Transparent Pricing
         </h2>
         <p className="text-slate-600 dark:text-slate-400 text-base sm:text-lg max-w-2xl mx-auto mb-6 sm:mb-8 px-4">
-          Pay only for what you use. Each credit creates one complete AI video
+          Pay only for what you use
         </p>
 
         {/* <div className="flex flex-col items-center gap-3 sm:gap-4 mb-6 sm:mb-8"> */}
-          {/* Currency selector */}
-          {/* <div className="flex items-center gap-2">
+        {/* Currency selector */}
+        {/* <div className="flex items-center gap-2">
             <span className="text-sm text-slate-600 dark:text-slate-400">Select currency:</span>
             <CurrencySelector />
           </div>
@@ -97,20 +91,16 @@ export function PricingCards() {
         <p className="text-sm opacity-90 mb-2">
           <strong>15s video:</strong> 5 credits • <strong>30s video:</strong> 10 credits • <strong>60s video:</strong> 20 credits
         </p>
-        <p className="text-sm opacity-90">
-          Each credit creates one complete AI video with images, audio, and captions
-        </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto">
         {creditPackages.map((pkg, index) => (
-          <div 
-            key={index} 
-            className={`border-2 rounded-xl p-6 sm:p-8 bg-white dark:bg-slate-800 flex flex-col hover:shadow-lg transition-shadow duration-300 relative group ${
-              pkg.popular 
-                ? 'border-blue-500 dark:border-blue-400 shadow-lg' 
-                : 'border-slate-200 dark:border-slate-700'
-            }`}
+          <div
+            key={index}
+            className={`border-2 rounded-xl p-6 sm:p-8 bg-white dark:bg-slate-800 flex flex-col hover:shadow-lg transition-shadow duration-300 relative group ${pkg.popular
+              ? 'border-blue-500 dark:border-blue-400 shadow-lg'
+              : 'border-slate-200 dark:border-slate-700'
+              }`}
           >
             {pkg.popular && (
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-medium shadow-sm flex items-center">
@@ -122,7 +112,7 @@ export function PricingCards() {
               <h3 className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-200 mb-3">
                 {pkg.name}
               </h3>
-              
+
               <div className="flex items-center justify-center gap-2 mb-3">
                 <Coins className="h-8 w-8 text-yellow-500" />
                 <span className="text-4xl sm:text-5xl font-bold text-slate-800 dark:text-slate-200">
@@ -130,11 +120,11 @@ export function PricingCards() {
                 </span>
                 <span className="text-lg text-slate-500 dark:text-slate-400">Credits</span>
               </div>
-              
+
               <div className="text-3xl sm:text-4xl font-bold text-blue-600 dark:text-blue-400 mb-2">
                 ${pkg.price}
               </div>
-              
+
               <p className="text-sm text-slate-500 dark:text-slate-400">
                 One-time payment • ${(pkg.price / pkg.credits).toFixed(2)} per credit
               </p>
@@ -152,12 +142,11 @@ export function PricingCards() {
             </ul>
 
             <Link href={`/payment?package=${index}&credits=${pkg.credits}&price=${pkg.price}`} className="mt-auto">
-              <Button 
-                className={`w-full py-4 sm:py-6 text-base sm:text-lg ${
-                  pkg.popular 
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md' 
-                    : 'bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-200'
-                }`}
+              <Button
+                className={`w-full py-4 sm:py-6 text-base sm:text-lg ${pkg.popular
+                  ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md'
+                  : 'bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-200'
+                  }`}
               >
                 Get {pkg.credits} Credits
               </Button>

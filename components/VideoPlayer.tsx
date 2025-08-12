@@ -36,7 +36,26 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   }, [width, height]);
 
   // Calculate total duration from audio captions
-  const totalDurationInFrames = frames.length > 0 ? frames.length * 90 : 270; // 90 frames per scene (3 seconds at 30fps)
+  // Find the last word's end time and convert to frames
+  const calculateDurationFromCaptions = () => {
+    if (caption && caption.length > 0) {
+      // Find the last word with the highest end time
+      const lastWord = caption.reduce((latest, current) => 
+        current.end > latest.end ? current : latest
+      );
+      
+      // Convert milliseconds to frames (30fps)
+      const durationInSeconds = lastWord.end / 1000;
+      const durationInFrames = Math.ceil(durationInSeconds * 30);
+      
+      return durationInFrames;
+    }
+    
+    // Fallback to frame-based calculation if no captions
+    return frames.length > 0 ? frames.length * 90 : 270; // 90 frames per scene (3 seconds at 30fps)
+  };
+
+  const totalDurationInFrames = calculateDurationFromCaptions();
 
   return (
     <div className="flex flex-col items-center justify-center w-full">

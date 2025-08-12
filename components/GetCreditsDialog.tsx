@@ -26,12 +26,11 @@ export function GetCreditsDialog() {
       features: [
         "25 AI Video Credits",
         "5 x 15-second videos, OR",
-        "2 x 30-second videos, OR", 
+        "2 x 30-second videos, OR",
         "1 x 60-second video",
         "All Video Styles",
         "All Voice Types",
         "No Watermark",
-        "Priority Support"
       ]
     },
     {
@@ -47,8 +46,6 @@ export function GetCreditsDialog() {
         "All Video Styles",
         "All Voice Types",
         "No Watermark",
-        "Priority Support",
-        "Bulk Export"
       ]
     },
     {
@@ -64,9 +61,6 @@ export function GetCreditsDialog() {
         "All Video Styles",
         "All Voice Types",
         "No Watermark",
-        "Priority Support",
-        "Bulk Export",
-        "Custom Branding"
       ]
     }
   ];
@@ -107,27 +101,23 @@ export function GetCreditsDialog() {
           <p className="text-sm text-blue-600 dark:text-blue-400 mb-2">
             <strong>15s video:</strong> 5 credits • <strong>30s video:</strong> 10 credits • <strong>60s video:</strong> 20 credits
           </p>
-          <p className="text-sm text-blue-600 dark:text-blue-400">
-            Each credit creates one complete AI video with images, audio, and captions
-          </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-4 mt-4">
           {creditPackages.map((pkg, index) => (
-            <div 
-              key={index} 
-              className={`bg-card border-2 rounded-lg p-6 relative ${
-                pkg.popular 
-                  ? 'border-blue-500 dark:border-blue-400' 
-                  : 'border-gray-200 dark:border-gray-700'
-              }`}
+            <div
+              key={index}
+              className={`bg-card border-2 rounded-lg p-6 relative ${pkg.popular
+                ? 'border-blue-500 dark:border-blue-400'
+                : 'border-gray-200 dark:border-gray-700'
+                }`}
             >
               {pkg.popular && (
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-medium shadow-sm">
                   Most Popular
                 </div>
               )}
-              
+
               <div className="text-center mb-4">
                 <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-200 mb-2">
                   {pkg.name}
@@ -157,11 +147,10 @@ export function GetCreditsDialog() {
               </ul>
 
               <Button
-                className={`w-full ${
-                  pkg.popular 
-                    ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                    : 'bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-200'
-                }`}
+                className={`w-full ${pkg.popular
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                  : 'bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-200'
+                  }`}
                 onClick={() => handlePurchase(index)}
               >
                 Get {pkg.credits} Credits
