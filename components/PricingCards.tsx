@@ -166,16 +166,16 @@ export function PricingCards() {
               ))}
             </ul>
 
-            <div className="relative w-full">
-              <Button
-                className={`w-full py-4 sm:py-6 text-base sm:text-lg pointer-events-none ${pkg.popular
-                  ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md'
-                  : 'bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-200'
-                  }`}
-              >
-                Get {pkg.credits} Credits
-              </Button>
-              {session && (
+            {session && (
+              <div className="relative w-full">
+                <Button
+                  className={`w-full py-4 sm:py-6 text-base sm:text-lg pointer-events-none ${pkg.popular
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md'
+                    : 'bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-200'
+                    }`}
+                >
+                  Get {pkg.credits} Credits
+                </Button>
                 <div className="absolute inset-0 opacity-0">
                   <PayPalButtons style={{ layout: 'horizontal' }}
                     onApprove={() => onPaymentSuccess(pkg.credits, pkg.price)}
@@ -193,8 +193,8 @@ export function PricingCards() {
                     }}
                   />
                 </div>
-              )}
-            </div>
+              </div>
+            )}
 
           </div>
         ))}
