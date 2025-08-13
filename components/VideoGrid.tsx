@@ -1,31 +1,20 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Player } from '@remotion/player';
 import { VideoComposition } from '@/remotion/VideoComposition';
 import { sampleVideos } from '@/lib/objects';
-import { Play, Pause, Video } from 'lucide-react';
+import { Video } from 'lucide-react';
 
 interface VideoGridProps {
   className?: string;
 }
 
 export const VideoGrid: React.FC<VideoGridProps> = ({ className = '' }) => {
-  const [playingVideos, setPlayingVideos] = useState<Set<number>>(new Set());
-
-  const toggleVideo = (videoId: number) => {
-    const newPlayingVideos = new Set(playingVideos);
-    if (newPlayingVideos.has(videoId)) {
-      newPlayingVideos.delete(videoId);
-    } else {
-      newPlayingVideos.add(videoId);
-    }
-    setPlayingVideos(newPlayingVideos);
-  };
 
   return (
     <div className={`w-full ${className}`}>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
         {sampleVideos.map((video) => (
           <div
             key={video.id}
@@ -64,7 +53,7 @@ export const VideoGrid: React.FC<VideoGridProps> = ({ className = '' }) => {
                   height: '100%',
                 }}
                 controls={false}
-                autoPlay={playingVideos.has(video.id)}
+                autoPlay={true}
                 loop
                 errorFallback={() => (
                   <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900">
@@ -75,18 +64,6 @@ export const VideoGrid: React.FC<VideoGridProps> = ({ className = '' }) => {
                   </div>
                 )}
               />
-              
-              {/* Play/Pause Overlay */}
-              <button
-                onClick={() => toggleVideo(video.id)}
-                className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-              >
-                {playingVideos.has(video.id) ? (
-                  <Pause className="h-12 w-12 text-white" />
-                ) : (
-                  <Play className="h-12 w-12 text-white" />
-                )}
-              </button>
             </div>
 
             {/* Video Info */}
