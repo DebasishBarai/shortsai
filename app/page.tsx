@@ -1,170 +1,150 @@
 'use client';
 
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { Check, Megaphone, Users, TrendingUp, Bot, Video, Timer, Rocket, Mic, Sparkles } from "lucide-react";
-import { PricingCards } from "@/components/PricingCards";
-import { signIn, useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
-import Image from "next/image";
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { Player } from '@remotion/player';
+import { VideoComposition } from '@/remotion/VideoComposition';
+import { frames as framesObject, audioUrl, caption, imagesUrl } from '@/lib/objects';
+import { VideoGrid } from '@/components/VideoGrid';
+import { PricingCards } from '@/components/PricingCards';
+import { Sparkles, PenLine, Brain, Mic, Image as ImageIcon, Film, Rocket } from 'lucide-react';
 
 export default function Home() {
   const { data: session } = useSession();
-  const [activeStatIndex, setActiveStatIndex] = useState(0);
 
-  const marketingStats = [
-    {
-      icon: <Bot className="h-8 w-8 text-cyan-500" />,
-      title: "100% AI-Powered",
-      description: "Script, voice, and visuals generated automatically from prompts",
-    },
-    {
-      icon: <Video className="h-8 w-8 text-purple-500" />,
-      title: "60s Videos in 60s",
-      description: "Create ready-to-publish shorts in under a minute",
-    },
-    {
-      icon: <Timer className="h-8 w-8 text-rose-500" />,
-      title: "10× Faster Workflow",
-      description: "Compared to traditional editing or scripting",
-    },
-    {
-      icon: <Rocket className="h-8 w-8 text-orange-500" />,
-      title: "High Engagement Format",
-      description: "Optimized for YouTube Shorts, Instagram Reels & TikTok",
-    },
-    {
-      icon: <Mic className="h-8 w-8 text-emerald-500" />,
-      title: "Human-Like Voiceovers",
-      description: "Narration powered by realistic AI voice models",
-    },
-    {
-      icon: <Sparkles className="h-8 w-8 text-yellow-500" />,
-      title: "One Prompt. One Video.",
-      description: "Just describe your idea — we handle the rest",
-    },
-  ];
+  // Typewriter prompt demo
+  const prompts = useMemo(
+    () => [
+      'Explain black holes in 30 seconds',
+      'Top 5 productivity hacks for students',
+      'Why is the sky blue? Make it fun',
+      'A 60s summary of Cleopatra & Antony',
+      'How AI will change healthcare in 2025',
+    ],
+    []
+  );
+  const [promptIndex, setPromptIndex] = useState(0);
+  const [displayText, setDisplayText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
 
-
-  // Auto-rotate through stats
   useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveStatIndex((prev) => (prev + 1) % marketingStats.length);
-    }, 3000);
+    const current = prompts[promptIndex];
+    const typingSpeed = isDeleting ? 20 : 35;
 
-    return () => clearInterval(interval);
-  }, [marketingStats.length]);
+    const tick = () => {
+      if (!isDeleting) {
+        const next = current.slice(0, displayText.length + 1);
+        setDisplayText(next);
+        if (next === current) {
+          setTimeout(() => setIsDeleting(true), 800);
+        }
+      } else {
+        const next = current.slice(0, displayText.length - 1);
+        setDisplayText(next);
+        if (next.length === 0) {
+          setIsDeleting(false);
+          setPromptIndex((prev) => (prev + 1) % prompts.length);
+        }
+      }
+    };
+
+    const timer = setTimeout(tick, typingSpeed);
+    return () => clearTimeout(timer);
+  }, [displayText, isDeleting, promptIndex, prompts]);
+
+  // Compute duration from captions for preview
+  const heroDurationInFrames = useMemo(() => {
+    if (caption && caption.length > 0) {
+      const lastEnd = Math.max(...caption.map((w: any) => w.end || 0));
+      return Math.ceil((lastEnd / 1000) * 30);
+    }
+    return (framesObject.scenes?.length || 5) * 90;
+  }, []);
 
   return (
     <div className="flex flex-col min-h-[calc(100vh-4rem)]">
-      {/* Hero Section with Gradient Background */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
-        {/* Decorative elements */}
-        <div className="absolute top-20 right-[10%] w-72 h-72 bg-blue-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 left-[5%] w-64 h-64 bg-purple-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute top-40 left-[15%] w-40 h-40 bg-amber-500/10 rounded-full blur-2xl"></div>
-
-        <div className="container mx-auto px-4 py-24 md:py-32 relative z-10">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            {/* Left side - Text and CTA */}
+      {/* HERO */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 to-white dark:from-slate-900 dark:to-slate-800">
+        {/* Decorative glows */}
+        <div className="pointer-events-none absolute -top-24 -right-24 h-96 w-96 rounded-full bg-blue-500/10 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 -left-24 h-[28rem] w-[28rem] rounded-full bg-purple-500/10 blur-3xl" />
+        <div className="container mx-auto px-4 py-20 md:py-28 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-10 items-center">
+            {/* Headline + Prompt Demo */}
             <div className="space-y-8">
-              <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 text-sm font-medium mb-4">
+              <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 text-sm font-medium">
                 <Sparkles className="h-4 w-4 mr-2" />
-                Powered by GPT-4
+                One prompt. One video. In seconds.
               </div>
-
-              <h1 className="md:py-4 text-4xl md:text-5xl lg:text-6xl font-bold leading-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
-                Generate High Quality Videos With AI
+              <h1 className="text-4xl md:text-6xl font-bold leading-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-300">
+                Turn your idea into a viral short video
               </h1>
-
-              <p className="text-xl text-slate-600 dark:text-slate-300">
-                Generate high quality videos with AI, schedule upload to your social media, saving time and effort.
+              <p className="text-lg md:text-xl text-slate-600 dark:text-slate-300 max-w-2xl">
+                Describe your idea. ShortsAI instantly writes the script, narrates with a human-like voice, generates visuals, and edits it all into a ready-to-post short.
               </p>
 
-              <div className="flex flex-wrap gap-4">
+              {/* Typewriter prompt bar */}
+              <div className="relative max-w-2xl">
+                <div className="flex items-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-800/70 backdrop-blur px-4 py-4 shadow-sm">
+                  <PenLine className="h-5 w-5 text-blue-600 dark:text-blue-400 mr-3" />
+                  <div className="flex-1 text-base md:text-lg font-medium text-slate-800 dark:text-slate-100">
+                    {displayText}
+                    <span className="animate-pulse">|</span>
+                  </div>
+                </div>
+                <div className="absolute -bottom-6 left-2 text-xs text-slate-500 dark:text-slate-400">
+                  Try: “Make a 60s breakdown of quantum entanglement”
+                </div>
+              </div>
+
+              {/* CTAs */}
+              <div className="flex flex-wrap gap-3 pt-6">
                 {session ? (
-                  <Link href="/dashboard">
+                  <Link href="/create">
                     <Button size="lg" className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg shadow-blue-500/25 border-0">
-                      Go to Dashboard
+                      Create Your First Video
                     </Button>
                   </Link>
                 ) : (
-                  <Button
-                    size="lg"
-                    onClick={() => signIn()}
-                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg shadow-blue-500/25 border-0"
-                  >
-                    Generate Videos
-                  </Button>
+                  <Link href="#get-started">
+                    <Button size="lg" className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg shadow-blue-500/25 border-0">
+                      Get Started Free
+                    </Button>
+                  </Link>
                 )}
-                <Link href="/pricing">
+                <Link href="#how-it-works">
                   <Button variant="outline" size="lg" className="border-2 shadow-sm">
-                    View Pricing
+                    See How It Works
                   </Button>
                 </Link>
               </div>
-
-              {/* Animated Stats - Modern Design */}
-              <div className="mt-12 relative">
-                <div className="relative h-32 overflow-hidden">
-                  {marketingStats.map((stat, index) => (
-                    <div
-                      key={index}
-                      className={`absolute w-full transition-all duration-700 ease-out ${index === activeStatIndex
-                        ? "opacity-100 translate-y-0"
-                        : index < activeStatIndex
-                          ? "opacity-0 -translate-y-full"
-                          : "opacity-0 translate-y-full"
-                        }`}
-                    >
-                      <div className="flex items-start">
-                        <div className="bg-white dark:bg-slate-800 p-3 rounded-xl mr-5 shadow-md backdrop-blur-sm border border-slate-200 dark:border-slate-700">
-                          {stat.icon}
-                        </div>
-                        <div>
-                          <div className="text-3xl font-bold mb-1">{stat.title}</div>
-                          <div className="text-lg text-slate-600 dark:text-slate-400">{stat.description}</div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Modern indicator pills */}
-                <div className="flex space-x-1.5 mt-6">
-                  {marketingStats.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setActiveStatIndex(index)}
-                      className={`transition-all duration-300 ${index === activeStatIndex
-                        ? "w-10 h-2 bg-blue-500 rounded-full"
-                        : "w-2 h-2 bg-slate-300 dark:bg-slate-700 rounded-full hover:bg-blue-300 dark:hover:bg-blue-700"
-                        }`}
-                      aria-label={`View stat ${index + 1}`}
-                    />
-                  ))}
-                </div>
-              </div>
             </div>
 
-            {/* Right side - Image */}
-            <div className="relative h-[520px] hidden md:block">
-              <div className="absolute -inset-0.5 bg-gradient-to-tr from-blue-500/10 via-purple-500/10 to-amber-500/10 rounded-2xl blur"></div>
-              <div className="relative h-full w-full bg-white dark:bg-slate-800 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-xl">
-                <Image
-                  src="/remind-me.jpg"
-                  alt="Woman using WhatsApp on tablet"
-                  fill
-                  className="object-cover object-center"
-                  priority
-                />
-
-                {/* WhatsApp message bubbles */}
-                <div className="absolute right-10 top-24 bg-green-100 dark:bg-green-900/90 p-4 rounded-lg rounded-tr-none shadow-lg transform rotate-3 z-10 max-w-[180px] backdrop-blur-sm border border-green-200 dark:border-green-800">
-                  <p className="text-sm font-medium text-green-800 dark:text-green-200">Check out our new promotion! 🎉</p>
-                </div>
-                <div className="absolute left-10 bottom-36 bg-white dark:bg-slate-700 p-4 rounded-lg rounded-tl-none shadow-lg transform -rotate-2 z-10 max-w-[180px] backdrop-blur-sm border border-slate-200 dark:border-slate-600">
-                  <p className="text-sm font-medium dark:text-white">I&apos;m interested! Tell me more about the offer. 👍</p>
+            {/* Right: Remotion live preview */}
+            <div className="relative">
+              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-tr from-blue-500/20 via-purple-500/20 to-amber-500/20 blur-xl" />
+              <div className="relative rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-900/90">
+                <div className="aspect-[9/16] w-full">
+                  <Player
+                    component={VideoComposition}
+                    inputProps={{
+                      frames: framesObject.scenes || [],
+                      audioUrl,
+                      caption,
+                      imagesUrl,
+                      zoomEffect: 'in' as const,
+                    }}
+                    durationInFrames={heroDurationInFrames}
+                    compositionWidth={1080}
+                    compositionHeight={1920}
+                    fps={30}
+                    style={{ width: '100%', height: '100%' }}
+                    controls={false}
+                    autoPlay
+                    loop
+                  />
                 </div>
               </div>
             </div>
@@ -172,60 +152,116 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-24 bg-white dark:bg-slate-900">
+      {/* HOW IT WORKS */}
+      <section id="how-it-works" className="py-24 bg-white dark:bg-slate-900">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 inline-block">
-              Why Choose RemindMe
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 inline-block">
+              From prompt to polished video in 3 steps
             </h2>
             <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-              Powerful tools to boost your business marketing through WhatsApp
+              No editing. No studios. Just your idea, turned into a short worth sharing.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-slate-50 dark:bg-slate-800 p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-slate-200 dark:border-slate-700">
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="group bg-slate-50 dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all">
               <div className="bg-blue-500/10 p-3 rounded-xl inline-block mb-5">
-                <Megaphone className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+                <PenLine className="h-8 w-8 text-blue-600 dark:text-blue-400" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Targeted Promotions</h3>
-              <p className="text-slate-600 dark:text-slate-400">
-                Send personalized offers and discounts directly to your customers&apos; WhatsApp, increasing conversion rates.
-              </p>
+              <h3 className="text-xl font-semibold mb-2">Write your prompt</h3>
+              <p className="text-slate-600 dark:text-slate-400">Describe what you want. Topic, tone, length—anything in plain English.</p>
             </div>
-
-            <div className="bg-slate-50 dark:bg-slate-800 p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-slate-200 dark:border-slate-700">
+            <div className="group bg-slate-50 dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all">
               <div className="bg-purple-500/10 p-3 rounded-xl inline-block mb-5">
-                <Users className="h-8 w-8 text-purple-600 dark:text-purple-400" />
+                <Brain className="h-8 w-8 text-purple-600 dark:text-purple-400" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Customer Engagement</h3>
-              <p className="text-slate-600 dark:text-slate-400">
-                Build stronger relationships with automated yet personalized campaign messages to your customer base.
+              <h3 className="text-xl font-semibold mb-2">AI creates everything</h3>
+              <p className="text-slate-600 dark:text-slate-400 flex items-center gap-2">
+                <span className="inline-flex items-center gap-2"><Mic className="h-5 w-5" /> Voice</span>
+                <span className="inline-flex items-center gap-2 ml-3"><ImageIcon className="h-5 w-5" /> Visuals</span>
+                <span className="inline-flex items-center gap-2 ml-3"><Film className="h-5 w-5" /> Editing</span>
               </p>
             </div>
-
-            <div className="bg-slate-50 dark:bg-slate-800 p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-slate-200 dark:border-slate-700">
+            <div className="group bg-slate-50 dark:bg-slate-800 p-8 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all">
               <div className="bg-amber-500/10 p-3 rounded-xl inline-block mb-5">
-                <TrendingUp className="h-8 w-8 text-amber-600 dark:text-amber-400" />
+                <Rocket className="h-8 w-8 text-amber-600 dark:text-amber-400" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Increased Sales</h3>
-              <p className="text-slate-600 dark:text-slate-400">
-                Drive more revenue with timely promotional campaigns that reach customers where they&apos;re most active.
-              </p>
+              <h3 className="text-xl font-semibold mb-2">Get a ready-to-post short</h3>
+              <p className="text-slate-600 dark:text-slate-400">Perfect for YouTube Shorts, Instagram Reels and TikTok—generated in seconds.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Pricing Preview Section with Enhanced Background */}
-      <section className="py-24 bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-800 relative overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute top-40 left-[10%] w-72 h-72 bg-blue-500/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-[10%] w-80 h-80 bg-purple-500/5 rounded-full blur-3xl"></div>
+      {/* SAMPLE VIDEOS */}
+      <section className="py-24 bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-800">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 inline-block">
+              Create unique faceless videos for every niche
+            </h2>
+            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+              From image generation to full edits, ShortsAI can generate any style of video in seconds.
+            </p>
+          </div>
+          <VideoGrid />
+        </div>
+      </section>
 
+      {/* TESTIMONIALS */}
+      <section className="py-24 bg-white dark:bg-slate-900">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Loved by creators and teams</h2>
+            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">Hear how people use ShortsAI to save hours and grow faster.</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-slate-50 dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700">
+              <p className="text-slate-700 dark:text-slate-200 mb-4">“Insane speed. I type the idea, and minutes later I have a Short I	27m proud to post.”</p>
+              <div className="text-sm text-slate-500 dark:text-slate-400">— Alex R., YouTuber</div>
+            </div>
+            <div className="bg-slate-50 dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700">
+              <p className="text-slate-700 dark:text-slate-200 mb-4">“The AI voice is shockingly good. Viewers thought it was a real voiceover artist.”</p>
+              <div className="text-sm text-slate-500 dark:text-slate-400">— Priya S., Marketer</div>
+            </div>
+            <div className="bg-slate-50 dark:bg-slate-800 p-6 rounded-xl border border-slate-200 dark:border-slate-700">
+              <p className="text-slate-700 dark:text-slate-200 mb-4">“I made 10 Shorts this week without opening an editor. Game changer.”</p>
+              <div className="text-sm text-slate-500 dark:text-slate-400">— Marco D., Indie Developer</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* PRICING PREVIEW */}
+      <section className="py-24 bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-800 relative overflow-hidden">
+        <div className="absolute top-40 left-[10%] w-72 h-72 bg-blue-500/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 right-[10%] w-80 h-80 bg-purple-500/5 rounded-full blur-3xl" />
         <div className="container mx-auto px-4 relative z-10">
           <PricingCards />
+        </div>
+      </section>
+
+      {/* FINAL CTA */}
+      <section id="get-started" className="py-24 bg-white dark:bg-slate-900">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Your next viral short starts with a prompt</h2>
+          <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-8">
+            Join creators using ShortsAI to turn ideas into videos in seconds. No editing skills required.
+          </p>
+          {session ? (
+            <Link href="/create">
+              <Button size="lg" className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg shadow-blue-500/25 border-0">
+                Create a Video
+              </Button>
+            </Link>
+          ) : (
+            <Link href="/login">
+              <Button size="lg" className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg shadow-blue-500/25 border-0">
+                Get Started Free
+              </Button>
+            </Link>
+          )}
         </div>
       </section>
     </div>
