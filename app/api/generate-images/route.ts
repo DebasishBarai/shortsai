@@ -101,6 +101,12 @@ export async function POST(request: Request) {
     const uploadResults = await Promise.all(s3UploadPromises);
 
     if (!uploadResults.every(result => result.success)) {
+      await prisma.video.update({
+        where: { id: videoId },
+        data: {
+          error: true,
+        },
+      });
       return NextResponse.json({ error: "Failed to upload images", uploadResults });
     }
 
@@ -111,6 +117,7 @@ export async function POST(request: Request) {
       where: { id: videoId },
       data: {
         imagesUrl: imagesUrl,
+        error: false,
       },
     });
 

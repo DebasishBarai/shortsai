@@ -51,6 +51,12 @@ export async function POST(request: Request) {
 
 
     if (!captionResponse.words) {
+      await prisma.video.update({
+        where: { id: videoId },
+        data: {
+          error: true,
+        },
+      });
       return NextResponse.json(
         { error: "Failed to generate captions" },
         { status: 500 }
@@ -67,7 +73,8 @@ export async function POST(request: Request) {
         id: videoId,
       },
       data: {
-        caption: caption
+        caption: caption,
+        error: false,
       }
     })
 

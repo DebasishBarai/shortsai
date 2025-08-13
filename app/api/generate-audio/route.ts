@@ -80,6 +80,12 @@ export async function POST(request: Request) {
     const audioResponse = await polly.send(pollyCommand);
 
     if (!audioResponse.AudioStream) {
+      await prisma.video.update({
+        where: { id: videoId },
+        data: {
+          error: true,
+        },
+      });
       return NextResponse.json(
         { error: "Failed to generate audio" },
         { status: 500 }
@@ -109,6 +115,7 @@ export async function POST(request: Request) {
       where: { id: videoId },
       data: {
         audioUrl: audioUrl,
+        error: false,
       },
     });
 
