@@ -53,8 +53,8 @@ export const VideoComposition: React.FC<VideoCompositionProps> = ({
 
   // Calculate frames per image (equal distribution)
   // Add validation to prevent NaN values
-  const framesPerImage = frames && frames.length > 0 
-    ? Math.floor(durationInFrames / frames.length) 
+  const framesPerImage = frames && frames.length > 0
+    ? Math.floor(durationInFrames / frames.length)
     : durationInFrames; // If no frames, use full duration
 
   // Debug logging for framesPerImage
@@ -69,9 +69,14 @@ export const VideoComposition: React.FC<VideoCompositionProps> = ({
   // Determine current image index with safety checks
   const currentImageIndex = frames && frames.length > 0
     ? Math.min(
-        Math.floor(frame / framesPerImage),
-        frames.length - 1
-      )
+      Math.floor(frame / framesPerImage),
+      frames.length - 1
+    )
+    : 0;
+
+  // Calculate next image index for smooth transitions
+  const nextImageIndex = frames && frames.length > 0
+    ? Math.min(currentImageIndex + 1, frames.length - 1)
     : 0;
 
   // Get current time in milliseconds
@@ -80,8 +85,8 @@ export const VideoComposition: React.FC<VideoCompositionProps> = ({
   // Find current caption words
   const currentWords = caption && Array.isArray(caption) && caption.length > 0
     ? caption.filter(
-        (word) => word.start <= currentTimeMs && word.end > currentTimeMs
-      )
+      (word) => word.start <= currentTimeMs && word.end > currentTimeMs
+    )
     : [];
 
   // Get current word to display
@@ -90,19 +95,35 @@ export const VideoComposition: React.FC<VideoCompositionProps> = ({
     return currentWord ? currentWord.text : '';
   };
 
-  // Animation for image transitions and zoom effect
-  // Add safety checks to prevent NaN in interpolate
-  const imageOpacity = frames && frames.length > 0
-    ? interpolate(
-        frame % framesPerImage,
-        [0, 10, framesPerImage - 10, framesPerImage],
-        [0, 1, 1, 0],
-        { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
-      )
-    : 1; // Default opacity if no frames
+  // Improved transition logic - crossfade between images
+  const frameInSegment = frame % framesPerImage;
+  const transitionDuration = 15; // frames for transition
+
+  // Calculate opacities for current and next image
+  const isInTransition = frameInSegment >= (framesPerImage - transitionDuration);
+  const isLastImage = currentImageIndex >= (frames?.length || 0) - 1;
+
+  let currentImageOpacity = 1;
+  let nextImageOpacity = 0;
+
+  if (isInTransition && !isLastImage) {
+    const transitionProgress = (frameInSegment - (framesPerImage - transitionDuration)) / transitionDuration;
+    currentImageOpacity = interpolate(
+      transitionProgress,
+      [0, 1],
+      [1, 0],
+      { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
+    );
+    nextImageOpacity = interpolate(
+      transitionProgress,
+      [0, 1],
+      [0, 1],
+      { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
+    );
+  }
 
   // Zoom effect based on parameter
-  const getImageScale = () => {
+  const getImageScale = (imageIndex: number) => {
     if (zoomEffect === 'none' || !frames || frames.length === 0) {
       return 1.0; // No zoom or no frames
     }
@@ -110,35 +131,60 @@ export const VideoComposition: React.FC<VideoCompositionProps> = ({
     const startScale = zoomEffect === 'in' ? 1.0 : 1.1;
     const endScale = zoomEffect === 'in' ? 1.1 : 1.0;
 
+    // Use the frame position within the current image segment
+    const effectiveFrame = imageIndex === currentImageIndex ? frameInSegment : 0;
+
     return interpolate(
-      frame % framesPerImage,
+      effectiveFrame,
       [0, framesPerImage],
       [startScale, endScale],
       { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
     );
   };
 
-  const imageScale = getImageScale();
-
   return (
     <AbsoluteFill style={{ backgroundColor: '#000' }}>
       {/* Audio */}
       <Audio src={audioUrl} />
 
-      {/* Background Image */}
+      {/* Background Images with Smooth Transitions */}
       <AbsoluteFill>
-        {imagesUrl && imagesUrl.length > 0 && imagesUrl[currentImageIndex] ? (
-          <Img
-            src={imagesUrl[currentImageIndex]}
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              opacity: imageOpacity,
-              transform: `scale(${imageScale})`,
-              transition: 'transform 0.1s ease-out',
-            }}
-          />
+        {imagesUrl && imagesUrl.length > 0 ? (
+          <>
+            {/* Current Image */}
+            {imagesUrl[currentImageIndex] && (
+              <Img
+                src={imagesUrl[currentImageIndex]}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  opacity: currentImageOpacity,
+                  transform: `scale(${getImageScale(currentImageIndex)})`,
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                }}
+              />
+            )}
+
+            {/* Next Image (for transition) */}
+            {!isLastImage && imagesUrl[nextImageIndex] && nextImageOpacity > 0 && (
+              <Img
+                src={imagesUrl[nextImageIndex]}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  opacity: nextImageOpacity,
+                  transform: `scale(${getImageScale(nextImageIndex)})`,
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                }}
+              />
+            )}
+          </>
         ) : (
           // Fallback background if no images
           <div style={{
@@ -180,9 +226,6 @@ export const VideoComposition: React.FC<VideoCompositionProps> = ({
           {getCurrentWord()}
         </div>
       </AbsoluteFill>
-
-
     </AbsoluteFill>
   );
 };
-

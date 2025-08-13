@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
 
-export async function GET(request: Request) {
+export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions);
     console.log("Session:", session); // Debug log
@@ -46,6 +46,8 @@ export async function GET(request: Request) {
         frames: true,
         audioUrl: true,
         caption: true,
+        error: true,
+        completed: true,
       }
     });
 

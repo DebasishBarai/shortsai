@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 
     // Get user
     const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
+      where: { id: session.user.id },
     });
     console.log("Found user:", user); // Debug log
 
@@ -53,8 +53,8 @@ export async function POST(request: Request) {
 
     console.log("Updated user credits:", updatedUser); // Debug log
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       newCredits: updatedUser.credits,
       addedCredits: credits
     });

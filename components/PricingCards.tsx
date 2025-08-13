@@ -1,25 +1,29 @@
 'use client'
 
+import { Check, Star, Zap, Coins, Video } from "lucide-react";
+import { PayPalButtons } from "@paypal/react-paypal-js";
+import { toast } from "sonner";
+import axios from "axios";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { Check, Star, Zap, Coins, Video, Rocket } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useCurrency } from "@/lib/currency-context";
-import { CurrencySelector } from "./CurrencySelector";
+import { Button } from "./ui/button";
 
 export function PricingCards() {
-  const { formatPrice } = useCurrency();
+
+  const { data: session } = useSession();
+
 
   const creditPackages = [
     {
       name: "Starter Pack",
-      credits: 25,
+      credits: 60,
       price: 10,
       popular: false,
       features: [
-        "25 AI Video Credits",
-        "5 x 15-second videos, OR",
-        "2 x 30-second videos, OR",
-        "1 x 60-second video",
+        "60 AI Video Credits",
+        "12 x 15-second videos, OR",
+        "6 x 30-second videos, OR",
+        "3 x 60-second video",
         "All Video Styles (Realistic, Cartoon, Watercolor, Sketch)",
         "All Voice Types (8 Premium Voices)",
         "9:16 Aspect Ratio for Short Videos",
@@ -29,14 +33,14 @@ export function PricingCards() {
     },
     {
       name: "Creator Pack",
-      credits: 60,
+      credits: 160,
       price: 20,
       popular: true,
       features: [
-        "60 AI Video Credits",
-        "12 x 15-second videos, OR",
-        "6 x 30-second videos, OR",
-        "3 x 60-second videos",
+        "160 AI Video Credits",
+        "32 x 15-second videos, OR",
+        "16 x 30-second videos, OR",
+        "8 x 60-second videos",
         "All Video Styles (Realistic, Cartoon, Watercolor, Sketch)",
         "All Voice Types (8 Premium Voices)",
         "9:16 Aspect Ratio for Short Videos",
@@ -46,14 +50,14 @@ export function PricingCards() {
     },
     {
       name: "Pro Pack",
-      credits: 120,
+      credits: 360,
       price: 40,
       popular: false,
       features: [
-        "120 AI Video Credits",
-        "24 x 15-second videos, OR",
-        "12 x 30-second videos, OR",
-        "6 x 60-second videos",
+        "360 AI Video Credits",
+        "72 x 15-second videos, OR",
+        "36 x 30-second videos, OR",
+        "18 x 60-second videos",
         "All Video Styles (Realistic, Cartoon, Watercolor, Sketch)",
         "All Voice Types (8 Premium Voices)",
         "9:16 Aspect Ratio for Short Videos",
@@ -62,6 +66,27 @@ export function PricingCards() {
       ]
     }
   ];
+
+  const onPaymentSuccess = async (credits: number, price: number) => {
+    const res = await axios.post('/api/add-credits', {
+      credits: credits,
+    });
+
+    if (!res.data.success) {
+      toast.error('Payment failed');
+      console.log('Payment failed:', res.data.error);
+      return;
+    }
+
+    toast.success(`Successfully purchased ${res.data.credits} credits for ${price}`);
+    toast.success(`Updated credits: ${res.data.newCredits}`);
+    console.log('Payment success:', credits, price);
+  };
+
+  const onPaymentCancel = () => {
+    toast.error('Payment cancelled');
+    console.log('Payment cancel');
+  };
 
   return (
     <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
@@ -141,16 +166,36 @@ export function PricingCards() {
               ))}
             </ul>
 
-            <Link href={`/payment?package=${index}&credits=${pkg.credits}&price=${pkg.price}`} className="mt-auto">
+            <div className="relative w-full">
               <Button
-                className={`w-full py-4 sm:py-6 text-base sm:text-lg ${pkg.popular
+                className={`w-full py-4 sm:py-6 text-base sm:text-lg pointer-events-none ${pkg.popular
                   ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md'
                   : 'bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-200'
                   }`}
               >
                 Get {pkg.credits} Credits
               </Button>
-            </Link>
+              {session && (
+                <div className="absolute inset-0 opacity-0">
+                  <PayPalButtons style={{ layout: 'horizontal' }}
+                    onApprove={() => onPaymentSuccess(pkg.credits, pkg.price)}
+                    onCancel={() => onPaymentCancel()}
+                    createOrder={(data, actions) => {
+                      return actions.order.create({
+                        intent: 'CAPTURE',
+                        purchase_units: [{
+                          amount: {
+                            value: pkg.price.toString(),
+                            currency_code: 'USD',
+                          },
+                        }],
+                      });
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+
           </div>
         ))}
       </div>

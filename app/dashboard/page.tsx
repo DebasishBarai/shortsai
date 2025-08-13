@@ -24,6 +24,7 @@ import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 import { VideoDialog } from '@/components/VideoDialog';
 import { convertValueToLabel } from '@/lib/functions';
+import axios from 'axios';
 
 interface Video {
   id: string;
@@ -61,12 +62,12 @@ export default function DashboardPage() {
     const fetchData = async () => {
       try {
         const [videosRes, userRes] = await Promise.all([
-          fetch('/api/user/videos'),
-          fetch('/api/user')
+          axios.post('/api/user/videos'),
+          axios.post('/api/user')
         ]);
 
-        const videosData = await videosRes.json();
-        const userData = await userRes.json();
+        const videosData = await videosRes.data;
+        const userData = await userRes.data;
 
         if (Array.isArray(videosData)) {
           // Sort videos by creation date (newest first)
@@ -91,11 +92,9 @@ export default function DashboardPage() {
 
   const deleteVideo = async (id: string) => {
     try {
-      const res = await fetch(`/api/user/videos/${id}`, {
-        method: 'DELETE',
-      });
+      const res = await axios.delete(`/api/user/videos/${id}`);
 
-      if (!res.ok) {
+      if (res.status !== 200) {
         throw new Error('Failed to delete video');
       }
 
