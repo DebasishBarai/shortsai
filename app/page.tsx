@@ -177,31 +177,31 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 inline-block">
-              Why Choose RemindMe
+              Why Choose ShortsAI
             </h2>
             <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-              Powerful tools to boost your business marketing through WhatsApp
+              Revolutionary AI-powered tools to create engaging short-form videos in seconds
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-slate-50 dark:bg-slate-800 p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-slate-200 dark:border-slate-700">
               <div className="bg-blue-500/10 p-3 rounded-xl inline-block mb-5">
-                <Megaphone className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+                <Bot className="h-8 w-8 text-blue-600 dark:text-blue-400" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Targeted Promotions</h3>
+              <h3 className="text-xl font-semibold mb-3">AI-Powered Generation</h3>
               <p className="text-slate-600 dark:text-slate-400">
-                Send personalized offers and discounts directly to your customers&apos; WhatsApp, increasing conversion rates.
+                Transform your ideas into compelling videos with advanced AI that handles scripting, voiceovers, and visuals automatically.
               </p>
             </div>
 
             <div className="bg-slate-50 dark:bg-slate-800 p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-slate-200 dark:border-slate-700">
               <div className="bg-purple-500/10 p-3 rounded-xl inline-block mb-5">
-                <Users className="h-8 w-8 text-purple-600 dark:text-purple-400" />
+                <Video className="h-8 w-8 text-purple-600 dark:text-purple-400" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Customer Engagement</h3>
+              <h3 className="text-xl font-semibold mb-3">Lightning Fast Creation</h3>
               <p className="text-slate-600 dark:text-slate-400">
-                Build stronger relationships with automated yet personalized campaign messages to your customer base.
+                Generate professional-quality short videos in under 60 seconds, perfect for YouTube Shorts, Instagram Reels, and TikTok.
               </p>
             </div>
 
@@ -209,9 +209,9 @@ export default function Home() {
               <div className="bg-amber-500/10 p-3 rounded-xl inline-block mb-5">
                 <TrendingUp className="h-8 w-8 text-amber-600 dark:text-amber-400" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Increased Sales</h3>
+              <h3 className="text-xl font-semibold mb-3">Boost Your Reach</h3>
               <p className="text-slate-600 dark:text-slate-400">
-                Drive more revenue with timely promotional campaigns that reach customers where they&apos;re most active.
+                Create engaging content that drives views, likes, and shares across all major social media platforms with optimized formats.
               </p>
             </div>
           </div>
