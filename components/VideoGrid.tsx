@@ -56,6 +56,8 @@ export const VideoGrid: React.FC<VideoGridProps> = ({ className = '' }) => {
                   zoomEffect: 'in' as const
                 }}
                 durationInFrames={90}
+                compositionWidth={1080}
+                compositionHeight={1920}
                 fps={30}
                 style={{
                   width: '100%',
