@@ -447,3 +447,55 @@ export const caption = [
     "speaker": null
   }
 ]
+
+// Sample videos for the landing page grid
+export const sampleVideos = [
+  {
+    id: 1,
+    title: "Ancient Egypt: Cleopatra's Reign",
+    description: "The legendary queen who ruled with beauty and power",
+    videoUrl: "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme5j5zd0000513mrokd4mxlv/video.mp4",
+    thumbnail: "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme5j5zd0000513mrokd4mxlv/images/0.png",
+    category: "History"
+  },
+  {
+    id: 2,
+    title: "Space Exploration: Mars Mission",
+    description: "Journey to the red planet and beyond",
+    videoUrl: "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme5j5zd0000513mrokd4mxlv/video.mp4",
+    thumbnail: "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme5j5zd0000513mrokd4mxlv/images/1.png",
+    category: "Science"
+  },
+  {
+    id: 3,
+    title: "Ocean Mysteries: Deep Sea Creatures",
+    description: "Discover the fascinating life in the ocean depths",
+    videoUrl: "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme5j5zd0000513mrokd4mxlv/video.mp4",
+    thumbnail: "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme5j5zd0000513mrokd4mxlv/images/2.png",
+    category: "Nature"
+  },
+  {
+    id: 4,
+    title: "Tech Revolution: AI Breakthroughs",
+    description: "How artificial intelligence is changing our world",
+    videoUrl: "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme5j5zd0000513mrokd4mxlv/video.mp4",
+    thumbnail: "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme5j5zd0000513mrokd4mxlv/images/3.png",
+    category: "Technology"
+  },
+  {
+    id: 5,
+    title: "Art History: Renaissance Masters",
+    description: "The genius of Leonardo, Michelangelo, and Raphael",
+    videoUrl: "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme5j5zd0000513mrokd4mxlv/video.mp4",
+    thumbnail: "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme5j5zd0000513mrokd4mxlv/images/4.png",
+    category: "Art"
+  },
+  {
+    id: 6,
+    title: "Wildlife: African Safari",
+    description: "Experience the majesty of Africa's wildlife",
+    videoUrl: "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme5j5zd0000513mrokd4mxlv/video.mp4",
+    thumbnail: "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme5j5zd0000513mrokd4mxlv/images/0.png",
+    category: "Nature"
+  }
+]

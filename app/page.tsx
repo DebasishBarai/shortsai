@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Check, Megaphone, Users, TrendingUp, Bot, Video, Timer, Rocket, Mic, Sparkles } from "lucide-react";
 import { PricingCards } from "@/components/PricingCards";
+import { VideoGrid } from "@/components/VideoGrid";
 import { signIn, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -172,49 +173,19 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Sample Videos Section */}
       <section className="py-24 bg-white dark:bg-slate-900">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 inline-block">
-              Why Choose ShortsAI
+              Create unique faceless videos for every niche
             </h2>
             <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-              Revolutionary AI-powered tools to create engaging short-form videos in seconds
+              From Image generation to video generation, ShortsAI can generate any style of video in seconds.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-slate-50 dark:bg-slate-800 p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-slate-200 dark:border-slate-700">
-              <div className="bg-blue-500/10 p-3 rounded-xl inline-block mb-5">
-                <Bot className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-              </div>
-              <h3 className="text-xl font-semibold mb-3">AI-Powered Generation</h3>
-              <p className="text-slate-600 dark:text-slate-400">
-                Transform your ideas into compelling videos with advanced AI that handles scripting, voiceovers, and visuals automatically.
-              </p>
-            </div>
-
-            <div className="bg-slate-50 dark:bg-slate-800 p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-slate-200 dark:border-slate-700">
-              <div className="bg-purple-500/10 p-3 rounded-xl inline-block mb-5">
-                <Video className="h-8 w-8 text-purple-600 dark:text-purple-400" />
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Lightning Fast Creation</h3>
-              <p className="text-slate-600 dark:text-slate-400">
-                Generate professional-quality short videos in under 60 seconds, perfect for YouTube Shorts, Instagram Reels, and TikTok.
-              </p>
-            </div>
-
-            <div className="bg-slate-50 dark:bg-slate-800 p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-slate-200 dark:border-slate-700">
-              <div className="bg-amber-500/10 p-3 rounded-xl inline-block mb-5">
-                <TrendingUp className="h-8 w-8 text-amber-600 dark:text-amber-400" />
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Boost Your Reach</h3>
-              <p className="text-slate-600 dark:text-slate-400">
-                Create engaging content that drives views, likes, and shares across all major social media platforms with optimized formats.
-              </p>
-            </div>
-          </div>
+          <VideoGrid />
         </div>
       </section>
 
