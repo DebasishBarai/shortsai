@@ -8,7 +8,7 @@ export async function POST(request: Request) {
     const session = await getServerSession(authOptions);
     console.log("Session:", session); // Debug log
 
-    if (!session?.user?.email) {
+    if (!session?.user?.id) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 
     // Get user
     const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
+      where: { id: session.user.id },
     });
     console.log("Found user:", user); // Debug log
 
@@ -44,14 +44,14 @@ export async function POST(request: Request) {
     const hasEnoughCredits = (user as any).credits >= requiredCredits;
     const currentCredits = (user as any).credits || 0;
 
-    console.log("Credit check result:", { 
-      hasEnoughCredits, 
-      currentCredits, 
-      requiredCredits 
+    console.log("Credit check result:", {
+      hasEnoughCredits,
+      currentCredits,
+      requiredCredits
     }); // Debug log
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       hasEnoughCredits,
       currentCredits,
       requiredCredits

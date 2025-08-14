@@ -57,7 +57,7 @@ const Navbar = () => {
           {/*     Groups */}
           {/*   </Button> */}
           {/* </Link> */}
-          
+
           {/* Credits Display */}
           <div className="flex items-center gap-2 px-3 py-2 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
             <Coins className="h-4 w-4 text-green-600 dark:text-green-400" />
@@ -68,7 +68,7 @@ const Navbar = () => {
 
           {/* Get Credits Button */}
           <GetCreditsDialog />
-          
+
           <Button
             onClick={handleSignOut}
             variant="ghost"

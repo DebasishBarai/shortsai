@@ -1,0 +1,79 @@
+import { authOptions } from "@/lib/auth";
+import { getServerSession } from "next-auth";
+import { NextResponse } from "next/server";
+import { getFunctions, renderMediaOnLambda, getRenderProgress } from '@remotion/lambda/client';
+import { prisma } from "@/lib/prisma";
+
+
+export async function POST(request: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+    console.log("Session:", session); // Debug log
+
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    const body = await request.json();
+    console.log("Request body:", body); // Debug log
+
+    const { videoId, frames, audioUrl, caption, imagesUrl } = body;
+
+    if (!videoId) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    //Implement video rendering logic
+    const functions = await getFunctions({
+      region: 'us-east-1',
+      compatibleOnly: true,
+    });
+
+    const functionName = functions[0].functionName;
+
+    const { renderId, bucketName } = await renderMediaOnLambda({
+      region: 'ap-south-1',
+      functionName,
+      serveUrl: process.env.SERVE_URL || '',
+      composition: 'shortsai',
+      inputProps: {
+        frames,
+        audioUrl,
+        caption,
+        imagesUrl,
+      },
+      codec: 'h264',
+      imageFormat: 'jpeg',
+      maxRetries: 1,
+      framesPerLambda: 20,
+      privacy: 'public',
+      webhook: {
+        url: `${process.env.NEXTAUTH_URL}/api/remotion/webhook`,
+        secret: process.env.WEBHOOK_SECRET || '',
+      }
+    });
+
+    await prisma.video.update({
+      where: {
+        id: videoId,
+      },
+      data: {
+        renderId,
+      },
+    });
+
+    return NextResponse.json({ success: true, renderId });
+  } catch (error) {
+    console.error('Error rendering video:', error);
+    return NextResponse.json(
+      { error: "Failed to render video" },
+      { status: 500 }
+    );
+  }
+}

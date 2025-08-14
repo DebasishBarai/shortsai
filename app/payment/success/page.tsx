@@ -17,33 +17,33 @@ function SuccessContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [creditsAdded, setCreditsAdded] = useState(false);
-  
+
   const packageIndex = searchParams.get('package');
   const credits = searchParams.get('credits');
   const price = searchParams.get('price');
-  
+
   // Add credits to user account
   useEffect(() => {
     const addCredits = async () => {
-      if (!credits || !session?.user?.email) {
+      if (!credits || !session?.user?.id) {
         setError('Missing credit information or user not authenticated');
         setLoading(false);
         return;
       }
-      
+
       try {
         // Call API to add credits to user account
         const response = await axios.post('/api/add-credits', {
           credits: parseInt(credits)
         });
-        
+
         if (response.status === 200) {
           setCreditsAdded(true);
           toast.success(`Successfully added ${credits} credits to your account!`);
         } else {
           throw new Error('Failed to add credits');
         }
-        
+
         setLoading(false);
       } catch (err) {
         console.error('Error adding credits:', err);
@@ -51,10 +51,10 @@ function SuccessContent() {
         setLoading(false);
       }
     };
-    
+
     addCredits();
   }, [credits, session]);
-  
+
   return (
     <div className="container mx-auto px-4 py-12 max-w-3xl">
       <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-8 shadow-sm text-center">
@@ -76,7 +76,7 @@ function SuccessContent() {
           <div className="py-8">
             <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
             <h1 className="text-3xl font-bold mb-4 text-slate-800 dark:text-slate-200">Credits Purchased Successfully!</h1>
-            
+
             <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-6">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Coins className="h-6 w-6 text-yellow-500" />
@@ -88,23 +88,23 @@ function SuccessContent() {
                 You can now create {credits} AI videos
               </p>
             </div>
-            
+
             <p className="mb-6 text-slate-600 dark:text-slate-400">
               Thank you for your purchase! Your {credits} credits have been added to your account.
               You can now start creating amazing AI videos.
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link href="/create">
                 <Button size="lg" className="px-8 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md">
                   Create Your First Video
                 </Button>
               </Link>
-            <Link href="/dashboard">
+              <Link href="/dashboard">
                 <Button size="lg" variant="outline" className="px-8">
                   Go to Dashboard
                 </Button>
-            </Link>
+              </Link>
             </div>
           </div>
         )}

@@ -8,7 +8,8 @@ export async function POST(request: Request) {
     const session = await getServerSession(authOptions);
     console.log("Session:", session); // Debug log
 
-    if (!session?.user?.email) {
+    if (!session?.user?.id) {
+      console.log('🔴 Unauthorized request attempt');
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
@@ -17,11 +18,12 @@ export async function POST(request: Request) {
 
     // Get user
     const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
+      where: { id: session.user.id },
     });
     console.log("Found user:", user); // Debug log
 
     if (!user) {
+      console.log('🔴 User not found');
       return NextResponse.json(
         { error: "User not found" },
         { status: 404 }
@@ -36,6 +38,7 @@ export async function POST(request: Request) {
         id: true,
         title: true,
         description: true,
+        url: true,
         imagesUrl: true,
         createdAt: true,
         contentType: true,

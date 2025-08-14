@@ -55,7 +55,7 @@ export async function POST(request: Request) {
     const session = await getServerSession(authOptions);
     console.log('🔵 Initiating credit payment for user:', session?.user?.email);
 
-    if (!session?.user?.email) {
+    if (!session?.user?.id) {
       console.log('🔴 Unauthorized payment attempt');
       return NextResponse.json(
         { error: "Unauthorized" },
@@ -131,7 +131,7 @@ export async function PUT(request: Request) {
     const session = await getServerSession(authOptions);
     console.log('🔵 Processing credit payment completion for user:', session?.user?.email);
 
-    if (!session?.user?.email) {
+    if (!session?.user?.id) {
       console.log('🔴 Unauthorized payment completion attempt');
       return NextResponse.json(
         { error: "Unauthorized" },
@@ -177,7 +177,7 @@ export async function PUT(request: Request) {
 
       // Add credits to user
       await prisma.user.update({
-        where: { email: session.user.email },
+        where: { id: session.user.id },
         data: {
           credits: {
             increment: credits

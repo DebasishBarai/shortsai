@@ -38,6 +38,7 @@ import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 import { VideoDialog } from '@/components/VideoDialog';
+import axios from 'axios';
 
 interface Video {
   id: string;
@@ -73,11 +74,17 @@ export default function VideosPage() {
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const res = await fetch('/api/user/videos');
-        const data = await res.json();
+        const res = await axios.post('/api/user/videos');
+
+        if (res.status !== 200) {
+          const errorData = await res.data;
+          throw new Error(errorData?.error || 'Failed to fetch videos');
+        }
+        const data = res.data;
+        console.log('🔵 Fetched videos:', data);
         if (Array.isArray(data)) {
           // Sort videos by creation date (newest first)
-          const sortedVideos = data.sort((a: Video, b: Video) => 
+          const sortedVideos = data.sort((a: Video, b: Video) =>
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           );
           setVideos(sortedVideos);
@@ -95,12 +102,11 @@ export default function VideosPage() {
 
   const deleteVideo = async (id: string) => {
     try {
-      const res = await fetch(`/api/user/videos/${id}`, {
-        method: 'DELETE',
-      });
+      const res = await axios.delete(`/api/user/videos/${id}`);
 
-      if (!res.ok) {
-        throw new Error('Failed to delete video');
+      if (res.status !== 200) {
+        const errorData = await res.data;
+        throw new Error(errorData?.error || 'Failed to delete video');
       }
 
       setVideos(videos.filter(video => video.id !== id));
@@ -307,7 +313,7 @@ export default function VideosPage() {
                   <Calendar className="h-3 w-3" />
                   Created on {format(new Date(video.createdAt), 'PPP')}
                 </div>
-                  </div>
+              </div>
 
               {/* Actions */}
               <div className="flex items-center gap-2">
@@ -322,34 +328,34 @@ export default function VideosPage() {
                     caption={video.caption || []}
                   />
                 </div>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Delete Video</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Are you sure you want to delete this video? This action cannot be undone.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete Video</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to delete this video? This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
                         onClick={() => deleteVideo(video.id)}
-                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                        >
-                          Delete
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </div>
           ))
@@ -410,7 +416,7 @@ export default function VideosPage() {
                   <TableCell className="max-w-[250px]">
                     <div className="text-sm text-muted-foreground line-clamp-2">
                       {video.description || 'No description'}
-                      </div>
+                    </div>
                   </TableCell>
                   <TableCell>
                     <Badge variant="secondary" className="text-xs">
@@ -441,34 +447,34 @@ export default function VideosPage() {
                         imagesUrl={video.imagesUrl || []}
                         caption={video.caption || []}
                       />
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Delete Video</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Are you sure you want to delete this video? This action cannot be undone.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction
-                              onClick={() => deleteVideo(video.id)}
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-muted-foreground hover:text-destructive"
                           >
-                            Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Video</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete this video? This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => deleteVideo(video.id)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   </TableCell>
                 </TableRow>

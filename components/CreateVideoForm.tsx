@@ -235,6 +235,34 @@ export default function CreateVideoForm() {
 
       setVideoCaption(caption)
 
+      // start video render
+      const renderVideoRes = await axios.post('/api/remotion/render-video', {
+        videoId: videoId,
+        frames: script?.scenes,
+        audioUrl: audioUrl,
+        caption: caption,
+        imagesUrl: videoImagesUrl,
+      });
+
+      if (renderVideoRes.status !== 200) {
+        const errorData = await renderVideoRes.data;
+        throw new Error(errorData?.error || 'Failed to render video');
+      }
+
+      const renderId = renderVideoRes.data.renderId
+
+      console.log({ renderId })
+
+      // decreament credits
+      const removeCreditsRes = await axios.post('/api/remove-credits', {
+        credits: requiredCredits,
+      });
+
+      if (removeCreditsRes.status !== 200) {
+        const errorData = await removeCreditsRes.data;
+        throw new Error(errorData?.error || 'Failed to decrement credits');
+      }
+
       setIsVideoReady(true)
 
       // Show success message with remaining credits
