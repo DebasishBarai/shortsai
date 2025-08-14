@@ -22,7 +22,7 @@ import {
 import { toast } from "sonner";
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
-import { VideoDialog } from '@/components/VideoDialog';
+
 import { convertValueToLabel } from '@/lib/functions';
 import axios from 'axios';
 
@@ -292,15 +292,12 @@ export default function DashboardPage() {
 
                   {/* Actions */}
                   <div className="flex items-center gap-2">
-                    <VideoDialog
-                      triggerText="Watch"
-                      title={video.title || 'Untitled Video'}
-                      description={video.description || ''}
-                      frames={video.frames || []}
-                      audioUrl={video.audioUrl || ''}
-                      imagesUrl={video.imagesUrl || []}
-                      caption={video.caption || []}
-                    />
+                    <Link href={`/video/${video.id}`}>
+                      <Button variant="outline" size="sm">
+                        <Play className="mr-2 h-4 w-4" />
+                        Watch
+                      </Button>
+                    </Link>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button

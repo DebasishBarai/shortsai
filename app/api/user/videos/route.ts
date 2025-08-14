@@ -54,7 +54,7 @@ export async function POST(request: Request) {
       }
     });
 
-    console.log("Found videos:", videos); // Debug log
+    // console.log("Found videos:", videos); // Debug log
 
     return NextResponse.json(videos);
   } catch (error) {

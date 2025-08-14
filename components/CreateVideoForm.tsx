@@ -25,9 +25,10 @@ import { convertValueToLabel } from '@/lib/functions';
 import { Textarea } from '@/components/ui/textarea';
 import axios from 'axios';
 import { VideoDialog } from './VideoDialog';
-import { Play, Square, Coins } from 'lucide-react';
+import { Play, Square, Coins, Eye } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 export default function CreateVideoForm() {
   const { data: session, status } = useSession({ required: true });
@@ -35,6 +36,7 @@ export default function CreateVideoForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [isVideoReady, setIsVideoReady] = useState(false)
+  const [videoId, setVideoId] = useState('')
   const [videoTitle, setVideoTitle] = useState('')
   const [videoDescription, setVideoDescription] = useState('')
   const [videoScenes, setVideoScenes] = useState([])
@@ -166,6 +168,8 @@ export default function CreateVideoForm() {
       const videoId = res.data.videoId
       const script = res.data.script;
       console.log({ script });
+
+      setVideoId(videoId)
 
       const title = script?.title
 
@@ -394,15 +398,12 @@ export default function CreateVideoForm() {
                   </div>
                 ) : (
                   <div className="mt-6 sm:mt-8 flex justify-center">
-                    <VideoDialog
-                      triggerText="🎬 Watch Video"
-                      title={videoTitle}
-                      description={videoDescription}
-                      frames={videoScenes}
-                      audioUrl={audioScriptUrl}
-                      imagesUrl={videoImagesUrl}
-                      caption={videoCaption}
-                    />
+                    <Link href={`/video/${videoId}`} className="w-full">
+                      <Button
+                        className={cn("w-full h-11 sm:h-12 text-sm sm:text-base font-medium")}>
+                        🎬 Watch Video
+                      </Button>
+                    </Link>
                   </div>
                 )}
               </div>

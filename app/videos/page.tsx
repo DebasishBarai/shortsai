@@ -37,7 +37,7 @@ import Link from 'next/link';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
-import { VideoDialog } from '@/components/VideoDialog';
+
 import axios from 'axios';
 
 interface Video {
@@ -318,15 +318,12 @@ export default function VideosPage() {
               {/* Actions */}
               <div className="flex items-center gap-2">
                 <div className="flex-1">
-                  <VideoDialog
-                    triggerText="Watch Video"
-                    title={video.title || 'Untitled Video'}
-                    description={video.description || ''}
-                    frames={video.frames || []}
-                    audioUrl={video.audioUrl || ''}
-                    imagesUrl={video.imagesUrl || []}
-                    caption={video.caption || []}
-                  />
+                  <Link href={`/video/${video.id}`}>
+                    <Button variant="outline" className="w-full">
+                      <Eye className="mr-2 h-4 w-4" />
+                      Watch Video
+                    </Button>
+                  </Link>
                 </div>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
@@ -438,15 +435,12 @@ export default function VideosPage() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <VideoDialog
-                        triggerText="Watch"
-                        title={video.title || 'Untitled Video'}
-                        description={video.description || ''}
-                        frames={video.frames || []}
-                        audioUrl={video.audioUrl || ''}
-                        imagesUrl={video.imagesUrl || []}
-                        caption={video.caption || []}
-                      />
+                      <Link href={`/video/${video.id}`}>
+                        <Button variant="outline" size="sm">
+                          <Eye className="mr-2 h-4 w-4" />
+                          Watch
+                        </Button>
+                      </Link>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button
