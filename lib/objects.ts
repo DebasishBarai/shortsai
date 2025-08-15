@@ -1,449 +1,393 @@
 export const frames = {
-  "title": "Cleopatra & Antony: A Love Forged in Power",
-  "description": "Witness the legendary romance of Cleopatra, the seductive Queen of Egypt, and Mark Antony, the Roman general. A tale of passion, politics, and a love that defied empires, ultimately leading to their tragic end.",
+  "title": "Chrono-Seed: Echoes of the Future",
+  "description": "A lone botanist discovers a time-bending seed, linking her to a forgotten past and a perilous future. Can she cultivate hope before time unravels?",
   "scenes": [
     {
-      "imagePrompt": "A regal Cleopatra, in her prime, with an ornate gold headdress and flowing silk robes, sitting on a luxurious throne in a lavish Egyptian palace. The background shows hints of hieroglyphs and ancient Egyptian architecture. The lighting is soft and warm, emphasizing her beauty and power. Focus on her confident expression.",
-      "contentText": "In the heart of ancient Egypt, a queen unlike any other reigned: Cleopatra."
+      "imagePrompt": "A close-up shot of a glowing, pulsating seed nestled in the palm of a dirt-stained hand, surrounded by scientific instruments and a futuristic botanical lab. The seed emits a soft, ethereal light.",
+      "contentText": "In a forgotten lab, Dr. Aris discovered it – the Chrono-Seed."
     },
     {
-      "imagePrompt": "A strong and charismatic Mark Antony, in Roman military attire, with a stern yet thoughtful expression, standing on a grand marble balcony overlooking a bustling Roman forum. The background features classical Roman buildings and statues. The lighting is strong and directional, highlighting his features.",
-      "contentText": "Across the sea, a powerful Roman general, Mark Antony, shaped an empire."
+      "imagePrompt": "Dr. Aris, a determined woman in a lab coat, gazes into a holographic projection of a lush, ancient forest teeming with bioluminescent flora and fauna, a stark contrast to her futuristic surroundings. Her expression is a mix of awe and wonder.",
+      "contentText": "It offered glimpses of a world long lost, a vibrant past."
     },
     {
-      "imagePrompt": "Cleopatra and Mark Antony, in an intimate and passionate embrace, looking into each other's eyes, within a beautifully decorated Egyptian barge on the Nile River. The setting sun casts a golden glow, reflecting on the water. Their expressions show deep affection and connection. Focus on their intertwined hands.",
-      "contentText": "Their worlds collided, forging a love story that defied empires."
+      "imagePrompt": "The Chrono-Seed, now planted in a glass terrarium, rapidly sprouts tendrils of light that reach out, forming a swirling vortex of shimmering colors. The lab around it shows signs of temporal distortion.",
+      "contentText": "But each vision pulsed with a strange, undeniable energy."
     },
     {
-      "imagePrompt": "A dramatic depiction of a naval battle, with ancient warships clashing on a turbulent sea under a stormy sky. Smoke rises from burning ships. Focus on the chaos and intensity of the battle, hinting at the political turmoil surrounding their love.",
-      "contentText": "But their passion sparked a war, threatening their very existence."
+      "imagePrompt": "Dr. Aris, now outside the lab in a desolate, futuristic wasteland filled with crumbling skyscrapers and a polluted sky, desperately clutches the growing Chrono-Seedling. A single tear rolls down her cheek as she looks at the wasteland.",
+      "contentText": "A stark warning of a barren, desolate future."
     },
     {
-      "imagePrompt": "Cleopatra and Mark Antony, standing side-by-side, looking into the distance with a mixture of determination and somber resolve, against a backdrop of crumbling ancient ruins bathed in moonlight. The scene conveys a sense of their shared fate and ultimate demise. Focus on their unified stance.",
-      "contentText": "A legend of love, power, and a tragic end, forever etched in history."
+      "imagePrompt": "The Chrono-Seedling, now a small, glowing tree, stands resiliently in the center of the desolate landscape. Around its base, patches of green begin to emerge, pushing through the cracked earth, a beacon of hope against the bleakness. Dr. Aris kneels beside it, a look of quiet determination on her face.",
+      "contentText": "Now, with the Chrono-Seedling, Aris plants hope. Can she change fate?"
     }
   ]
 }
 
 export const aspectRatio = "RATIO_9_16"
 
-export const audioScript = "In the heart of ancient Egypt, a queen unlike any other reigned: Cleopatra. Across the sea, a powerful Roman general, Mark Antony, shaped an empire. Their worlds collided, forging a love story that defied empires. But their passion sparked a war, threatening their very existence. A legend of love, power, and a tragic end, forever etched in history. "
+export const audioScript = "In a forgotten lab, Dr. Aris discovered it – the Chrono-Seed. It offered glimpses of a world long lost, a vibrant past. But each vision pulsed with a strange, undeniable energy. A stark warning of a barren, desolate future. Now, with the Chrono-Seedling, Aris plants hope. Can she change fate? "
 
-export const audioUrl = "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme5j5zd0000513mrokd4mxlv/audio.mp3"
+export const audioUrl = "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cmebplvgs00012rbh242y0sl4/audio.mp3"
 
 export const imagesUrl = [
-  "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme5j5zd0000513mrokd4mxlv/images/0.png",
-  "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme5j5zd0000513mrokd4mxlv/images/1.png",
-  "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme5j5zd0000513mrokd4mxlv/images/2.png",
-  "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme5j5zd0000513mrokd4mxlv/images/3.png",
-  "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cme5j5zd0000513mrokd4mxlv/images/4.png"
+  "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cmebplvgs00012rbh242y0sl4/images/0.png",
+  "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cmebplvgs00012rbh242y0sl4/images/1.png",
+  "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cmebplvgs00012rbh242y0sl4/images/2.png",
+  "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cmebplvgs00012rbh242y0sl4/images/3.png",
+  "https://debb-bucket.s3.amazonaws.com/shortsai/cme3y6k2j0000gkmn43orwv0h/cmebplvgs00012rbh242y0sl4/images/4.png"
 ]
 
 export const caption = [
   {
     "text": "In",
-    "start": 160,
-    "end": 240,
-    "confidence": 0.9951172,
+    "start": 80,
+    "end": 200,
+    "confidence": 0.99658203,
     "speaker": null
   },
   {
-    "text": "the",
-    "start": 240,
+    "text": "a",
+    "start": 200,
     "end": 320,
-    "confidence": 1,
-    "speaker": null
-  },
-  {
-    "text": "heart",
-    "start": 320,
-    "end": 440,
-    "confidence": 1,
-    "speaker": null
-  },
-  {
-    "text": "of",
-    "start": 440,
-    "end": 600,
-    "confidence": 1,
-    "speaker": null
-  },
-  {
-    "text": "ancient",
-    "start": 600,
-    "end": 1040,
-    "confidence": 0.99527997,
-    "speaker": null
-  },
-  {
-    "text": "Egypt,",
-    "start": 1040,
-    "end": 1640,
-    "confidence": 0.9881592,
-    "speaker": null
-  },
-  {
-    "text": "a",
-    "start": 1640,
-    "end": 1880,
-    "confidence": 0.99902344,
-    "speaker": null
-  },
-  {
-    "text": "queen",
-    "start": 1880,
-    "end": 2160,
-    "confidence": 0.9814453,
-    "speaker": null
-  },
-  {
-    "text": "unlike",
-    "start": 2160,
-    "end": 2600,
-    "confidence": 0.9996745,
-    "speaker": null
-  },
-  {
-    "text": "any",
-    "start": 2600,
-    "end": 2760,
-    "confidence": 1,
-    "speaker": null
-  },
-  {
-    "text": "other",
-    "start": 2760,
-    "end": 3040,
-    "confidence": 0.99853516,
-    "speaker": null
-  },
-  {
-    "text": "reigned",
-    "start": 3040,
-    "end": 3560,
-    "confidence": 0.9663086,
-    "speaker": null
-  },
-  {
-    "text": "Cleopatra.",
-    "start": 3560,
-    "end": 4480,
-    "confidence": 0.9980469,
-    "speaker": null
-  },
-  {
-    "text": "Across",
-    "start": 4800,
-    "end": 5160,
-    "confidence": 1,
-    "speaker": null
-  },
-  {
-    "text": "the",
-    "start": 5160,
-    "end": 5440,
-    "confidence": 1,
-    "speaker": null
-  },
-  {
-    "text": "sea,",
-    "start": 5440,
-    "end": 5840,
-    "confidence": 0.99853516,
-    "speaker": null
-  },
-  {
-    "text": "a",
-    "start": 5840,
-    "end": 6120,
-    "confidence": 0.9980469,
-    "speaker": null
-  },
-  {
-    "text": "powerful",
-    "start": 6120,
-    "end": 6480,
-    "confidence": 1,
-    "speaker": null
-  },
-  {
-    "text": "Roman",
-    "start": 6480,
-    "end": 6880,
-    "confidence": 0.9851074,
-    "speaker": null
-  },
-  {
-    "text": "general,",
-    "start": 6880,
-    "end": 7280,
-    "confidence": 1,
-    "speaker": null
-  },
-  {
-    "text": "Mark",
-    "start": 7520,
-    "end": 7920,
-    "confidence": 0.6870117,
-    "speaker": null
-  },
-  {
-    "text": "Antony,",
-    "start": 7920,
-    "end": 8560,
-    "confidence": 0.9929199,
-    "speaker": null
-  },
-  {
-    "text": "shaped",
-    "start": 8720,
-    "end": 9160,
-    "confidence": 1,
-    "speaker": null
-  },
-  {
-    "text": "an",
-    "start": 9160,
-    "end": 9360,
     "confidence": 0.9995117,
     "speaker": null
   },
   {
-    "text": "empire.",
-    "start": 9360,
-    "end": 9840,
-    "confidence": 0.9404297,
+    "text": "forgotten",
+    "start": 320,
+    "end": 800,
+    "confidence": 1,
     "speaker": null
   },
   {
-    "text": "Their",
+    "text": "lab.",
+    "start": 800,
+    "end": 1120,
+    "confidence": 0.9995117,
+    "speaker": null
+  },
+  {
+    "text": "Dr.",
+    "start": 1120,
+    "end": 1600,
+    "confidence": 0.99984,
+    "speaker": null
+  },
+  {
+    "text": "Aris",
+    "start": 1600,
+    "end": 2120,
+    "confidence": 0.57543945,
+    "speaker": null
+  },
+  {
+    "text": "discovered",
+    "start": 2120,
+    "end": 2600,
+    "confidence": 0.86409503,
+    "speaker": null
+  },
+  {
+    "text": "it.",
+    "start": 2600,
+    "end": 2840,
+    "confidence": 0.8647461,
+    "speaker": null
+  },
+  {
+    "text": "The",
+    "start": 2840,
+    "end": 3080,
+    "confidence": 0.97753906,
+    "speaker": null
+  },
+  {
+    "text": "Chronoseed.",
+    "start": 3080,
+    "end": 3920,
+    "confidence": 0.7155762,
+    "speaker": null
+  },
+  {
+    "text": "It",
+    "start": 4160,
+    "end": 4440,
+    "confidence": 0.9995117,
+    "speaker": null
+  },
+  {
+    "text": "offered",
+    "start": 4440,
+    "end": 4760,
+    "confidence": 1,
+    "speaker": null
+  },
+  {
+    "text": "glimpses",
+    "start": 4760,
+    "end": 5200,
+    "confidence": 0.9996338,
+    "speaker": null
+  },
+  {
+    "text": "of",
+    "start": 5200,
+    "end": 5320,
+    "confidence": 1,
+    "speaker": null
+  },
+  {
+    "text": "a",
+    "start": 5320,
+    "end": 5480,
+    "confidence": 0.9995117,
+    "speaker": null
+  },
+  {
+    "text": "world",
+    "start": 5480,
+    "end": 5720,
+    "confidence": 0.9995117,
+    "speaker": null
+  },
+  {
+    "text": "long",
+    "start": 5720,
+    "end": 6040,
+    "confidence": 1,
+    "speaker": null
+  },
+  {
+    "text": "lost,",
+    "start": 6040,
+    "end": 6400,
+    "confidence": 1,
+    "speaker": null
+  },
+  {
+    "text": "a",
+    "start": 6560,
+    "end": 6840,
+    "confidence": 0.99902344,
+    "speaker": null
+  },
+  {
+    "text": "vibrant",
+    "start": 6840,
+    "end": 7320,
+    "confidence": 1,
+    "speaker": null
+  },
+  {
+    "text": "past.",
+    "start": 7320,
+    "end": 7680,
+    "confidence": 0.9995117,
+    "speaker": null
+  },
+  {
+    "text": "But",
+    "start": 8000,
+    "end": 8280,
+    "confidence": 0.9995117,
+    "speaker": null
+  },
+  {
+    "text": "each",
+    "start": 8280,
+    "end": 8480,
+    "confidence": 1,
+    "speaker": null
+  },
+  {
+    "text": "vision",
+    "start": 8480,
+    "end": 8880,
+    "confidence": 1,
+    "speaker": null
+  },
+  {
+    "text": "pulsed",
+    "start": 8880,
+    "end": 9280,
+    "confidence": 0.9880371,
+    "speaker": null
+  },
+  {
+    "text": "with",
+    "start": 9280,
+    "end": 9400,
+    "confidence": 1,
+    "speaker": null
+  },
+  {
+    "text": "a",
+    "start": 9400,
+    "end": 9560,
+    "confidence": 0.9970703,
+    "speaker": null
+  },
+  {
+    "text": "strange,",
+    "start": 9560,
+    "end": 10000,
+    "confidence": 1,
+    "speaker": null
+  },
+  {
+    "text": "undeniable",
     "start": 10080,
-    "end": 10360,
-    "confidence": 1,
+    "end": 10880,
+    "confidence": 0.99833983,
     "speaker": null
   },
   {
-    "text": "worlds",
-    "start": 10360,
-    "end": 10840,
-    "confidence": 0.81103516,
-    "speaker": null
-  },
-  {
-    "text": "collided,",
-    "start": 10840,
+    "text": "energy.",
+    "start": 10880,
     "end": 11280,
-    "confidence": 1,
+    "confidence": 0.9921875,
     "speaker": null
   },
   {
-    "text": "forging",
-    "start": 11440,
+    "text": "A",
+    "start": 11680,
     "end": 11960,
     "confidence": 0.99902344,
     "speaker": null
   },
   {
-    "text": "a",
+    "text": "stark",
     "start": 11960,
-    "end": 12080,
-    "confidence": 1,
-    "speaker": null
-  },
-  {
-    "text": "love",
-    "start": 12080,
     "end": 12280,
     "confidence": 1,
     "speaker": null
   },
   {
-    "text": "story",
+    "text": "warning",
     "start": 12280,
-    "end": 12600,
-    "confidence": 1,
+    "end": 12560,
+    "confidence": 0.9953613,
     "speaker": null
   },
   {
-    "text": "that",
-    "start": 12600,
-    "end": 12840,
-    "confidence": 1,
-    "speaker": null
-  },
-  {
-    "text": "defied",
-    "start": 12840,
-    "end": 13320,
-    "confidence": 0.99975586,
-    "speaker": null
-  },
-  {
-    "text": "empires.",
-    "start": 13320,
-    "end": 14000,
-    "confidence": 0.9998372,
-    "speaker": null
-  },
-  {
-    "text": "But",
-    "start": 14080,
-    "end": 14400,
-    "confidence": 0.7055664,
-    "speaker": null
-  },
-  {
-    "text": "their",
-    "start": 14400,
-    "end": 14640,
-    "confidence": 1,
-    "speaker": null
-  },
-  {
-    "text": "passion",
-    "start": 14640,
-    "end": 15080,
-    "confidence": 0.73254395,
-    "speaker": null
-  },
-  {
-    "text": "sparked",
-    "start": 15080,
-    "end": 15480,
+    "text": "of",
+    "start": 12560,
+    "end": 12720,
     "confidence": 1,
     "speaker": null
   },
   {
     "text": "a",
-    "start": 15480,
-    "end": 15600,
-    "confidence": 0.99902344,
+    "start": 12720,
+    "end": 12840,
+    "confidence": 0.9975586,
     "speaker": null
   },
   {
-    "text": "war",
-    "start": 15600,
-    "end": 15840,
+    "text": "barren,",
+    "start": 12840,
+    "end": 13280,
+    "confidence": 0.98339844,
+    "speaker": null
+  },
+  {
+    "text": "desolate",
+    "start": 13360,
+    "end": 14000,
     "confidence": 1,
     "speaker": null
   },
   {
-    "text": "threatening",
-    "start": 15919,
-    "end": 16480,
+    "text": "future.",
+    "start": 14000,
+    "end": 14320,
     "confidence": 0.9995117,
     "speaker": null
   },
   {
-    "text": "their",
-    "start": 16480,
+    "text": "Now",
+    "start": 14960,
+    "end": 15320,
+    "confidence": 0.9995117,
+    "speaker": null
+  },
+  {
+    "text": "with",
+    "start": 15320,
+    "end": 15560,
+    "confidence": 0.9995117,
+    "speaker": null
+  },
+  {
+    "text": "the",
+    "start": 15560,
+    "end": 15720,
+    "confidence": 0.99609375,
+    "speaker": null
+  },
+  {
+    "text": "Chrono",
+    "start": 15720,
+    "end": 16199,
+    "confidence": 0.82910156,
+    "speaker": null
+  },
+  {
+    "text": "seedling,",
+    "start": 16199,
     "end": 16640,
-    "confidence": 1,
+    "confidence": 0.984375,
     "speaker": null
   },
   {
-    "text": "very",
+    "text": "Eris",
     "start": 16640,
-    "end": 16880,
-    "confidence": 0.99902344,
+    "end": 17120,
+    "confidence": 0.76220703,
     "speaker": null
   },
   {
-    "text": "existence.",
-    "start": 16880,
-    "end": 17600,
-    "confidence": 0.91780597,
+    "text": "plants",
+    "start": 17120,
+    "end": 17560,
+    "confidence": 0.99560547,
     "speaker": null
   },
   {
-    "text": "A",
-    "start": 17920,
-    "end": 18160,
-    "confidence": 0.99853516,
+    "text": "hope.",
+    "start": 17560,
+    "end": 17920,
+    "confidence": 0.9921875,
     "speaker": null
   },
   {
-    "text": "legend",
+    "text": "Can",
     "start": 18160,
     "end": 18440,
     "confidence": 1,
     "speaker": null
   },
   {
-    "text": "of",
+    "text": "she",
     "start": 18440,
     "end": 18640,
-    "confidence": 1,
-    "speaker": null
-  },
-  {
-    "text": "love,",
-    "start": 18640,
-    "end": 18960,
-    "confidence": 1,
-    "speaker": null
-  },
-  {
-    "text": "power,",
-    "start": 19200,
-    "end": 19600,
-    "confidence": 1,
-    "speaker": null
-  },
-  {
-    "text": "and",
-    "start": 19600,
-    "end": 19920,
-    "confidence": 0.9458008,
-    "speaker": null
-  },
-  {
-    "text": "a",
-    "start": 19920,
-    "end": 20120,
-    "confidence": 0.99902344,
-    "speaker": null
-  },
-  {
-    "text": "tragic",
-    "start": 20120,
-    "end": 20640,
-    "confidence": 0.97998047,
-    "speaker": null
-  },
-  {
-    "text": "end",
-    "start": 20640,
-    "end": 20960,
     "confidence": 0.9995117,
     "speaker": null
   },
   {
-    "text": "forever",
-    "start": 21040,
-    "end": 21520,
-    "confidence": 1,
+    "text": "change",
+    "start": 18640,
+    "end": 18880,
+    "confidence": 0.9995117,
     "speaker": null
   },
   {
-    "text": "etched",
-    "start": 21520,
-    "end": 21920,
-    "confidence": 0.94958496,
-    "speaker": null
-  },
-  {
-    "text": "in",
-    "start": 21920,
-    "end": 22040,
-    "confidence": 1,
-    "speaker": null
-  },
-  {
-    "text": "history.",
-    "start": 22040,
-    "end": 22320,
-    "confidence": 0.99658203,
+    "text": "feet?",
+    "start": 18880,
+    "end": 19280,
+    "confidence": 0.99780273,
     "speaker": null
   }
 ]

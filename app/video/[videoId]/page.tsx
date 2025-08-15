@@ -1,11 +1,12 @@
 'use client'
 
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { VideoPlayer } from '@/components/VideoPlayer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Clock, Mic, FileText, Play } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Calendar, Clock, Mic, FileText, Play, Download } from 'lucide-react';
 
 interface PageProps {
   params: {
@@ -37,37 +38,46 @@ export default function VideoPage({ params }: PageProps) {
   const [video, setVideo] = useState<VideoData | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const getVideo = async (videoId: string) => {
+  const getVideo = useCallback(async (videoId: string) => {
     try {
       setError(null);
 
       const res = await axios.post(`/api/user/videos/${videoId}`);
 
-      const video = res.data;
-      setVideo(video);
-      return video;
+      const videoData = res.data;
+      console.log('Video data:', videoData);
+      setVideo(videoData);
+
+      const progressRes = await axios.post(`/api/remotion/get-render-progress`, {
+        renderId: videoData.renderId,
+        bucketName: videoData.bucketName,
+      });
+
+      const progress = progressRes.data;
+
+      console.log('Progress:', progress);
     } catch (error: any) {
       console.error('Error fetching video:', error);
       const errorMessage = error.response?.data?.error || error.message || 'Failed to fetch video';
       setError(errorMessage);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (videoId) {
       getVideo(videoId);
     }
-  }, [videoId]); // Add videoId as dependency
+  }, [videoId, getVideo]); // Add videoId and getVideo as dependencies
 
   const formatDuration = (seconds?: number | string) => {
     if (!seconds) return 'N/A';
-    
+
     // Convert to number if it's a string
     const secondsNum = typeof seconds === 'string' ? parseInt(seconds, 10) : seconds;
-    
+
     // Check if it's a valid number
     if (isNaN(secondsNum)) return 'N/A';
-    
+
     const minutes = Math.floor(secondsNum / 60);
     const remainingSeconds = secondsNum % 60;
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
@@ -83,25 +93,38 @@ export default function VideoPage({ params }: PageProps) {
     });
   };
 
+  const handleDownload = () => {
+    if (video?.url) {
+      const link = document.createElement('a');
+      link.href = video.url;
+      link.download = `${video.title || 'video'}.mp4`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
   const renderVideoContent = () => {
     if (!video) return null;
-    
+
     // If URL exists and video is completed, show the URL video
     if (video.url && video.completed) {
       return (
-        <div className="w-full h-full min-h-[400px] lg:min-h-[600px]">
-          <video
-            src={video.url}
-            controls
-            className="w-full h-full object-cover rounded-lg"
-            poster={video.imagesUrl?.[0]}
-          >
-            Your browser does not support the video tag.
-          </video>
+        <div className="w-full flex justify-center">
+          <div className="w-[380px] h-[675px]">
+            <video
+              src={video.url}
+              controls
+              className="w-full h-full object-cover rounded-lg"
+              poster={video.imagesUrl?.[0]}
+            >
+              Your browser does not support the video tag.
+            </video>
+          </div>
         </div>
       );
     }
-    
+
     // Otherwise, show the Remotion video player
     return (
       <VideoPlayer
@@ -145,7 +168,7 @@ export default function VideoPage({ params }: PageProps) {
           <div className="flex justify-center">
             {renderVideoContent()}
           </div>
-          
+
           {/* Details Section */}
           <Card>
             <CardHeader>
@@ -161,20 +184,20 @@ export default function VideoPage({ params }: PageProps) {
                   <p className="text-sm">{video.description}</p>
                 </div>
               )}
-              
+
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div className="flex items-center gap-2">
                   <Mic className="w-4 h-4 text-muted-foreground" />
                   <span className="text-muted-foreground">Voice:</span>
                   <span>{video.voiceType || 'N/A'}</span>
                 </div>
-                
+
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-muted-foreground" />
                   <span className="text-muted-foreground">Created:</span>
                   <span>{formatDate(typeof video.createdAt === 'string' ? video.createdAt : video.createdAt.toISOString())}</span>
                 </div>
-                
+
                 <div className="flex items-center gap-2">
                   <Play className="w-4 h-4 text-muted-foreground" />
                   <span className="text-muted-foreground">Status:</span>
@@ -183,25 +206,39 @@ export default function VideoPage({ params }: PageProps) {
                   </Badge>
                 </div>
               </div>
-              
+
               {video.style && (
                 <div>
                   <h3 className="font-semibold text-sm text-muted-foreground mb-2">Style</h3>
                   <Badge variant="outline">{video.style}</Badge>
                 </div>
               )}
-              
+
               {video.contentType && (
                 <div>
                   <h3 className="font-semibold text-sm text-muted-foreground mb-2">Content Type</h3>
                   <Badge variant="outline">{video.contentType}</Badge>
                 </div>
               )}
-              
+
               {video.prompt && (
                 <div>
                   <h3 className="font-semibold text-sm text-muted-foreground mb-2">Prompt</h3>
                   <p className="text-sm bg-muted p-3 rounded-md">{video.prompt}</p>
+                </div>
+              )}
+
+              {/* Download Button */}
+              {video.completed && video.url && (
+                <div className="pt-4">
+                  <Button
+                    onClick={handleDownload}
+                    className="w-full"
+                    variant="default"
+                  >
+                    <Download className="mr-2 h-4 w-4" />
+                    Download Video
+                  </Button>
                 </div>
               )}
             </CardContent>
@@ -214,7 +251,7 @@ export default function VideoPage({ params }: PageProps) {
           <div className="sticky top-8">
             {renderVideoContent()}
           </div>
-          
+
           {/* Details Section */}
           <div className="space-y-6">
             <Card>
@@ -231,20 +268,20 @@ export default function VideoPage({ params }: PageProps) {
                     <p className="text-sm leading-relaxed">{video.description}</p>
                   </div>
                 )}
-                
+
                 <div className="grid grid-cols-1 gap-4 text-sm">
                   <div className="flex items-center gap-3">
                     <Mic className="w-4 h-4 text-muted-foreground" />
                     <span className="text-muted-foreground min-w-[80px]">Voice:</span>
                     <span className="font-medium">{video.voiceType || 'N/A'}</span>
                   </div>
-                  
+
                   <div className="flex items-center gap-3">
                     <Calendar className="w-4 h-4 text-muted-foreground" />
                     <span className="text-muted-foreground min-w-[80px]">Created:</span>
                     <span className="font-medium">{formatDate(typeof video.createdAt === 'string' ? video.createdAt : video.createdAt.toISOString())}</span>
                   </div>
-                  
+
                   <div className="flex items-center gap-3">
                     <Play className="w-4 h-4 text-muted-foreground" />
                     <span className="text-muted-foreground min-w-[80px]">Status:</span>
@@ -253,25 +290,39 @@ export default function VideoPage({ params }: PageProps) {
                     </Badge>
                   </div>
                 </div>
-                
+
                 {video.style && (
                   <div>
                     <h3 className="font-semibold text-sm text-muted-foreground mb-2">Style</h3>
                     <Badge variant="outline">{video.style}</Badge>
                   </div>
                 )}
-                
+
                 {video.contentType && (
                   <div>
                     <h3 className="font-semibold text-sm text-muted-foreground mb-2">Content Type</h3>
                     <Badge variant="outline">{video.contentType}</Badge>
                   </div>
                 )}
-                
+
                 {video.prompt && (
                   <div>
                     <h3 className="font-semibold text-sm text-muted-foreground mb-2">Prompt</h3>
                     <p className="text-sm bg-muted p-4 rounded-md leading-relaxed">{video.prompt}</p>
+                  </div>
+                )}
+
+                {/* Download Button */}
+                {video.completed && video.url && (
+                  <div className="pt-6">
+                    <Button
+                      onClick={handleDownload}
+                      className="w-full"
+                      variant="default"
+                    >
+                      <Download className="mr-2 h-4 w-4" />
+                      Download Video
+                    </Button>
                   </div>
                 )}
               </CardContent>

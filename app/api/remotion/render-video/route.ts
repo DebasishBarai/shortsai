@@ -31,7 +31,7 @@ export async function POST(request: Request) {
 
     //Implement video rendering logic
     const functions = await getFunctions({
-      region: 'us-east-1',
+      region: 'ap-south-1',
       compatibleOnly: true,
     });
 
@@ -65,10 +65,11 @@ export async function POST(request: Request) {
       },
       data: {
         renderId,
+        bucketName
       },
     });
 
-    return NextResponse.json({ success: true, renderId });
+    return NextResponse.json({ success: true, renderId, bucketName });
   } catch (error) {
     console.error('Error rendering video:', error);
     return NextResponse.json(

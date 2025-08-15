@@ -245,7 +245,7 @@ export default function CreateVideoForm() {
         frames: script?.scenes,
         audioUrl: audioUrl,
         caption: caption,
-        imagesUrl: videoImagesUrl,
+        imagesUrl: imagesUrl,
       });
 
       if (renderVideoRes.status !== 200) {

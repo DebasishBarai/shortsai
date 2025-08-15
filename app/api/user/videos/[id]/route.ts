@@ -57,6 +57,8 @@ export async function POST(request: Request, { params }: { params: { id: string 
         caption: true,
         error: true,
         completed: true,
+        renderId: true,
+        bucketName: true,
       }
     });
 

@@ -3,8 +3,10 @@ import { prisma } from "@/lib/prisma";
 
 export const POST = appRouterWebhook({
   secret: process.env.REMOTION_WEBHOOK_SECRET!,
-  testing: process.env.NODE_ENV === 'development',
-
+  testing: true,
+  extraHeaders: {
+    region: 'ap-south-1',
+  },
   onSuccess: async ({ renderId, outputUrl }) => {
     console.log(`✅ Render ${renderId} completed: ${outputUrl}`);
     // Your success logic here
