@@ -5,12 +5,11 @@ import { PayPalButtons } from "@paypal/react-paypal-js";
 import { toast } from "sonner";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import { Button } from "./ui/button";
 
 export function PricingCards() {
 
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
 
   const creditPackages = [

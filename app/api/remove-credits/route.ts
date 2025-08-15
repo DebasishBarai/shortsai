@@ -55,8 +55,8 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
-      newCredits: updatedUser.credits,
-      addedCredits: credits
+      currentCredits: updatedUser.credits,
+      removedCredits: credits
     });
   } catch (error) {
     console.log({ error });

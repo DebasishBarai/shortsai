@@ -3,6 +3,7 @@
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+import { RecoilRoot } from "recoil";
 import { CurrencyProvider } from "@/lib/currency-context";
 import { Toaster } from 'sonner';
 
@@ -21,7 +22,9 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <RecoilRoot>
+              {children}
+            </RecoilRoot>
           </ThemeProvider>
         </CurrencyProvider>
         <Toaster />

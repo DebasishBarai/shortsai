@@ -64,7 +64,7 @@ model User {
   hashedPassword String?
   isVerified     Boolean   @default(false)
   verifyToken    String?   @unique
-  credits        Int       @default(0) // Number of available credits
+  credits        Int       @default(5) // Number of available credits
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   accounts       Account[]

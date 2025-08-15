@@ -14,9 +14,13 @@ import {
 } from "@/components/ui/sheet";
 import { GetCreditsDialog } from "@/components/GetCreditsDialog";
 import Image from 'next/image';
+import { useRecoilValue } from 'recoil';
+import { creditState } from '@/store/store';
 
 const Navbar = () => {
   const { data: session, status } = useSession();
+
+  const credits = useRecoilValue(creditState);
 
   const handleSignOut = () => {
     signOut({ callbackUrl: '/' }); // This will redirect to the landing page after logout
@@ -62,7 +66,7 @@ const Navbar = () => {
           <div className="flex items-center gap-2 px-3 py-2 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
             <Coins className="h-4 w-4 text-green-600 dark:text-green-400" />
             <span className="text-sm font-medium text-green-700 dark:text-green-300">
-              {session.user?.credits || 0} Credits
+              {credits} Credits
             </span>
           </div>
 

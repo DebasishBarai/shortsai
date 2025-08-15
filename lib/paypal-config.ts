@@ -1,7 +1,7 @@
 export const paypalOptions = {
   clientId: process.env.NODE_ENV === 'production'
-    ? process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID!
-    : process.env.NEXT_PUBLIC_SANDBOX_PAYPAL_CLIENT_ID!,
+    ? (process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || '')
+    : (process.env.NEXT_PUBLIC_SANDBOX_PAYPAL_CLIENT_ID || ''),
   currency: "USD",
   intent: "capture",
   components: ["buttons"],

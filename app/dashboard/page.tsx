@@ -25,6 +25,8 @@ import Image from 'next/image';
 
 import { convertValueToLabel } from '@/lib/functions';
 import axios from 'axios';
+import { useRecoilState } from 'recoil';
+import { creditState } from '@/store/store';
 
 interface Video {
   id: string;
@@ -57,6 +59,7 @@ export default function DashboardPage() {
   const [videos, setVideos] = useState<Video[]>([]);
   const [userData, setUserData] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [credits, setCredits] = useRecoilState(creditState);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -68,6 +71,10 @@ export default function DashboardPage() {
 
         const videosData = await videosRes.data;
         const userData = await userRes.data;
+
+        if (userData?.credits !== undefined) {
+          setCredits(userData.credits)
+        }
 
         if (Array.isArray(videosData)) {
           // Sort videos by creation date (newest first)
@@ -121,11 +128,9 @@ export default function DashboardPage() {
         <div className="space-y-2">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">Welcome back, {session?.user?.name}</h1>
           <p className="text-sm sm:text-base text-muted-foreground">
-            {userData?.credits !== undefined && (
-              <span className="text-primary font-medium">
-                {userData.credits} credits remaining
-              </span>
-            )}
+            <span className="text-primary font-medium">
+              {credits || 0} credits remaining
+            </span>
           </p>
         </div>
       </div>

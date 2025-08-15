@@ -29,6 +29,8 @@ import { Play, Square, Coins, Eye } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { useRecoilState } from 'recoil';
+import { creditState } from '@/store/store';
 
 export default function CreateVideoForm() {
   const { data: session, status } = useSession({ required: true });
@@ -37,12 +39,15 @@ export default function CreateVideoForm() {
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [isVideoReady, setIsVideoReady] = useState(false)
   const [videoId, setVideoId] = useState('')
-  const [videoTitle, setVideoTitle] = useState('')
-  const [videoDescription, setVideoDescription] = useState('')
-  const [videoScenes, setVideoScenes] = useState([])
-  const [audioScriptUrl, setAudioScriptUrl] = useState('')
-  const [videoImagesUrl, setVideoImagesUrl] = useState([])
-  const [videoCaption, setVideoCaption] = useState([])
+  // const [videoTitle, setVideoTitle] = useState('')
+  // const [videoDescription, setVideoDescription] = useState('')
+  // const [videoScenes, setVideoScenes] = useState([])
+  // const [audioScriptUrl, setAudioScriptUrl] = useState('')
+  // const [videoImagesUrl, setVideoImagesUrl] = useState([])
+  // const [videoCaption, setVideoCaption] = useState([])
+
+  const [credits, setCredits] = useRecoilState(creditState);
+
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const contentType = Object.values(ContentType).map(type => ({
@@ -148,6 +153,8 @@ export default function CreateVideoForm() {
 
       const { hasEnoughCredits, currentCredits } = creditCheckRes.data;
 
+      setCredits(currentCredits)
+
       if (!hasEnoughCredits) {
         const durationLabel = convertValueToLabel({ type: "VideoDuration", input: formData.duration as string });
         toast.error(`Insufficient credits. You have ${currentCredits} credits but need ${requiredCredits} credits to create a ${durationLabel} video. Please purchase more credits.`);
@@ -173,13 +180,13 @@ export default function CreateVideoForm() {
 
       const title = script?.title
 
-      setVideoTitle(title)
+      // setVideoTitle(title)
 
       const description = script?.description
 
-      setVideoDescription(description)
+      // setVideoDescription(description)
 
-      setVideoScenes(script?.scenes)
+      // setVideoScenes(script?.scenes)
 
       // generate script to generate the audio
       let audioScript = '';
@@ -202,7 +209,7 @@ export default function CreateVideoForm() {
       const audioUrl = audioRes.data.audioUrl
       console.log({ audioUrl });
 
-      setAudioScriptUrl(audioUrl)
+      // setAudioScriptUrl(audioUrl)
 
       // generate images
       const imageRes = await axios.post('/api/generate-images', {
@@ -220,7 +227,7 @@ export default function CreateVideoForm() {
       const imagesUrl = imageRes.data.imagesUrl;
       console.log({ imagesUrl });
 
-      setVideoImagesUrl(imagesUrl)
+      // setVideoImagesUrl(imagesUrl)
 
       //generate captions file for captions
       const captionRes = await axios.post('/api/generate-caption', {
@@ -237,7 +244,7 @@ export default function CreateVideoForm() {
 
       console.log({ caption })
 
-      setVideoCaption(caption)
+      // setVideoCaption(caption)
 
       // start video render
       const renderVideoRes = await axios.post('/api/remotion/render-video', {
@@ -266,6 +273,8 @@ export default function CreateVideoForm() {
         const errorData = await removeCreditsRes.data;
         throw new Error(errorData?.error || 'Failed to decrement credits');
       }
+
+      setCredits(removeCreditsRes.data.currentCredits)
 
       setIsVideoReady(true)
 

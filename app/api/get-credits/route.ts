@@ -9,23 +9,10 @@ export async function POST(request: Request) {
     console.log("Session:", session); // Debug log
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
-
-    const body = await request.json();
-    console.log("Add credits request body:", body); // Debug log
-
-    const { credits } = body;
-
-    // Validate required fields
-    if (!credits || typeof credits !== 'number' || credits <= 0) {
-      return NextResponse.json(
-        { error: "Invalid credits amount" },
-        { status: 400 }
-      );
+      return NextResponse.json({
+        success: true,
+        currentCredits: 0,
+      });
     }
 
     // Get user
@@ -41,27 +28,20 @@ export async function POST(request: Request) {
       );
     }
 
-    // Add credits to user
-    const updatedUser = await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        credits: {
-          increment: credits
-        }
-      },
-    });
+    const currentCredits = (user as any).credits || 0;
 
-    console.log("Updated user credits:", updatedUser); // Debug log
+    console.log("Credit check result:", {
+      currentCredits,
+    }); // Debug log
 
     return NextResponse.json({
       success: true,
-      currentCredits: updatedUser.credits,
-      addedCredits: credits
+      currentCredits,
     });
   } catch (error) {
     console.log({ error });
     return NextResponse.json(
-      { error: "Failed to add credits" },
+      { error: "Failed to check credits" },
       { status: 500 }
     );
   }
