@@ -177,7 +177,7 @@ export default function Home() {
                   <div className="absolute bottom-4 left-4 right-4">
                     <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-lg p-3">
                       <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                        "{landingVideos[activeVideoIndex].prompt}"
+                        {landingVideos[activeVideoIndex].prompt}
                       </p>
                     </div>
                   </div>

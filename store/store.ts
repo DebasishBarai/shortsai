@@ -7,7 +7,7 @@ const api = axios.create({
 });
 
 // creditState
-export const creditState = atom<number>({
+/*export const creditState = atom<number>({
   key: "creditState",
   default: selector({
     key: "creditSelectorState",
@@ -29,4 +29,9 @@ export const creditState = atom<number>({
       }
     }
   }),
+}); */
+
+export const creditState = atom<number>({
+  key: "creditState",
+  default: 0,
 });
