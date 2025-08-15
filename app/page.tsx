@@ -2,14 +2,16 @@
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Check, Megaphone, Users, TrendingUp, Bot, Video, Timer, Rocket, Mic, Sparkles } from "lucide-react";
+import { Check, Megaphone, Users, TrendingUp, Bot, Video, Timer, Rocket, Mic, Sparkles, Play, ArrowRight } from "lucide-react";
 import { PricingCards } from "@/components/PricingCards";
 import { signIn, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { landingVideos } from "@/lib/objects";
 
 export default function Home() {
   const { data: session } = useSession();
+  const [activeVideoIndex, setActiveVideoIndex] = useState(0);
   const [activeStatIndex, setActiveStatIndex] = useState(0);
 
   const marketingStats = [
@@ -45,6 +47,14 @@ export default function Home() {
     },
   ];
 
+  // Auto-rotate through videos
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveVideoIndex((prev) => (prev + 1) % landingVideos.length);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Auto-rotate through stats
   useEffect(() => {
@@ -57,7 +67,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-[calc(100vh-4rem)]">
-      {/* Hero Section with Gradient Background */}
+      {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
         {/* Decorative elements */}
         <div className="absolute top-20 right-[10%] w-72 h-72 bg-blue-500/10 rounded-full blur-3xl"></div>
@@ -65,20 +75,20 @@ export default function Home() {
         <div className="absolute top-40 left-[15%] w-40 h-40 bg-amber-500/10 rounded-full blur-2xl"></div>
 
         <div className="container mx-auto px-4 py-24 md:py-32 relative z-10">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left side - Text and CTA */}
             <div className="space-y-8">
               <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 text-sm font-medium mb-4">
                 <Sparkles className="h-4 w-4 mr-2" />
-                Powered by GPT-4
+                AI-Powered Video Generation
               </div>
 
               <h1 className="md:py-4 text-4xl md:text-5xl lg:text-6xl font-bold leading-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
-                Generate High Quality Videos With AI
+                One Prompt. One Video.
               </h1>
 
               <p className="text-xl text-slate-600 dark:text-slate-300">
-                Generate high quality videos with AI, schedule upload to your social media, saving time and effort.
+                Transform your ideas into engaging videos instantly. Just describe what you want, and our AI creates professional videos with voice, visuals, and captions.
               </p>
 
               <div className="flex flex-wrap gap-4">
@@ -94,7 +104,7 @@ export default function Home() {
                     onClick={() => signIn()}
                     className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg shadow-blue-500/25 border-0"
                   >
-                    Generate Videos
+                    Start Creating
                   </Button>
                 )}
                 <Link href="/pricing">
@@ -147,27 +157,133 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right side - Image */}
-            <div className="relative h-[520px] hidden md:block">
-              <div className="absolute -inset-0.5 bg-gradient-to-tr from-blue-500/10 via-purple-500/10 to-amber-500/10 rounded-2xl blur"></div>
-              <div className="relative h-full w-full bg-white dark:bg-slate-800 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-xl">
-                <Image
-                  src="/remind-me.jpg"
-                  alt="Woman using WhatsApp on tablet"
-                  fill
-                  className="object-cover object-center"
-                  priority
-                />
+            {/* Right side - Video Showcase */}
+            <div className="relative">
+              <div className="relative h-[600px] w-full max-w-[320px] mx-auto">
+                {/* Video Display */}
+                <div className="relative w-full h-full rounded-2xl overflow-hidden border-4 border-white dark:border-slate-700 shadow-2xl">
+                  <video
+                    key={landingVideos[activeVideoIndex].videoUrl}
+                    src={landingVideos[activeVideoIndex].videoUrl}
+                    className="w-full h-full object-cover"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
 
-                {/* WhatsApp message bubbles */}
-                <div className="absolute right-10 top-24 bg-green-100 dark:bg-green-900/90 p-4 rounded-lg rounded-tr-none shadow-lg transform rotate-3 z-10 max-w-[180px] backdrop-blur-sm border border-green-200 dark:border-green-800">
-                  <p className="text-sm font-medium text-green-800 dark:text-green-200">Check out our new promotion! 🎉</p>
+                  {/* Prompt Display */}
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-lg p-3">
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                        "{landingVideos[activeVideoIndex].prompt}"
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div className="absolute left-10 bottom-36 bg-white dark:bg-slate-700 p-4 rounded-lg rounded-tl-none shadow-lg transform -rotate-2 z-10 max-w-[180px] backdrop-blur-sm border border-slate-200 dark:border-slate-600">
-                  <p className="text-sm font-medium dark:text-white">I&apos;m interested! Tell me more about the offer. 👍</p>
+
+                {/* Video Navigation Dots */}
+                <div className="flex justify-center space-x-2 mt-4">
+                  {landingVideos.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setActiveVideoIndex(index)}
+                      className={`w-2 h-2 rounded-full transition-all duration-300 ${index === activeVideoIndex
+                        ? "bg-blue-500 w-6"
+                        : "bg-slate-300 dark:bg-slate-600"
+                        }`}
+                    />
+                  ))}
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section className="py-24 bg-white dark:bg-slate-900">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
+              How It Works
+            </h2>
+            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+              Create professional videos in three simple steps
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="bg-blue-500/10 p-6 rounded-full inline-block mb-6">
+                <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">1</div>
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Write Your Prompt</h3>
+              <p className="text-slate-600 dark:text-slate-400">
+                Describe your video idea in natural language. Our AI understands context and creates engaging content.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="bg-purple-500/10 p-6 rounded-full inline-block mb-6">
+                <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">2</div>
+              </div>
+              <h3 className="text-xl font-semibold mb-3">AI Generates Everything</h3>
+              <p className="text-slate-600 dark:text-slate-400">
+                Our AI creates the script, generates voiceover, creates visuals, and adds captions automatically.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="bg-green-500/10 p-6 rounded-full inline-block mb-6">
+                <div className="text-3xl font-bold text-green-600 dark:text-green-400">3</div>
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Download & Share</h3>
+              <p className="text-slate-600 dark:text-slate-400">
+                Get your video ready for social media. Perfect for YouTube Shorts, TikTok, Instagram Reels, and more.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Video Gallery Section */}
+      <section className="py-24 bg-slate-50 dark:bg-slate-800">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
+              See What You Can Create
+            </h2>
+            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+              Real videos generated with simple prompts
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            {landingVideos.map((video, index) => (
+              <div
+                key={index}
+                className="group cursor-pointer"
+                onClick={() => setActiveVideoIndex(index)}
+              >
+                <div className="relative aspect-[9/16] rounded-lg overflow-hidden border-2 border-white dark:border-slate-700 shadow-lg group-hover:shadow-xl transition-all duration-300">
+                  <video
+                    src={video.videoUrl}
+                    className="w-full h-full object-cover"
+                    muted
+                    loop
+                    playsInline
+                  />
+                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <Play className="h-8 w-8 text-white" />
+                  </div>
+                </div>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 line-clamp-2">
+                  "{video.prompt}"
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -176,51 +292,116 @@ export default function Home() {
       <section className="py-24 bg-white dark:bg-slate-900">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 inline-block">
-              Why Choose RemindMe
+            <h2 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
+              Powerful Features
             </h2>
             <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-              Powerful tools to boost your business marketing through WhatsApp
+              Everything you need to create viral videos
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="bg-slate-50 dark:bg-slate-800 p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-slate-200 dark:border-slate-700">
               <div className="bg-blue-500/10 p-3 rounded-xl inline-block mb-5">
-                <Megaphone className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+                <Bot className="h-8 w-8 text-blue-600 dark:text-blue-400" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Targeted Promotions</h3>
+              <h3 className="text-xl font-semibold mb-3">AI Script Generation</h3>
               <p className="text-slate-600 dark:text-slate-400">
-                Send personalized offers and discounts directly to your customers&apos; WhatsApp, increasing conversion rates.
+                Our AI writes engaging scripts based on your prompt, ensuring your content is compelling and shareable.
               </p>
             </div>
 
             <div className="bg-slate-50 dark:bg-slate-800 p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-slate-200 dark:border-slate-700">
               <div className="bg-purple-500/10 p-3 rounded-xl inline-block mb-5">
-                <Users className="h-8 w-8 text-purple-600 dark:text-purple-400" />
+                <Mic className="h-8 w-8 text-purple-600 dark:text-purple-400" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Customer Engagement</h3>
+              <h3 className="text-xl font-semibold mb-3">Natural Voiceovers</h3>
               <p className="text-slate-600 dark:text-slate-400">
-                Build stronger relationships with automated yet personalized campaign messages to your customer base.
+                Choose from multiple AI voices that sound natural and engaging, perfect for your target audience.
               </p>
             </div>
 
             <div className="bg-slate-50 dark:bg-slate-800 p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-slate-200 dark:border-slate-700">
               <div className="bg-amber-500/10 p-3 rounded-xl inline-block mb-5">
-                <TrendingUp className="h-8 w-8 text-amber-600 dark:text-amber-400" />
+                <Video className="h-8 w-8 text-amber-600 dark:text-amber-400" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Increased Sales</h3>
+              <h3 className="text-xl font-semibold mb-3">Visual Generation</h3>
               <p className="text-slate-600 dark:text-slate-400">
-                Drive more revenue with timely promotional campaigns that reach customers where they&apos;re most active.
+                AI creates stunning visuals that match your content, with smooth transitions and professional quality.
+              </p>
+            </div>
+
+            <div className="bg-slate-50 dark:bg-slate-800 p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-slate-200 dark:border-slate-700">
+              <div className="bg-green-500/10 p-3 rounded-xl inline-block mb-5">
+                <Timer className="h-8 w-8 text-green-600 dark:text-green-400" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Lightning Fast</h3>
+              <p className="text-slate-600 dark:text-slate-400">
+                Generate complete videos in under a minute. No waiting, no complex editing - just instant results.
+              </p>
+            </div>
+
+            <div className="bg-slate-50 dark:bg-slate-800 p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-slate-200 dark:border-slate-700">
+              <div className="bg-rose-500/10 p-3 rounded-xl inline-block mb-5">
+                <TrendingUp className="h-8 w-8 text-rose-600 dark:text-rose-400" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Optimized for Growth</h3>
+              <p className="text-slate-600 dark:text-slate-400">
+                Videos are optimized for social media algorithms, helping you reach more viewers and grow faster.
+              </p>
+            </div>
+
+            <div className="bg-slate-50 dark:bg-slate-800 p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-slate-200 dark:border-slate-700">
+              <div className="bg-indigo-500/10 p-3 rounded-xl inline-block mb-5">
+                <Users className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Multiple Formats</h3>
+              <p className="text-slate-600 dark:text-slate-400">
+                Create videos for YouTube Shorts, TikTok, Instagram Reels, and more with the perfect aspect ratios.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Pricing Preview Section with Enhanced Background */}
+      {/* CTA Section */}
+      <section className="py-24 bg-gradient-to-br from-blue-600 to-purple-600">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+            Ready to Create Viral Videos?
+          </h2>
+          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+            Join thousands of creators who are already using AI to generate engaging content and grow their audience.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            {session ? (
+              <Link href="/dashboard">
+                <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-500 shadow-lg">
+                  Go to Dashboard
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            ) : (
+              <Button
+                size="lg"
+                onClick={() => signIn()}
+                className="bg-white text-blue-600 hover:bg-blue-50 shadow-lg"
+              >
+                Start Creating Now
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            )}
+            <Link href="/pricing">
+              <Button variant="outline" size="lg" className="border-2 shadow-sm">
+                View Pricing
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Preview Section */}
       <section className="py-24 bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-800 relative overflow-hidden">
-        {/* Decorative elements */}
         <div className="absolute top-40 left-[10%] w-72 h-72 bg-blue-500/5 rounded-full blur-3xl"></div>
         <div className="absolute bottom-20 right-[10%] w-80 h-80 bg-purple-500/5 rounded-full blur-3xl"></div>
 

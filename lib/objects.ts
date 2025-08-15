@@ -391,3 +391,46 @@ export const caption = [
     "speaker": null
   }
 ]
+
+export const landingVideos = [
+  {
+    prompt: 'a love story of a poor boy and a rich girl',
+    videoUrl: 'https://s3.ap-south-1.amazonaws.com/remotionlambda-apsouth1-61anwa9bc8/renders/cnquihk627/out.mp4'
+  },
+  {
+    prompt: 'a love story of a poor boy and a rich girl',
+    videoUrl: 'https://s3.ap-south-1.amazonaws.com/remotionlambda-apsouth1-61anwa9bc8/renders/cnquihk627/out.mp4'
+  },
+  {
+    prompt: 'a love story of a poor boy and a rich girl',
+    videoUrl: 'https://s3.ap-south-1.amazonaws.com/remotionlambda-apsouth1-61anwa9bc8/renders/cnquihk627/out.mp4'
+  },
+  {
+    prompt: 'a love story of a poor boy and a rich girl',
+    videoUrl: 'https://s3.ap-south-1.amazonaws.com/remotionlambda-apsouth1-61anwa9bc8/renders/cnquihk627/out.mp4'
+  },
+  {
+    prompt: 'a love story of a poor boy and a rich girl',
+    videoUrl: 'https://s3.ap-south-1.amazonaws.com/remotionlambda-apsouth1-61anwa9bc8/renders/cnquihk627/out.mp4'
+  },
+  {
+    prompt: 'a love story of a poor boy and a rich girl',
+    videoUrl: 'https://s3.ap-south-1.amazonaws.com/remotionlambda-apsouth1-61anwa9bc8/renders/cnquihk627/out.mp4'
+  },
+  {
+    prompt: 'a love story of a poor boy and a rich girl',
+    videoUrl: 'https://s3.ap-south-1.amazonaws.com/remotionlambda-apsouth1-61anwa9bc8/renders/cnquihk627/out.mp4'
+  },
+  {
+    prompt: 'a love story of a poor boy and a rich girl',
+    videoUrl: 'https://s3.ap-south-1.amazonaws.com/remotionlambda-apsouth1-61anwa9bc8/renders/cnquihk627/out.mp4'
+  },
+  {
+    prompt: 'a love story of a poor boy and a rich girl',
+    videoUrl: 'https://s3.ap-south-1.amazonaws.com/remotionlambda-apsouth1-61anwa9bc8/renders/cnquihk627/out.mp4'
+  },
+  {
+    prompt: 'a love story of a poor boy and a rich girl',
+    videoUrl: 'https://s3.ap-south-1.amazonaws.com/remotionlambda-apsouth1-61anwa9bc8/renders/cnquihk627/out.mp4'
+  },
+]
