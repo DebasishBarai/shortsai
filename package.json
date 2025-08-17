@@ -21,6 +21,7 @@
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-separator": "^1.1.7",
     "@radix-ui/react-slot": "^1.2.3",
+    "@radix-ui/react-toast": "^1.2.15",
     "@react-email/components": "^0.5.0",
     "@remotion/lambda": "4.0.334",
     "@remotion/player": "4.0.334",

@@ -100,7 +100,7 @@ export default function DashboardPage() {
   const deleteVideo = async (id: string) => {
     try {
       const res = await axios.delete(`/api/user/video`, {
-        videoId: id
+        data: { videoId: id }
       });
 
       if (res.status !== 200) {
