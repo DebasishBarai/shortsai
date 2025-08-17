@@ -1,0 +1,134 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SubscriptionType {
+  free
+  basic
+  premium
+}
+
+enum ContentType {
+  customPrompt
+  randomAiStory
+  scaryStay
+  historicalFacts
+  bedTimeStory
+  motivational
+  funFacts
+}
+
+enum VideoStyle {
+  realistic
+  cartoon
+  watercolor
+  sketch
+}
+
+enum VideoDuration {
+  DURATION_15 @map("15 sec")
+  DURATION_30 @map("30 sec")
+  DURATION_60 @map("60 sec")
+}
+
+enum VoiceType {
+  Joanna
+  Salli
+  Kimberly
+  Kendra
+  Ivy
+  Matthew
+  Justin
+  Joey
+}
+
+enum AspectRatio {
+  RATIO_9_16 @map("9:16")
+  RATIO_16_9 @map("16:9")
+  RATIO_4_3  @map("4:3")
+  RATIO_3_4  @map("3:4")
+  RATIO_1_1  @map("1:1")
+}
+
+model User {
+  id             String    @id @default(cuid())
+  name           String?
+  email          String?   @unique
+  emailVerified  DateTime?
+  image          String?
+  hashedPassword String?
+  isVerified     Boolean   @default(false)
+  verifyToken    String?   @unique
+  credits        Int       @default(5) // Number of available credits
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  accounts       Account[]
+  sessions       Session[]
+  videos         Video[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Video {
+  id          String         @id @default(cuid())
+  url         String?
+  title       String?
+  description String?
+  userId      String
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contentType ContentType?   @default(historicalFacts)
+  prompt      String?        @db.Text
+  style       VideoStyle?    @default(realistic)
+  voiceType   VoiceType?     @default(Joanna)
+  aspectRatio AspectRatio?   @default(RATIO_9_16)
+  duration    VideoDuration? @default(DURATION_60)
+  frames      Json?
+  audioUrl    String?
+  imagesUrl   String[]
+  script      String?
+  caption     Json?
+  error       Boolean        @default(false)
+  completed   Boolean        @default(false)
+  renderId    String?
+  bucketName  String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
