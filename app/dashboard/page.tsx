@@ -95,11 +95,13 @@ export default function DashboardPage() {
     };
 
     fetchData();
-  }, []);
+  }, [setCredits, setVideos, setUserData, setIsLoading]);
 
   const deleteVideo = async (id: string) => {
     try {
-      const res = await axios.delete(`/api/user/videos/${id}`);
+      const res = await axios.delete(`/api/user/video`, {
+        videoId: id
+      });
 
       if (res.status !== 200) {
         throw new Error('Failed to delete video');

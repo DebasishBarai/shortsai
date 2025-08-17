@@ -63,10 +63,10 @@ export default function CreateVideoForm() {
     label: convertValueToLabel({ type: "VoiceType", input: type as string }),
   }))
 
-  const aspectRatio = Object.values(AspectRatio).map(ratio => ({
-    value: ratio,
-    label: convertValueToLabel({ type: "AspectRatio", input: ratio as string }),
-  }))
+  // const aspectRatio = Object.values(AspectRatio).map(ratio => ({
+  //   value: ratio,
+  //   label: convertValueToLabel({ type: "AspectRatio", input: ratio as string }),
+  // }))
 
   const videoDuration = Object.values(VideoDuration).map(duration => ({
     value: duration,
@@ -176,11 +176,11 @@ export default function CreateVideoForm() {
 
       setVideoId(videoId)
 
-      const title = script?.title
+      // const title = script?.title
 
       // setVideoTitle(title)
 
-      const description = script?.description
+      // const description = script?.description
 
       // setVideoDescription(description)
 

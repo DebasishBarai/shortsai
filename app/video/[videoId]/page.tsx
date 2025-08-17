@@ -42,7 +42,9 @@ export default function VideoPage({ params }: PageProps) {
     try {
       setError(null);
 
-      const res = await axios.post(`/api/user/videos/${videoId}`);
+      const res = await axios.post(`/api/user/video`, {
+        videoId: videoId
+      });
 
       const videoData = res.data;
       console.log('Video data:', videoData);

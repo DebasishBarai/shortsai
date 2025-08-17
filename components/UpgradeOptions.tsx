@@ -35,11 +35,6 @@ export function UpgradeOptions({ currentPlan, isTrialExpired }: UpgradeOptionsPr
   const basicMonthlyEquivalent = Math.round(basicYearly / 12);
   const premiumMonthlyEquivalent = Math.round(premiumYearly / 12);
 
-  const handleUpgrade = (plan: 'basic' | 'premium') => {
-    // Add payment logic here
-    console.log(`Upgrading to ${plan}`);
-  };
-
   if (currentPlan === 'premium') return null;
 
   return (

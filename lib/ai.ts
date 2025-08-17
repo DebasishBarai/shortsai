@@ -33,9 +33,22 @@ interface GenerateImageOptions {
 
 export async function generateImage({ prompt, style, aspectRatio }: GenerateImageOptions) {
   try {
+    // Include aspect ratio instruction in the prompt
+    const getStyleDescription = ({ style }: { style: "realistic" | "cartoon" | "watercolor" | "sketch" }) => {
+      const styles = {
+        realistic: "photorealistic, high-quality photography style with natural lighting and detailed textures",
+        cartoon: "vibrant cartoon illustration with bold colors, clean lines, and animated style",
+        watercolor: "soft watercolor painting with flowing colors, gentle brushstrokes, and artistic texture",
+        sketch: "hand-drawn pencil sketch with detailed line work, shading, and artistic sketching"
+      };
+      return styles[style] || styles.realistic;
+    };
+
+    const imagePrompt = `Create a ${getStyleDescription({ style })} image with aspect ratio ${aspectRatio}: ${prompt}`;
+
     const response = await genai.models.generateImages({
       model: "imagen-4.0-generate-preview-06-06",
-      prompt: `${prompt}`,
+      prompt: `${imagePrompt}`,
       config: {
         numberOfImages: 1,
         aspectRatio: aspectRatio,

@@ -279,7 +279,7 @@ export default function Home() {
                   </div>
                 </div>
                 <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 line-clamp-2">
-                  "{video.prompt}"
+                  {video.prompt}
                 </p>
               </div>
             ))}

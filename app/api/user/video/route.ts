@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
 
-export async function POST(request: Request, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     console.log("Session:", session); // Debug log
@@ -16,29 +16,19 @@ export async function POST(request: Request, { params }: { params: { id: string 
       );
     }
 
-    const videoId = params.id;
+
+    const body = await request.json();
+    console.log("Request body:", body); // Debug log
+
+    const { videoId } = body;
+
     console.log("Fetching video data:", videoId); // Debug log
-
-
-    // Get user
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-    });
-    console.log("Found user:", user); // Debug log
-
-    if (!user) {
-      console.log('🔴 User not found');
-      return NextResponse.json(
-        { error: "User not found" },
-        { status: 404 }
-      );
-    }
 
     // Get user's videos
     const video = await prisma.video.findUnique({
       where: {
         id: videoId,
-        userId: user.id,
+        userId: session?.user?.id,
       },
       select: {
         id: true,
@@ -74,7 +64,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request) {
   try {
     const session = await getServerSession(authOptions);
     console.log("Session:", session); // Debug log
@@ -86,27 +76,15 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
       );
     }
 
-    const videoId = params.id;
-    console.log("Deleting video:", videoId); // Debug log
+    const body = await request.json();
+    console.log("Request body:", body); // Debug log
 
-    // Get user
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-    });
-    console.log("Found user:", user); // Debug log
-
-    if (!user) {
-      return NextResponse.json(
-        { error: "User not found" },
-        { status: 404 }
-      );
-    }
-
+    const { videoId } = body;
     // Check if video belongs to user
     const video = await prisma.video.findFirst({
       where: {
         id: videoId,
-        userId: user.id
+        userId: session?.user?.id
       },
     });
 
@@ -132,4 +110,4 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
       { status: 500 }
     );
   }
-} 
+}

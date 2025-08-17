@@ -45,7 +45,7 @@ export default function VerifyEmailTemplate({
             </Link>
           </Text>
           <Text style={footer}>
-            If you didn't request this email, you can safely ignore it.
+            If you didn&apost request this email, you can safely ignore it.
           </Text>
         </Container>
       </Body>

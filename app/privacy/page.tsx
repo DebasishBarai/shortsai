@@ -2,7 +2,7 @@ export default function PrivacyPage() {
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">
       <h1 className="text-3xl font-bold mb-8">Privacy Policy</h1>
-      
+
       <div className="prose dark:prose-invert max-w-none space-y-8">
         <section>
           <h2 className="text-2xl font-semibold text-primary mb-4">1. Information We Collect</h2>
@@ -67,7 +67,7 @@ export default function PrivacyPage() {
                 <li>Maintenance or server downtime</li>
               </ul>
               <p className="text-slate-700 dark:text-slate-300 mt-3">
-                If you face any issues accessing your service, please contact our support team at <a href="mailto:support@remindme.me" className="text-primary hover:underline">support@remindme.me</a>, and we'll resolve it promptly.
+                If you face any issues accessing your service, please contact our support team at <a href="mailto:support@remindme.me" className="text-primary hover:underline">support@remindme.me</a>, and we&aposll resolve it promptly.
               </p>
             </div>
 

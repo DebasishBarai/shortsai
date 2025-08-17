@@ -4,7 +4,7 @@ export const BASE_CURRENCY = 'USD';
 export type Currency = 'USD' | 'EUR' | 'GBP' | 'INR' | 'CAD' | 'AUD' | 'JPY' | 'CNY';
 
 // Default exchange rates (will be updated with real-time data)
-export let EXCHANGE_RATES: Record<Currency, number> = {
+export const EXCHANGE_RATES: Record<Currency, number> = {
   USD: 1,
   EUR: 0.92,
   GBP: 0.79,
@@ -59,7 +59,7 @@ export async function fetchExchangeRates(): Promise<void> {
     // Using Exchange Rates API (exchangerate-api.com)
     const response = await fetch('https://open.er-api.com/v6/latest/USD');
     const data = await response.json();
-    
+
     if (data.result === 'success') {
       const rates = data.rates;
       // Update only the currencies we support

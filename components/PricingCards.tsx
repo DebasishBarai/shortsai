@@ -1,8 +1,6 @@
 'use client'
 
 import { Check, Star, Zap, Coins, Video } from "lucide-react";
-import { toast } from "sonner";
-import axios from "axios";
 import { useSession } from "next-auth/react";
 import { Button } from "./ui/button";
 
@@ -64,27 +62,6 @@ export function PricingCards() {
       ]
     }
   ];
-
-  const onPaymentSuccess = async (credits: number, price: number) => {
-    const res = await axios.post('/api/add-credits', {
-      credits: credits,
-    });
-
-    if (!res.data.success) {
-      toast.error('Payment failed');
-      console.log('Payment failed:', res.data.error);
-      return;
-    }
-
-    toast.success(`Successfully purchased ${res.data.credits} credits for ${price}`);
-    toast.success(`Updated credits: ${res.data.newCredits}`);
-    console.log('Payment success:', credits, price);
-  };
-
-  const onPaymentCancel = () => {
-    toast.error('Payment cancelled');
-    console.log('Payment cancel');
-  };
 
   return (
     <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
