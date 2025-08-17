@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@aws-sdk/client-bedrock-runtime": "^3.864.0",
