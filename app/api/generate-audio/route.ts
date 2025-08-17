@@ -24,9 +24,9 @@ const s3 = new S3Client({
 })
 
 export async function POST(request: Request) {
-  console.log('AWS Region: , process.env.AWS_REGION)
-  console.log('AWS Access Key: , process.env.AWS_PUBLIC_ACCESS_KEY)
-  console.log('AWS Secret Access Key: , process.env.AWS_PUBLIC_ACCESS_KEY)
+  console.log('AWS Region: ', process.env.AWS_REGION)
+  console.log('AWS Access Key: ', process.env.AWS_PUBLIC_ACCESS_KEY)
+  console.log('AWS Secret Access Key: ', process.env.AWS_PUBLIC_ACCESS_KEY)
   try {
     const session = await getServerSession(authOptions);
     console.log("Session:", session); // Debug log
