@@ -2,12 +2,12 @@ import axios from "axios";
 import { atom, selector } from "recoil";
 
 // initializing axios
-const api = axios.create({
+/* const api = axios.create({
   baseURL: process.env.NEXTAUTH_URL,
 });
 
 // creditState
-/*export const creditState = atom<number>({
+export const creditState = atom<number>({
   key: "creditState",
   default: selector({
     key: "creditSelectorState",
