@@ -32,7 +32,6 @@ const Navbar = () => {
             <Button variant="ghost">
               <LayoutDashboardIcon className="h-4 w-4 mr-2" />
               Dashboard
-
             </Button>
           </Link>
           <Link href="/create">

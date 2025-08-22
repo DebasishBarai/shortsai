@@ -7,6 +7,7 @@ import { PricingCards } from "@/components/PricingCards";
 import { signIn, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { landingVideos } from "@/lib/objects";
+import { ThreeDMarqueeHeroSection } from "@/components/ui-component/3DMarqueeHeroSection";
 
 export default function Home() {
   const { data: session } = useSession();
@@ -67,139 +68,8 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-[calc(100vh-4rem)]">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
-        {/* Decorative elements */}
-        <div className="absolute top-20 right-[10%] w-72 h-72 bg-blue-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 left-[5%] w-64 h-64 bg-purple-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute top-40 left-[15%] w-40 h-40 bg-amber-500/10 rounded-full blur-2xl"></div>
+      <ThreeDMarqueeHeroSection />
 
-        <div className="container mx-auto px-4 py-24 md:py-32 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left side - Text and CTA */}
-            <div className="space-y-8">
-              <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 text-sm font-medium mb-4">
-                <Sparkles className="h-4 w-4 mr-2" />
-                AI-Powered Video Generation
-              </div>
-
-              <h1 className="md:py-4 text-4xl md:text-5xl lg:text-6xl font-bold leading-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
-                One Prompt. One Video.
-              </h1>
-
-              <p className="text-xl text-slate-600 dark:text-slate-300">
-                Transform your ideas into engaging videos instantly. Just describe what you want, and our AI creates professional videos with voice, visuals, and captions.
-              </p>
-
-              <div className="flex flex-wrap gap-4">
-                {session ? (
-                  <Link href="/dashboard">
-                    <Button size="lg" className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg shadow-blue-500/25 border-0">
-                      Go to Dashboard
-                    </Button>
-                  </Link>
-                ) : (
-                  <Button
-                    size="lg"
-                    onClick={() => signIn()}
-                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg shadow-blue-500/25 border-0"
-                  >
-                    Start Creating
-                  </Button>
-                )}
-                <Link href="/pricing">
-                  <Button variant="outline" size="lg" className="border-2 shadow-sm">
-                    View Pricing
-                  </Button>
-                </Link>
-              </div>
-
-              {/* Animated Stats - Modern Design */}
-              <div className="mt-12 relative">
-                <div className="relative h-32 overflow-hidden">
-                  {marketingStats.map((stat, index) => (
-                    <div
-                      key={index}
-                      className={`absolute w-full transition-all duration-700 ease-out ${index === activeStatIndex
-                        ? "opacity-100 translate-y-0"
-                        : index < activeStatIndex
-                          ? "opacity-0 -translate-y-full"
-                          : "opacity-0 translate-y-full"
-                        }`}
-                    >
-                      <div className="flex items-start">
-                        <div className="bg-white dark:bg-slate-800 p-3 rounded-xl mr-5 shadow-md backdrop-blur-sm border border-slate-200 dark:border-slate-700">
-                          {stat.icon}
-                        </div>
-                        <div>
-                          <div className="text-3xl font-bold mb-1">{stat.title}</div>
-                          <div className="text-lg text-slate-600 dark:text-slate-400">{stat.description}</div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Modern indicator pills */}
-                <div className="flex space-x-1.5 mt-6">
-                  {marketingStats.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setActiveStatIndex(index)}
-                      className={`transition-all duration-300 ${index === activeStatIndex
-                        ? "w-10 h-2 bg-blue-500 rounded-full"
-                        : "w-2 h-2 bg-slate-300 dark:bg-slate-700 rounded-full hover:bg-blue-300 dark:hover:bg-blue-700"
-                        }`}
-                      aria-label={`View stat ${index + 1}`}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Right side - Video Showcase */}
-            <div className="relative">
-              <div className="relative h-[600px] w-full max-w-[320px] mx-auto">
-                {/* Video Display */}
-                <div className="relative w-full h-full rounded-2xl overflow-hidden border-4 border-white dark:border-slate-700 shadow-2xl">
-                  <video
-                    key={landingVideos[activeVideoIndex].videoUrl}
-                    src={landingVideos[activeVideoIndex].videoUrl}
-                    className="w-full h-full object-cover"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
-
-                  {/* Prompt Display */}
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <div className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-lg p-3">
-                      <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
-                        {landingVideos[activeVideoIndex].prompt}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Video Navigation Dots */}
-                <div className="flex justify-center space-x-2 mt-4">
-                  {landingVideos.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setActiveVideoIndex(index)}
-                      className={`w-2 h-2 rounded-full transition-all duration-300 ${index === activeVideoIndex
-                        ? "bg-blue-500 w-6"
-                        : "bg-slate-300 dark:bg-slate-600"
-                        }`}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* How It Works Section */}
       <section className="py-24 bg-white dark:bg-slate-900">
