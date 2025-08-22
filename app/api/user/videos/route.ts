@@ -32,7 +32,10 @@ export async function POST(request: Request) {
 
     // Get user's videos
     const videos = await prisma.video.findMany({
-      where: { userId: user.id },
+      where: {
+        userId: user.id,
+        completed: true,
+      },
       orderBy: { createdAt: 'desc' },
       select: {
         id: true,

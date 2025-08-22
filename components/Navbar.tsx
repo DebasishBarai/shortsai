@@ -12,7 +12,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { GetCreditsDialog } from "@/components/GetCreditsDialog";
 import Image from 'next/image';
 import { useCreditStore } from "@/store/store";
 
@@ -70,8 +69,15 @@ const Navbar = () => {
           </div>
 
           {/* Get Credits Button */}
-          <GetCreditsDialog />
-
+          <Link href='/pricing'>
+            <Button
+              variant="outline"
+              className="hidden md:flex"
+            >
+              <Coins className="h-4 w-4 mr-2" />
+              Get Credits
+            </Button>
+          </Link>
           <Button
             onClick={handleSignOut}
             variant="ghost"
@@ -110,13 +116,13 @@ const Navbar = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden lg:flex items-center gap-4">
           <NavItems />
           <ThemeToggle />
         </div>
 
         {/* Mobile Navigation */}
-        <div className="flex items-center gap-4 md:hidden">
+        <div className="flex items-center gap-4 lg:hidden">
           <ThemeToggle />
           <Sheet>
             <SheetTrigger asChild>
@@ -129,7 +135,7 @@ const Navbar = () => {
               <SheetHeader>
                 <SheetTitle>Menu</SheetTitle>
               </SheetHeader>
-              <div className="flex flex-col gap-4 mt-4">
+              <div className="flex flex-col gap-4 mt-4 justify-center items-center">
                 <NavItems />
               </div>
             </SheetContent>

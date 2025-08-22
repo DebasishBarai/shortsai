@@ -54,8 +54,8 @@ export async function POST(request: Request) {
       framesPerLambda: 20,
       privacy: 'public',
       webhook: {
-        url: `${process.env.NEXTAUTH_URL}/api/remotion/webhook`,
-        secret: process.env.WEBHOOK_SECRET || '',
+        url: `${process.env.REMOTION_WEBHOOK_URL}`,
+        secret: process.env.REMOTION_WEBHOOK_SECRET || '',
       }
     });
 

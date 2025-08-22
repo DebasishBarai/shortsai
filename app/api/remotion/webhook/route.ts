@@ -8,6 +8,7 @@ export const POST = appRouterWebhook({
     region: 'ap-south-1',
   },
   onSuccess: async ({ renderId, outputUrl }) => {
+    console.log("🎯 Remotion Webhook received!");
     console.log(`✅ Render ${renderId} completed: ${outputUrl}`);
     // Your success logic here
     await prisma.video.updateMany({
