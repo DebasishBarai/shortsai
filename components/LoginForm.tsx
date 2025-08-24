@@ -58,6 +58,7 @@ export function LoginForm() {
       });
 
       if (error) {
+        console.log ({ error });
         setRegistrationError(error.message || 'Registration failed');
       } else if (data) {
         // Show success message and switch to login form
