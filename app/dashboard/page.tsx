@@ -48,7 +48,7 @@ interface User {
 }
 
 export default function DashboardPage() {
-  const { data: session, status } = useSession({
+  const { data: session } = useSession({
     required: true,
     onUnauthenticated() {
       redirect('/login');
@@ -115,7 +115,7 @@ export default function DashboardPage() {
     }
   };
 
-  if (status === "loading" || isLoading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
