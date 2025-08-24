@@ -30,7 +30,7 @@ export async function sendVerificationEmail({ email, userId }: VerifyEmailProps)
       from: "RemindMe <no-reply@debasishbarai.com>",
       to: [`${email}`],
       subject: "Verify your email",
-      react: VerifyEmailTemplate({ baseUrl, token }),
+      react: VerificationEmail({ userEmail: email, verificationUrl: `${baseUrl}/api/auth/verify?token=${token}` }),
     });
 
     if (error) {
