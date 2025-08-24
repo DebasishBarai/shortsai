@@ -57,7 +57,7 @@ interface Video {
 }
 
 export default function VideosPage() {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   const [videos, setVideos] = useState<Video[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -158,7 +158,7 @@ export default function VideosPage() {
     }
   };
 
-  if (status === "loading" || isLoading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
