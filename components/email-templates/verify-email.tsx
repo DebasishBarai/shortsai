@@ -16,7 +16,7 @@ interface VerifyEmailProps {
   verificationUrl: string
 }
 
-const VerificationEmail = ({ userEmail, verificationUrl }: VerifyEmailProps) => {
+export const VerificationEmail = ({ userEmail, verificationUrl }: VerifyEmailProps) => {
 
   return (
     <Html lang="en" dir="ltr">
