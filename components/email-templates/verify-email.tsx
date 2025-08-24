@@ -60,7 +60,7 @@ export const VerificationEmail = ({ userEmail, verificationUrl }: VerifyEmailPro
             {/* Alternative Link */}
             <Section className="mb-[32px]">
               <Text className="text-[14px] text-gray-600 leading-[20px]">
-                If the button doesn't work, you can copy and paste this link into your browser:
+                If the button doesn&apos;t work, you can copy and paste this link into your browser:
               </Text>
               <Text className="text-[14px] text-blue-600 break-all leading-[20px]">
                 {verificationUrl}
@@ -72,7 +72,7 @@ export const VerificationEmail = ({ userEmail, verificationUrl }: VerifyEmailPro
             {/* Security Notice */}
             <Section className="mb-[24px]">
               <Text className="text-[14px] text-gray-600 leading-[20px]">
-                <strong>Security Notice:</strong> This verification link will expire in 24 hours. If you didn't create an account, you can safely ignore this email.
+                <strong>Security Notice:</strong> This verification link will expire in 24 hours. If you didn&apos;t create an account, you can safely ignore this email.
               </Text>
             </Section>
 
