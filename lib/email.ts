@@ -1,7 +1,7 @@
 import { Resend } from 'resend';
 import { randomUUID } from 'crypto';
 import { prisma } from '@/lib/prisma';
-import VerifyEmailTemplate from '@/components/email-templates/verify-email';
+import VerificationEmail from '@/components/email-templates/verify-email';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
