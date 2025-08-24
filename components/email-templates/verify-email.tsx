@@ -1,57 +1,106 @@
+import * as React from 'react';
 import {
-  Body,
-  Button,
-  Container,
-  Head,
-  Heading,
   Html,
-  Link,
-  Preview,
+  Head,
+  Body,
+  Container,
   Section,
   Text,
+  Button,
+  Hr,
+  Tailwind,
 } from '@react-email/components';
-import * as React from 'react';
 
-interface VerifyEmailTemplateProps {
-  baseUrl: string;
-  token: string;
+interface VerifyEmailProps {
+  userEmail: string
+  verificationUrl: string
 }
 
-export default function VerifyEmailTemplate({
-  baseUrl,
-  token,
-}: VerifyEmailTemplateProps) {
-  const verifyLink = `${baseUrl}/api/auth/verify?token=${token}`;
+const VerificationEmail = ({ userEmail, verificationUrl }: VerifyEmailProps) => {
 
   return (
-    <Html>
-      <Head />
-      <Preview>Verify your email address for RemindMe</Preview>
-      <Body style={main}>
-        <Container style={container}>
-          <Heading style={h1}>Verify your email</Heading>
-          <Text style={text}>
-            Click the button below to verify your email address and get started with RemindMe.
-          </Text>
-          <Section style={buttonContainer}>
-            <Button style={button} href={verifyLink}>
-              Verify Email
-            </Button>
-          </Section>
-          <Text style={text}>
-            Or copy and paste this URL into your browser:{' '}
-            <Link href={verifyLink} style={link}>
-              {verifyLink}
-            </Link>
-          </Text>
-          <Text style={footer}>
-            If you didn&apost request this email, you can safely ignore it.
-          </Text>
-        </Container>
-      </Body>
+    <Html lang="en" dir="ltr">
+      <Tailwind>
+        <Head />
+        <Body className="bg-gray-100 font-sans py-[40px]">
+          <Container className="bg-white mx-auto px-[40px] py-[40px] rounded-[8px] max-w-[600px]">
+            {/* Header */}
+            <Section className="text-center mb-[32px]">
+              <Text className="text-[24px] font-bold text-gray-900 m-0 mb-[8px]">
+                Verify Your Email Address
+              </Text>
+              <Text className="text-[16px] text-gray-600 m-0">
+                Please confirm your email address to complete your account setup
+              </Text>
+            </Section>
+
+            {/* Main Content */}
+            <Section className="mb-[32px]">
+              <Text className="text-[16px] text-gray-800 mb-[16px] leading-[24px]">
+                Hi there,
+              </Text>
+              <Text className="text-[16px] text-gray-800 mb-[16px] leading-[24px]">
+                Thanks for signing up! We need to verify your email address <strong>{userEmail}</strong> to activate your account.
+              </Text>
+              <Text className="text-[16px] text-gray-800 mb-[24px] leading-[24px]">
+                Click the button below to verify your email address:
+              </Text>
+            </Section>
+
+            {/* Verification Button */}
+            <Section className="text-center mb-[32px]">
+              <Button
+                href={verificationUrl}
+                className="bg-blue-600 text-white px-[32px] py-[12px] rounded-[8px] text-[16px] font-semibold no-underline box-border inline-block"
+              >
+                Verify Email Address
+              </Button>
+            </Section>
+
+            {/* Alternative Link */}
+            <Section className="mb-[32px]">
+              <Text className="text-[14px] text-gray-600 leading-[20px]">
+                If the button doesn't work, you can copy and paste this link into your browser:
+              </Text>
+              <Text className="text-[14px] text-blue-600 break-all leading-[20px]">
+                {verificationUrl}
+              </Text>
+            </Section>
+
+            <Hr className="border-gray-200 my-[24px]" />
+
+            {/* Security Notice */}
+            <Section className="mb-[24px]">
+              <Text className="text-[14px] text-gray-600 leading-[20px]">
+                <strong>Security Notice:</strong> This verification link will expire in 24 hours. If you didn't create an account, you can safely ignore this email.
+              </Text>
+            </Section>
+
+            {/* Footer */}
+            <Section className="text-center">
+              <Text className="text-[12px] text-gray-500 m-0 mb-[8px]">
+                This email was sent to {userEmail}
+              </Text>
+              <Text className="text-[12px] text-gray-500 m-0 mb-[8px]">
+                123 Business Street, Suite 100, City, State 12345
+              </Text>
+              <Text className="text-[12px] text-gray-500 m-0">
+                © 2025 Your Company Name. All rights reserved.
+              </Text>
+            </Section>
+          </Container>
+        </Body>
+      </Tailwind>
     </Html>
   );
-}
+};
+
+VerificationEmail.PreviewProps = {
+  userEmail: 'debasishbaraiju@gmail.com',
+  verificationUrl: 'https://yourapp.com/verify?token=abc123xyz',
+};
+
+export default VerificationEmail;
 
 const main = {
   backgroundColor: '#f6f9fc',
