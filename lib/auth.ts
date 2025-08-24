@@ -2,11 +2,25 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
 import { nextCookies } from "better-auth/next-js";
+import { VerificationEmail } from '@/components/email-templates/verify-email';
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql", // or "mysql", "postgresql", ...etc
   }),
+  emailVerification: {
+    sendVerificationEmail: async ( { user, url}, ) => {
+      await resend.emails.send({
+      from: "Shorts AI <no-reply@debasishbarai.com>",
+      to: [`${user.email}`],
+      subject: "Verify your email address",
+      react: VerificationEmail({ userEmail: `${user.email}`, verificationUrl: `${url}` }),
+    });
+    },
+  },
   plugins: [nextCookies()],
   emailAndPassword: {
     enabled: true,
