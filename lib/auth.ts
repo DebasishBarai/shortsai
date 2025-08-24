@@ -20,6 +20,7 @@ export const auth = betterAuth({
       react: VerificationEmail({ userEmail: `${user.email}`, verificationUrl: `${url}` }),
     });
     },
+    sendOnSignUp: true,
   },
   plugins: [nextCookies()],
   emailAndPassword: {
