@@ -48,12 +48,7 @@ interface User {
 }
 
 export default function DashboardPage() {
-  const { data: session } = useSession({
-    required: true,
-    onUnauthenticated() {
-      redirect('/login');
-    },
-  });
+  const { data: session } = useSession();
 
   const [videos, setVideos] = useState<Video[]>([]);
   const [userData, setUserData] = useState<User | null>(null);
