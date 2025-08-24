@@ -68,7 +68,9 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: Request) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth.api.getSession({
+      headers: await headers()
+    });
     console.log("Session:", session); // Debug log
 
     if (!session?.user?.id) {
