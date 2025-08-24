@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
-import { authOptions } from "@/lib/auth";
+import { auth } from "@/lib/auth";
+import { headers } from 'next/headers';
 import { VoiceType } from "@prisma/client";
 
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
@@ -28,7 +28,9 @@ export async function POST(request: Request) {
   console.log('AWS Access Key: ', process.env.AWS_PUBLIC_ACCESS_KEY)
   console.log('AWS Secret Access Key: ', process.env.AWS_SECRET_ACCESS_KEY)
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth.api.getSession({
+      headers: await headers()
+    });
     console.log("Session:", session); // Debug log
 
     if (!session?.user?.id) {

@@ -1,13 +1,15 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
-import { authOptions } from "@/lib/auth";
+import { auth } from "@/lib/auth";
+import { headers } from 'next/headers';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST() {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth.api.getSession({
+      headers: await headers()
+    });
 
     console.log(session);
 

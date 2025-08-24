@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Menu, Video, Plus, LayoutDashboardIcon, Coins } from "lucide-react";
 import {
@@ -17,11 +18,12 @@ import { useCreditStore } from "@/store/store";
 
 const Navbar = () => {
   const { data: session } = useSession();
+  const router = useRouter();
 
   const credits = useCreditStore((state) => state.credits);
 
-  const handleSignOut = () => {
-    signOut({ callbackUrl: '/' }); // This will redirect to the landing page after logout
+  const handleSignOut = async () => {
+    await signOut(); // This will redirect to the landing page after logout
   };
 
   const NavItems = () => (
@@ -90,7 +92,7 @@ const Navbar = () => {
             <Button variant="ghost">Pricing</Button>
           </Link>
           <Button
-            onClick={() => signIn()}
+            onClick={() => router.push('/login')}
           >
             Login
           </Button>

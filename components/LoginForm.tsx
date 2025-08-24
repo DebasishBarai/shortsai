@@ -1,13 +1,13 @@
 'use client';
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AlertCircle } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { signIn, signUp } from "@/lib/auth-client";
 
 export function LoginForm() {
   const router = useRouter();
@@ -27,15 +27,14 @@ export function LoginForm() {
     setError("");
 
     try {
-      const result = await signIn("credentials", {
+      const { data, error } = await signIn.email({
         email,
         password,
-        redirect: false,
       });
 
-      if (result?.error) {
-        setError("Invalid email or password");
-      } else {
+      if (error) {
+        setError(error.message || "Invalid email or password");
+      } else if (data) {
         router.push("/dashboard");
       }
     } catch (error) {
@@ -51,34 +50,38 @@ export function LoginForm() {
     setRegistrationError("");
 
     try {
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          password,
-          name,
-        }),
+      const { data, error } = await signUp.email({
+        email,
+        password,
+        name,
       });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || 'Registration failed');
+      if (error) {
+        setRegistrationError(error.message || 'Registration failed');
+      } else if (data) {
+        // Show success message and switch to login form
+        setIsRegistering(false);
+        setEmail("");
+        setPassword("");
+        setName("");
+        // You can show a success message here instead of alert
+        alert("Registration successful! You can now log in.");
       }
-
-      // Show success message and switch to login form
-      setIsRegistering(false);
-      setEmail("");
-      setPassword("");
-      setName("");
-      alert("Registration successful! Please check your email for verification.");
     } catch (error) {
       setRegistrationError(error instanceof Error ? error.message : 'Registration failed');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await signIn.social({
+        provider: "google",
+        callbackURL: "/dashboard"
+      });
+    } catch (error) {
+      setError("Google sign in failed. Please try again.");
     }
   };
 
@@ -106,7 +109,7 @@ export function LoginForm() {
             <Button
               variant="outline"
               className="w-full"
-              onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
+              onClick={handleGoogleSignIn}
             >
               <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                 <path

@@ -3,14 +3,16 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Users, TrendingUp, Bot, Video, Timer, Rocket, Mic, Sparkles, Play, ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useSession } from "@/lib/auth-client";
 import { PricingCards } from "@/components/PricingCards";
-import { signIn, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { landingVideos } from "@/lib/objects";
 import { ThreeDMarqueeHeroSection } from "@/components/ui-component/3DMarqueeHeroSection";
 
 export default function Home() {
   const { data: session } = useSession();
+  const router = useRouter();
   const [activeVideoIndex, setActiveVideoIndex] = useState(0);
   const [activeStatIndex, setActiveStatIndex] = useState(0);
 
@@ -45,6 +47,45 @@ export default function Home() {
       title: "One Prompt. One Video.",
       description: "Just describe your idea — we handle the rest",
     },
+  ];
+
+  const featureHighlights = [
+    {
+      icon: <Bot className="h-8 w-8 text-blue-600 dark:text-blue-400" />,
+      text: "AI Script Generation",
+      description: "Our AI writes engaging scripts based on your prompt, ensuring your content is compelling and shareable.",
+      color: "blue"
+    },
+    {
+      icon: <Mic className="h-8 w-8 text-purple-600 dark:text-purple-400" />,
+      text: "Natural Voiceovers",
+      description: "Choose from multiple AI voices that sound natural and engaging, perfect for your target audience.",
+      color: "purple"
+    },
+    {
+      icon: <Video className="h-8 w-8 text-amber-600 dark:text-amber-400" />,
+      text: "Visual Generation",
+      description: "AI creates stunning visuals that match your content, with smooth transitions and professional quality.",
+      color: "amber"
+    },
+    {
+      icon: <Timer className="h-8 w-8 text-green-600 dark:text-green-400" />,
+      text: "Lightning Fast",
+      description: "Generate complete videos in under a minute. No waiting, no complex editing - just instant results.",
+      color: "green"
+    },
+    {
+      icon: <TrendingUp className="h-8 w-8 text-rose-600 dark:text-rose-400" />,
+      text: "Optimized for Growth",
+      description: "Videos are optimized for social media algorithms, helping you reach more viewers and grow faster.",
+      color: "rose"
+    },
+    {
+      icon: <Users className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />,
+      text: "Multiple Formats",
+      description: "Create videos for YouTube Shorts, TikTok, Instagram Reels, and more with the perfect aspect ratios.",
+      color: "indigo"
+    }
   ];
 
   // Auto-rotate through videos
@@ -253,7 +294,7 @@ export default function Home() {
             ) : (
               <Button
                 size="lg"
-                onClick={() => signIn()}
+                onClick={() => router.push('/login')}
                 className="bg-white text-blue-600 hover:bg-blue-50 shadow-lg"
               >
                 Start Creating Now

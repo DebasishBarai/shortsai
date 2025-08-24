@@ -1,5 +1,5 @@
-import { authOptions } from "@/lib/auth";
-import { getServerSession } from "next-auth";
+import { auth } from "@/lib/auth";
+import { headers } from 'next/headers';
 import { NextResponse } from "next/server";
 import { getFunctions, renderMediaOnLambda, getRenderProgress } from '@remotion/lambda/client';
 import { prisma } from "@/lib/prisma";
@@ -7,7 +7,9 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth.api.getSession({
+      headers: await headers()
+    });
     console.log("Session:", session); // Debug log
 
     if (!session?.user?.id) {

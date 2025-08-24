@@ -1,11 +1,12 @@
 "use client";
 
-import { signIn, useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth-client";
 import { ThreeDMarquee } from "@/components/ui/3d-marquee";
 import { Button } from "../ui/button";
 import ColourfulText from "../ui/colourful-text";
 import Link from "next/link";
 import { LayoutDashboardIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export function ThreeDMarqueeHeroSection() {
   const images = [
@@ -43,6 +44,7 @@ export function ThreeDMarqueeHeroSection() {
   ];
 
   const { data: session } = useSession();
+  const router = useRouter();
 
   return (
     <div className="relative mx-auto my-10 flex h-screen w-full max-w-7xl flex-col items-center justify-center overflow-hidden rounded-3xl">
@@ -66,7 +68,7 @@ export function ThreeDMarqueeHeroSection() {
           </Link>
         ) : (
           <Button
-            onClick={() => signIn()}
+            onClick={() => router.push('/login')}
             variant='default'>
             Join the club
           </Button>

@@ -3,9 +3,10 @@
 import { Button } from "@/components/ui/button";
 import { Calendar, Clock, Bell } from "lucide-react";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export const LandingContent = () => {
+  const router = useRouter();
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary">
       <div className="container mx-auto px-4 py-16">
@@ -17,7 +18,7 @@ export const LandingContent = () => {
             Schedule custom WhatsApp reminders for all your important dates and events
           </p>
           <div className="flex justify-center gap-4">
-            <Button size="lg" className="gap-2" onClick={() => signIn()}>
+            <Button size="lg" className="gap-2" onClick={() => router.push('/login')}>
               <Bell className="w-4 h-4" />
               Get Started
             </Button>

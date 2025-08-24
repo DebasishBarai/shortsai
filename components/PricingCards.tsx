@@ -1,7 +1,7 @@
 'use client'
 
 import { Check, Star, Zap, Coins, Video } from "lucide-react";
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth-client";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
 import axios from "axios";

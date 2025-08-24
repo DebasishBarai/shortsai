@@ -1,6 +1,5 @@
 "use client";
 
-import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { CurrencyProvider } from "@/lib/currency-context";
 import { Toaster } from 'sonner';
@@ -8,7 +7,7 @@ import { Toaster } from 'sonner';
 export const Providers = ({ children }: { children: React.ReactNode }) => {
 
   return (
-    <SessionProvider>
+    <>
       <CurrencyProvider>
         <ThemeProvider
           attribute="class"
@@ -20,6 +19,6 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
         </ThemeProvider>
       </CurrencyProvider>
       <Toaster />
-    </SessionProvider>
+    </>
   );
 };

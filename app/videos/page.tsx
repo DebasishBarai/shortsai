@@ -1,6 +1,6 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/lib/auth-client';
 import { redirect } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';

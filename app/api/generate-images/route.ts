@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
-import { authOptions } from "@/lib/auth";
+import { auth } from "@/lib/auth";
+import { headers } from 'next/headers';
 import { generateImageWithFlash } from "@/lib/ai";
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
@@ -15,7 +15,9 @@ const s3 = new S3Client({
 
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth.api.getSession({
+      headers: await headers()
+    });
     console.log("Session:", session); // Debug log
 
     if (!session?.user?.id) {

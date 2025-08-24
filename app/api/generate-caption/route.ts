@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
-import { authOptions } from "@/lib/auth";
+import { auth } from "@/lib/auth";
+import { headers } from 'next/headers';
 
 import { AssemblyAI, SpeechModel } from "assemblyai";
 
@@ -11,7 +11,9 @@ const captionClient = new AssemblyAI({
 
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth.api.getSession({
+      headers: await headers()
+    });
     console.log("Session:", session); // Debug log
 
     if (!session?.user?.id) {
