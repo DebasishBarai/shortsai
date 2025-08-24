@@ -33,6 +33,7 @@ export function LoginForm() {
       });
 
       if (error) {
+        console.log ({ error });
         setError(error.message || "Invalid email or password");
       } else if (data) {
         router.push("/dashboard");
