@@ -27,6 +27,7 @@ import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { useCreditStore } from '@/store/store';
+import { authClient } from '@/lib/auth-client';
 
 export default function CreateVideoForm() {
   // const { data: session, status } = useSession({ required: true });
@@ -261,6 +262,13 @@ export default function CreateVideoForm() {
       console.log({ renderId })
 
       // decreament credits
+      const { data: ingested } = await authClient.usage.ingest({
+        event: "ai_video_generation",
+        metadata: {
+          video_duration: formData.duration,
+          credits_consumed: requiredCredits,
+        },
+      });
       const removeCreditsRes = await axios.post('/api/remove-credits', {
         credits: requiredCredits,
       });

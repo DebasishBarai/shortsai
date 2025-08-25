@@ -1,7 +1,7 @@
 'use client'
 
 import { Check, Star, Zap, Coins, Video } from "lucide-react";
-import { useSession } from "@/lib/auth-client";
+import { authClient, useSession } from "@/lib/auth-client";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
 import axios from "axios";
@@ -13,10 +13,10 @@ export function PricingCards() {
   const creditPackages = [
     {
       name: "Starter Pack",
+      slug: "starter",
       credits: 60,
       price: 10,
       popular: false,
-      productId: process.env.NEXT_PUBLIC_SANDBOX_STARTER_PRODUCT_ID,
       features: [
         "60 AI Video Credits",
         "12 x 15-second videos, OR",
@@ -31,8 +31,8 @@ export function PricingCards() {
     },
     {
       name: "Creator Pack",
+      slug: "creator",
       credits: 160,
-      productId: process.env.NEXT_PUBLIC_SANDBOX_STARTER_PRODUCT_ID,
       price: 20,
       popular: true,
       features: [
@@ -49,8 +49,8 @@ export function PricingCards() {
     },
     {
       name: "Pro Pack",
+      slug: "pro",
       credits: 360,
-      productId: process.env.NEXT_PUBLIC_SANDBOX_STARTER_PRODUCT_ID,
       price: 40,
       popular: false,
       features: [
@@ -67,10 +67,9 @@ export function PricingCards() {
     }
   ];
 
-  const handleClick = async ({ productId }) => {
+  const handleClick = async ({ slug }) => {
     try {
-      const chectoutUrl = `api/polar/checkout?products=${productId}&customerExternalId=${session?.user.id}&customerEmail=${session?.user.email}`
-      window.location.href = chectoutUrl
+      await authClient.checkout({ slug })
     } catch (error) {
       console.log({ error })
       return
@@ -158,7 +157,7 @@ export function PricingCards() {
             {session && (
               <div className="relative w-full">
                 <Button
-                  onClick={() => handleClick({ productId: pkg.productId })}
+                  onClick={() => handleClick({ slug: pkg.slug })}
                   className={`w-full py-4 sm:py-6 text-base sm:text-lg ${pkg.popular
                     ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md'
                     : 'bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-200'

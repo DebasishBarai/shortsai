@@ -2,10 +2,10 @@
 
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
-import { signOut, useSession } from "@/lib/auth-client";
+import { authClient, signOut, useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Menu, Video, Plus, LayoutDashboardIcon, Coins } from "lucide-react";
+import { Menu, Video, Plus, LayoutDashboardIcon, Coins, WalletCards } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -48,18 +48,6 @@ const Navbar = () => {
               Videos
             </Button>
           </Link>
-          {/* <Link href="/contacts"> */}
-          {/*   <Button variant="ghost"> */}
-          {/*     <UserPlus className="h-4 w-4 mr-2" /> */}
-          {/*     Contacts */}
-          {/*   </Button> */}
-          {/* </Link> */}
-          {/* <Link href="/groups"> */}
-          {/*   <Button variant="ghost"> */}
-          {/*     <Users className="h-4 w-4 mr-2" /> */}
-          {/*     Groups */}
-          {/*   </Button> */}
-          {/* </Link> */}
 
           {/* Credits Display */}
           <div className="flex items-center gap-2 px-3 py-2 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
@@ -79,6 +67,16 @@ const Navbar = () => {
               Get Credits
             </Button>
           </Link>
+
+          <Button variant="ghost"
+            className="hidden md:flex"
+            onClick={async () => await authClient.customer.portal()}
+          >
+            <WalletCards className="h-4 w-4 mr-2" />
+            Billing
+          </Button>
+
+          {/* Logout Button */}
           <Button
             onClick={handleSignOut}
             variant="ghost"
