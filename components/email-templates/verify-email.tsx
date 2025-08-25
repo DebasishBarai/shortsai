@@ -18,6 +18,8 @@ interface VerifyEmailProps {
 
 export const VerificationEmail = ({ userEmail, verificationUrl }: VerifyEmailProps) => {
 
+  console.log({ userEmail, verificationUrl });
+
   return (
     <Html lang="en" dir="ltr">
       <Tailwind>

@@ -5,9 +5,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Eye, EyeOff } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { signIn, signUp } from "@/lib/auth-client";
+import Link from "next/link";
+import { toast } from "sonner";
 
 export function LoginForm() {
   const router = useRouter();
@@ -15,11 +17,15 @@ export function LoginForm() {
   const verified = searchParams.get('verified');
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   const [name, setName] = useState("");
   const [registrationError, setRegistrationError] = useState("");
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,10 +36,11 @@ export function LoginForm() {
       const { data, error } = await signIn.email({
         email,
         password,
+        callbackURL: "/dashboard"
       });
 
       if (error) {
-        console.log ({ error });
+        console.log({ error });
         setError(error.message || "Invalid email or password");
       } else if (data) {
         router.push("/dashboard");
@@ -50,6 +57,12 @@ export function LoginForm() {
     setIsLoading(true);
     setRegistrationError("");
 
+    if (password !== passwordConfirmation) {
+      setRegistrationError("Passwords do not match");
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const { data, error } = await signUp.email({
         email,
@@ -58,7 +71,7 @@ export function LoginForm() {
       });
 
       if (error) {
-        console.log ({ error });
+        console.log({ error });
         setRegistrationError(error.message || 'Registration failed');
       } else if (data) {
         // Show success message and switch to login form
@@ -67,7 +80,7 @@ export function LoginForm() {
         setPassword("");
         setName("");
         // You can show a success message here instead of alert
-        alert("Registration successful! You can now log in.");
+        toast.success("Verification email sent successfully! Please check your inbox for verification link.");
       }
     } catch (error) {
       setRegistrationError(error instanceof Error ? error.message : 'Registration failed');
@@ -183,17 +196,68 @@ export function LoginForm() {
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+          <div className="grid gap-2">
+            <div className="flex items-center">
+              <Label htmlFor="password">Password</Label>
+              {!isRegistering && (
+                <Link
+                  href="#"
+                  className="ml-auto inline-block text-sm underline"
+                >
+                  Forgot your password?
+                </Link>
+              )}
+            </div>
+
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="password"
+                autoComplete="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4 text-gray-400" />
+                ) : (
+                  <Eye className="h-4 w-4 text-gray-400" />
+                )}
+              </button>
+            </div>
           </div>
+
+          {isRegistering && (
+            <div className="grid gap-2">
+              <Label htmlFor="password">Confirm Password</Label>
+              <div className="relative">
+                <Input
+                  id="password_confirmation"
+                  type={showPasswordConfirmation ? "text" : "password"}
+                  value={passwordConfirmation}
+                  onChange={(e) => setPasswordConfirmation(e.target.value)}
+                  autoComplete="new-password"
+                  placeholder="Confirm Password"
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  onClick={() => setShowPasswordConfirmation(!showPasswordConfirmation)}
+                >
+                  {showPasswordConfirmation ? (
+                    <EyeOff className="h-4 w-4 text-gray-400" />
+                  ) : (
+                    <Eye className="h-4 w-4 text-gray-400" />
+                  )}
+                </button>
+              </div>
+            </div>
+          )}
 
           <Button
             type="submit"
@@ -220,6 +284,11 @@ export function LoginForm() {
               ? "Already have an account? Sign in"
               : "Don't have an account? Create one"}
           </button>
+        </div>
+        <div className="flex justify-center w-full border-t py-4">
+          <p className="text-center text-xs text-neutral-500">
+            Secured by <span className="text-orange-400">better-auth</span>
+          </p>
         </div>
       </div>
     </div>

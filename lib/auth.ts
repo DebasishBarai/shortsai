@@ -12,13 +12,17 @@ export const auth = betterAuth({
     provider: "postgresql", // or "mysql", "postgresql", ...etc
   }),
   emailVerification: {
-    sendVerificationEmail: async ( { user, url}, ) => {
-      await resend.emails.send({
-      from: "Shorts AI <no-reply@debasishbarai.com>",
-      to: [`${user.email}`],
-      subject: "Verify your email address",
-      react: VerificationEmail({ userEmail: `${user.email}`, verificationUrl: `${url}` }),
-    });
+    sendVerificationEmail: async ({ user, url },) => {
+      try {
+        await resend.emails.send({
+          from: "Shorts AI <no-reply@debasishbarai.com>",
+          to: [`${user.email}`],
+          subject: "Verify your email address",
+          react: VerificationEmail({ userEmail: `${user.email}`, verificationUrl: `${url}` }),
+        });
+      } catch (error) {
+        console.error("Error sending verification email:", error);
+      }
     },
     sendOnSignUp: true,
   },
@@ -26,9 +30,6 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
-    async sendResetPassword(data, request) {
-      // Send an email to the user with a link to reset their password
-    },
   },
   socialProviders: {
     google: {
