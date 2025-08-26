@@ -49,22 +49,24 @@ export const VideoComposition: React.FC<VideoCompositionProps> = ({
       captionLength: caption?.length || 0,
       imagesUrlLength: imagesUrl?.length || 0
     });
+
+    // Log caption timing info
+    if (caption && caption.length > 0) {
+      const lastCaption = caption[caption.length - 1];
+      const videoDurationMs = (durationInFrames / fps) * 1000;
+      console.log('Caption timing analysis:', {
+        lastCaptionStart: lastCaption.start,
+        lastCaptionEnd: lastCaption.end,
+        videoDurationMs,
+        isVideoDurationSufficient: videoDurationMs >= lastCaption.end
+      });
+    }
   }
 
   // Calculate frames per image (equal distribution)
-  // Add validation to prevent NaN values
   const framesPerImage = frames && frames.length > 0
     ? Math.floor(durationInFrames / frames.length)
-    : durationInFrames; // If no frames, use full duration
-
-  // Debug logging for framesPerImage
-  if (frame === 0) {
-    console.log('framesPerImage calculation:', {
-      framesLength: frames?.length || 0,
-      durationInFrames,
-      framesPerImage
-    });
-  }
+    : durationInFrames;
 
   // Determine current image index with safety checks
   const currentImageIndex = frames && frames.length > 0
@@ -82,17 +84,51 @@ export const VideoComposition: React.FC<VideoCompositionProps> = ({
   // Get current time in milliseconds
   const currentTimeMs = (frame / fps) * 1000;
 
-  // Find current caption words
+  // Find current caption words - FIXED: Better filtering logic
   const currentWords = caption && Array.isArray(caption) && caption.length > 0
     ? caption.filter(
       (word) => word.start <= currentTimeMs && word.end > currentTimeMs
     )
     : [];
 
-  // Get current word to display
-  const getCurrentWord = () => {
-    const currentWord = currentWords[0];
-    return currentWord ? currentWord.text : '';
+  // IMPROVED: Get all words that should be visible at current time
+  const getCurrentWords = () => {
+    if (currentWords.length === 0) {
+      return '';
+    }
+
+    // If multiple words are active simultaneously, join them
+    return currentWords.map(word => word.text).join(' ');
+  };
+
+  // ALTERNATIVE: Get the most recent word (even if it has ended)
+  const getMostRecentWord = () => {
+    if (!caption || caption.length === 0) {
+      return '';
+    }
+
+    // Find the last word that has started by current time
+    const wordsStarted = caption.filter(word => word.start <= currentTimeMs);
+    if (wordsStarted.length === 0) {
+      return '';
+    }
+
+    const lastStartedWord = wordsStarted[wordsStarted.length - 1];
+
+    // If the word is still active (hasn't ended), show it
+    if (lastStartedWord.end > currentTimeMs) {
+      return lastStartedWord.text;
+    }
+
+    // If we're very close to the end of the video, show the last word anyway
+    const videoDurationMs = (durationInFrames / fps) * 1000;
+    const timeFromEnd = videoDurationMs - currentTimeMs;
+
+    if (timeFromEnd < 500) { // Within 500ms of video end
+      return lastStartedWord.text;
+    }
+
+    return '';
   };
 
   // Improved transition logic - crossfade between images
@@ -125,13 +161,12 @@ export const VideoComposition: React.FC<VideoCompositionProps> = ({
   // Zoom effect based on parameter
   const getImageScale = (imageIndex: number) => {
     if (zoomEffect === 'none' || !frames || frames.length === 0) {
-      return 1.0; // No zoom or no frames
+      return 1.0;
     }
 
     const startScale = zoomEffect === 'in' ? 1.0 : 1.1;
     const endScale = zoomEffect === 'in' ? 1.1 : 1.0;
 
-    // Use the frame position within the current image segment
     const effectiveFrame = imageIndex === currentImageIndex ? frameInSegment : 0;
 
     return interpolate(
@@ -186,7 +221,6 @@ export const VideoComposition: React.FC<VideoCompositionProps> = ({
             )}
           </>
         ) : (
-          // Fallback background if no images
           <div style={{
             width: '100%',
             height: '100%',
@@ -223,9 +257,34 @@ export const VideoComposition: React.FC<VideoCompositionProps> = ({
             maxWidth: '90%',
           }}
         >
-          {getCurrentWord()}
+          {/* CHOOSE ONE: Either getCurrentWords() or getMostRecentWord() */}
+          {getMostRecentWord()}
         </div>
       </AbsoluteFill>
     </AbsoluteFill>
   );
+}
+
+// HELPER FUNCTION: Calculate proper video duration from captions
+export const calculateVideoDurationFromCaptions = (
+  captions: CaptionItem[],
+  fps: number,
+  paddingMs: number = 500 // Add 500ms padding after last word
+): number => {
+  if (!captions || captions.length === 0) {
+    return 30 * fps; // Default to 30 seconds if no captions
+  }
+
+  const lastCaption = captions[captions.length - 1];
+  const totalDurationMs = lastCaption.end + paddingMs;
+  const durationInFrames = Math.ceil((totalDurationMs / 1000) * fps);
+
+  console.log('Duration calculation:', {
+    lastCaptionEnd: lastCaption.end,
+    paddingMs,
+    totalDurationMs,
+    durationInFrames
+  });
+
+  return durationInFrames;
 };

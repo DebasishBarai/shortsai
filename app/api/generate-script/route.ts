@@ -5,6 +5,7 @@ import { headers } from 'next/headers';
 import { generateScript } from "@/lib/ai";
 import { convertValueToLabel } from "@/lib/functions";
 import { VideoDuration } from "@prisma/client";
+import { promptVariations } from "@/lib/objects";
 
 export async function POST(request: Request) {
   try {
@@ -40,23 +41,36 @@ export async function POST(request: Request) {
       );
     }
 
-    const contentTypePrompts = {
-      randomAiStory: "a video on any original creative story with science fiction, fantasy, or futuristic elements",
+    /*  const contentTypePrompts = {
+        randomAiStory: "a video on any original creative story with science fiction, fantasy, or futuristic elements",
+  
+        scaryStay: "a video on any spine-chilling horror story or urban legend with supernatural elements",
+  
+        historicalFacts: "a video on any very popular historical facts or significant historical events",
+  
+        bedTimeStory: "a video on any gentle, magical bedtime story perfect for children with friendly characters",
+  
+        motivational: "a video on any inspirational success story or motivational message about overcoming challenges",
+  
+        funFacts: "a video on any amazing and mind-blowing fun facts about science, nature, space, or everyday things"
+      } */
 
-      scaryStay: "a video on any spine-chilling horror story or urban legend with supernatural elements",
+    // Function to get a random prompt from promptVariations
+    const getRandomPrompt = (contentType: string): string => {
+      const prompts = promptVariations[contentType as keyof typeof promptVariations];
 
-      historicalFacts: "a video on any very popular historical facts or significant historical events",
+      if (!prompts || prompts.length === 0) {
+        // Fallback to a default if content type not found
+        return "a video on any creative and engaging story";
+      }
 
-      bedTimeStory: "a video on any gentle, magical bedtime story perfect for children with friendly characters",
-
-      motivational: "a video on any inspirational success story or motivational message about overcoming challenges",
-
-      funFacts: "a video on any amazing and mind-blowing fun facts about science, nature, space, or everyday things"
-    }
+      const randomIndex = Math.floor(Math.random() * prompts.length);
+      return prompts[randomIndex];
+    };
 
     const scriptPrompt = contentType === 'customPrompt'
       ? prompt
-      : contentTypePrompts[contentType as keyof typeof contentTypePrompts] || contentTypePrompts.randomAiStory;
+      : getRandomPrompt(contentType);
 
     // Get user
     const user = await prisma.user.findUnique({

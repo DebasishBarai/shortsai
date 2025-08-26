@@ -7,13 +7,15 @@ import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 import { PricingCards } from "@/components/PricingCards";
 import { useEffect, useState } from "react";
-import { landingVideos } from "@/lib/objects";
+import { landingGifs } from "@/lib/objects";
 import { ThreeDMarqueeHeroSection } from "@/components/ui-component/3DMarqueeHeroSection";
+import { Marquee } from "@/components/ui/marquee";
+import Image from "next/image";
 
 export default function Home() {
   const { data: session } = useSession();
   const router = useRouter();
-  const [activeVideoIndex, setActiveVideoIndex] = useState(0);
+  const [activeGifIndex, setActiveGifIndex] = useState(0);
   const [activeStatIndex, setActiveStatIndex] = useState(0);
 
   const marketingStats = [
@@ -88,15 +90,6 @@ export default function Home() {
     }
   ];
 
-  // Auto-rotate through videos
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveVideoIndex((prev) => (prev + 1) % landingVideos.length);
-    }, 4000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   // Auto-rotate through stats
   useEffect(() => {
     const interval = setInterval(() => {
@@ -105,6 +98,31 @@ export default function Home() {
 
     return () => clearInterval(interval);
   }, [marketingStats.length]);
+
+  // Split gifs into two rows
+  const midpoint = Math.ceil(landingGifs.length / 2);
+  const firstRowGifs = landingGifs.slice(0, midpoint);
+  const secondRowGifs = landingGifs.slice(midpoint);
+
+  const GifCard = ({ gif, index, originalIndex }) => (
+    <div
+      className="group cursor-pointer mx-3"
+      onClick={() => setActiveGifIndex(originalIndex)}
+    >
+      <div className="relative w-48 aspect-[9/16] rounded-lg overflow-hidden border-2 border-white dark:border-slate-700 shadow-lg group-hover:shadow-xl transition-all duration-300">
+        <Image
+          src={gif.gifUrl || null}
+          alt={gif.prompt || "Generated GIF"}
+          fill
+          className="object-cover"
+          unoptimized={true}
+        />
+      </div>
+      <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 line-clamp-2 w-48">
+        {gif.prompt}
+      </p>
+    </div>
+  );
 
   return (
     <div className="flex flex-col min-h-[calc(100vh-4rem)]">
@@ -170,31 +188,32 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            {landingVideos.map((video, index) => (
-              <div
-                key={index}
-                className="group cursor-pointer"
-                onClick={() => setActiveVideoIndex(index)}
-              >
-                <div className="relative aspect-[9/16] rounded-lg overflow-hidden border-2 border-white dark:border-slate-700 shadow-lg group-hover:shadow-xl transition-all duration-300">
-                  <video
-                    src={video.videoUrl}
-                    className="w-full h-full object-cover"
-                    muted
-                    loop
-                    playsInline
-                  />
-                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <Play className="h-8 w-8 text-white" />
-                  </div>
-                </div>
-                <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 line-clamp-2">
-                  {video.prompt}
-                </p>
-              </div>
-            ))}
+          <div className="space-y-6">
+            {/* First Row - Left to Right */}
+            <Marquee className="[--duration:30s]" pauseOnHover>
+              {firstRowGifs.map((gif, index) => (
+                <GifCard
+                  key={`row1-${index}`}
+                  gif={gif}
+                  index={index}
+                  originalIndex={index}
+                />
+              ))}
+            </Marquee>
+
+            {/* Second Row - Right to Left */}
+            <Marquee className="[--duration:30s]" pauseOnHover reverse>
+              {secondRowGifs.map((gif, index) => (
+                <GifCard
+                  key={`row2-${index}`}
+                  gif={gif}
+                  index={index}
+                  originalIndex={midpoint + index}
+                />
+              ))}
+            </Marquee>
           </div>
+
         </div>
       </section>
 
