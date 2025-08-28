@@ -251,9 +251,6 @@ export default function DashboardPage() {
                           <Video className="h-8 w-8 text-muted-foreground" />
                         </div>
                       )}
-                      <div className="absolute inset-0 bg-black/20 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <Play className="h-8 w-8 text-white" />
-                      </div>
                     </div>
                   </div>
 
