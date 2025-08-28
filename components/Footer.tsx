@@ -19,7 +19,7 @@ const Footer = () => {
         </div>
         <div className="text-center mt-4">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} RemindMe. All rights reserved.
+            © {new Date().getFullYear()} AI Shorts. All rights reserved.
           </p>
         </div>
       </div>

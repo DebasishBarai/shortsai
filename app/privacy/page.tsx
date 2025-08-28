@@ -7,21 +7,27 @@ export default function PrivacyPage() {
         <section>
           <h2 className="text-2xl font-semibold text-primary mb-4">1. Information We Collect</h2>
           <p className="text-slate-700 dark:text-slate-300">
-            We collect information that you provide directly to us, including your name, email address, and phone number for WhatsApp notifications.
+            We collect information that you provide directly to us when you sign up or use AI Shorts,
+            including your name, email address, payment details (for subscriptions), and any prompts or content
+            you provide when generating videos. We may also collect usage data to help us improve our services.
           </p>
         </section>
 
         <section>
           <h2 className="text-2xl font-semibold text-primary mb-4">2. How We Use Your Information</h2>
           <p className="text-slate-700 dark:text-slate-300">
-            We use the information we collect to provide, maintain, and improve our services, including sending WhatsApp reminders.
+            We use the information we collect to operate and improve AI Shorts, personalize your experience,
+            process transactions, deliver generated content, and provide customer support.
+            We may also use anonymized data for research, analytics, and service enhancements.
           </p>
         </section>
 
         <section>
           <h2 className="text-2xl font-semibold text-primary mb-4">3. Data Security</h2>
           <p className="text-slate-700 dark:text-slate-300">
-            We implement appropriate security measures to protect your personal information against unauthorized access or disclosure.
+            We implement industry-standard security measures to protect your personal information
+            against unauthorized access, alteration, disclosure, or destruction.
+            However, no method of transmission or storage is 100% secure, and we cannot guarantee absolute security.
           </p>
         </section>
 
@@ -32,52 +38,53 @@ export default function PrivacyPage() {
           </p>
           <ul className="list-disc pl-6 space-y-2 text-slate-700 dark:text-slate-300">
             <li>Cancellations take effect at the end of your current billing cycle.</li>
-            <li>No partial refunds are offered for the remainder of the billing period.</li>
-            <li>If you face any issues canceling, contact us at <a href="mailto:support@remindme.me" className="text-primary hover:underline">support@remindme.me</a>.</li>
+            <li>No partial refunds are provided for unused subscription periods.</li>
+            <li>If you face any issues canceling, contact us at <a href="mailto:debasishbarai.developer@gmail.com" className="text-primary hover:underline">debasishbarai.developer@gmail.com</a>.</li>
           </ul>
           <p className="text-slate-700 dark:text-slate-300 mt-4">
-            We reserve the right to cancel or suspend your account in cases of misuse or violation of our terms of service.
+            We reserve the right to suspend or terminate accounts that violate our Terms of Use or misuse the service.
           </p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-semibold text-primary mb-4">5. Shipping and Delivery Policy</h2>
+          <h2 className="text-2xl font-semibold text-primary mb-4">5. Service Delivery Policy</h2>
           <p className="text-slate-700 dark:text-slate-300 mb-6">
-            Thank you for subscribing to our platform. As a digital service, we do not ship any physical goods. All services are delivered online through our web-based platform.
+            AI Shorts is a fully digital service. We do not ship physical goods. All features and content are delivered
+            online through our platform immediately after successful subscription or purchase.
           </p>
 
           <div className="space-y-6">
             <div>
-              <h3 className="text-xl font-semibold mb-3">Service Delivery</h3>
+              <h3 className="text-xl font-semibold mb-3">Service Access</h3>
               <ul className="list-disc pl-6 space-y-2 text-slate-700 dark:text-slate-300">
-                <li>Access to your subscription is granted <strong>immediately upon successful payment</strong>.</li>
-                <li>Once your account is active, you can start scheduling and sending bulk messages to your customers.</li>
-                <li>All features — including custom templates, analytics, and scheduling tools — are available through your dashboard.</li>
+                <li>Access to your account is granted <strong>immediately upon successful payment</strong>.</li>
+                <li>Once active, you can start generating AI-powered short videos via your dashboard.</li>
+                <li>Features such as customization, downloads, and editing tools are available within your account.</li>
               </ul>
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold mb-3">Delivery Failures</h3>
+              <h3 className="text-xl font-semibold mb-3">Delivery Issues</h3>
               <p className="text-slate-700 dark:text-slate-300 mb-3">
-                In rare cases, service access may be delayed due to:
+                In rare cases, access to services may be delayed due to:
               </p>
               <ul className="list-disc pl-6 space-y-2 text-slate-700 dark:text-slate-300">
                 <li>Payment verification issues</li>
-                <li>System errors</li>
-                <li>Maintenance or server downtime</li>
+                <li>Temporary technical problems</li>
+                <li>Scheduled maintenance or server downtime</li>
               </ul>
               <p className="text-slate-700 dark:text-slate-300 mt-3">
-                If you face any issues accessing your service, please contact our support team at <a href="mailto:support@remindme.me" className="text-primary hover:underline">support@remindme.me</a>, and we&aposll resolve it promptly.
+                If you face any access issues, please contact us at <a href="mailto:debasishbarai.developer@gmail.com" className="text-primary hover:underline">debasishbarai.developer@gmail.com</a>, and we will resolve it promptly.
               </p>
             </div>
 
             <div>
               <h3 className="text-xl font-semibold mb-3">No Physical Shipping</h3>
               <p className="text-slate-700 dark:text-slate-300">
-                This is a digital-only product. We do not deliver any physical goods, and no shipping is required.
+                AI Shorts is a digital-only platform. No physical shipping or delivery is required.
               </p>
               <p className="text-slate-700 dark:text-slate-300 mt-3">
-                Thank you for choosing RemindMe.
+                Thank you for choosing AI Shorts.
               </p>
             </div>
           </div>
@@ -85,4 +92,5 @@ export default function PrivacyPage() {
       </div>
     </div>
   );
-} 
+}
+
