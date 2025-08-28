@@ -437,27 +437,27 @@ export const landingVideos = [
 
 export const landingGifs = [
   {
-    prompt: 'a love story of a poor boy and a rich girl',
+    prompt: 'Embrace Your Uniqueness: The Story of Leo the Lion',
     gifUrl: '/video/vid1.webp'
   },
   {
-    prompt: 'a love story of a poor boy and a rich girl',
+    prompt: 'From Desk to Dream: Sarah\'s Second Act at 60',
     gifUrl: '/video/vid2.webp'
   },
   {
-    prompt: 'a love story of a poor boy and a rich girl',
+    prompt: 'Luna\'s Starry Slumber: A Gentle Bedtime Tale',
     gifUrl: '/video/vid3.webp'
   },
   {
-    prompt: 'a love story of a poor boy and a rich girl',
+    prompt: 'The Comfort Quilt: A World Embraced',
     gifUrl: '/video/vid4.webp'
   },
   {
-    prompt: 'a love story of a poor boy and a rich girl',
+    prompt: 'Starlight Slumber: Pip & the Dream Weavers',
     gifUrl: '/video/vid5.webp'
   },
   {
-    prompt: 'a love story of a poor boy and a rich girl',
+    prompt: 'Quiet Power: The Introvert\'s Superpower Story',
     gifUrl: '/video/vid6.webp'
   }
 ]
