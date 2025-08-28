@@ -10,17 +10,17 @@ import { polar as polarClient } from "./polar";
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const PRODUCT_CONFIGS = {
-  [process.env.POLAR_SANDBOX_STARTER_PRODUCT_ID as string]: {
+  [process.env.POLAR_STARTER_PRODUCT_ID as string]: {
     name: 'Starter Pack',
     credits: 60,
     slug: 'starter'
   },
-  [process.env.POLAR_SANDBOX_CREATOR_PRODUCT_ID as string]: {
+  [process.env.POLAR_CREATOR_PRODUCT_ID as string]: {
     name: 'Creator Pack',
     credits: 160, // Adjust as needed
     slug: 'creator'
   },
-  [process.env.POLAR_SANDBOX_PRO_PRODUCT_ID as string]: {
+  [process.env.POLAR_PRO_PRODUCT_ID as string]: {
     name: 'Pro Pack',
     credits: 360, // Adjust as needed
     slug: 'pro'
@@ -55,15 +55,15 @@ export const auth = betterAuth({
         checkout({
           products: [
             {
-              productId: process.env.POLAR_SANDBOX_STARTER_PRODUCT_ID as string,
+              productId: process.env.POLAR_STARTER_PRODUCT_ID as string,
               slug: "starter",
             },
             {
-              productId: process.env.POLAR_SANDBOX_CREATOR_PRODUCT_ID as string,
+              productId: process.env.POLAR_CREATOR_PRODUCT_ID as string,
               slug: "creator",
             },
             {
-              productId: process.env.POLAR_SANDBOX_PRO_PRODUCT_ID as string,
+              productId: process.env.POLAR_PRO_PRODUCT_ID as string,
               slug: "pro",
             },
           ],
