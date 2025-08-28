@@ -105,11 +105,12 @@ export default function Home() {
   const secondRowGifs = landingGifs.slice(midpoint);
 
   const GifCard = ({ gif, index, originalIndex }) => (
+
     <div
       className="group cursor-pointer mx-3"
       onClick={() => setActiveGifIndex(originalIndex)}
     >
-      <div className="relative w-48 aspect-[9/16] rounded-lg overflow-hidden border-2 border-white dark:border-slate-700 shadow-lg group-hover:shadow-xl transition-all duration-300">
+      <div className="relative w-48 lg:w-96 aspect-[9/16] rounded-lg overflow-hidden border-2 border-white dark:border-slate-700 shadow-lg group-hover:shadow-xl transition-all duration-300">
         <Image
           src={gif.gifUrl || null}
           alt={gif.prompt || "Generated GIF"}
@@ -125,10 +126,9 @@ export default function Home() {
   );
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-4rem)]">
+    <div className="flex flex-col lg:min-h-[calc(100vh-4rem)] bg-slate-50 dark:bg-slate-800">
       {/* Hero Section */}
       <ThreeDMarqueeHeroSection />
-
 
       {/* How It Works Section */}
       <section className="py-24 bg-white dark:bg-slate-900">
@@ -144,9 +144,7 @@ export default function Home() {
 
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="bg-blue-500/10 p-6 rounded-full inline-block mb-6">
-                <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">1</div>
-              </div>
+              <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">1</div>
               <h3 className="text-xl font-semibold mb-3">Write Your Prompt</h3>
               <p className="text-slate-600 dark:text-slate-400">
                 Describe your video idea in natural language. Our AI understands context and creates engaging content.
@@ -154,9 +152,7 @@ export default function Home() {
             </div>
 
             <div className="text-center">
-              <div className="bg-purple-500/10 p-6 rounded-full inline-block mb-6">
-                <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">2</div>
-              </div>
+              <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">2</div>
               <h3 className="text-xl font-semibold mb-3">AI Generates Everything</h3>
               <p className="text-slate-600 dark:text-slate-400">
                 Our AI creates the script, generates voiceover, creates visuals, and adds captions automatically.
@@ -164,9 +160,7 @@ export default function Home() {
             </div>
 
             <div className="text-center">
-              <div className="bg-green-500/10 p-6 rounded-full inline-block mb-6">
-                <div className="text-3xl font-bold text-green-600 dark:text-green-400">3</div>
-              </div>
+              <div className="text-3xl font-bold text-green-600 dark:text-green-400">3</div>
               <h3 className="text-xl font-semibold mb-3">Download & Share</h3>
               <p className="text-slate-600 dark:text-slate-400">
                 Get your video ready for social media. Perfect for YouTube Shorts, TikTok, Instagram Reels, and more.

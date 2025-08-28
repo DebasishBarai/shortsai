@@ -438,28 +438,28 @@ export const landingVideos = [
 export const landingGifs = [
   {
     prompt: 'a love story of a poor boy and a rich girl',
-    gifUrl: 'https://debb-bucket.s3.ap-south-1.amazonaws.com/converted.gif'
+    gifUrl: '/video/vid1.webp'
   },
   {
     prompt: 'a love story of a poor boy and a rich girl',
-    gifUrl: 'https://debb-bucket.s3.ap-south-1.amazonaws.com/converted.gif'
+    gifUrl: '/video/vid2.webp'
   },
   {
     prompt: 'a love story of a poor boy and a rich girl',
-    gifUrl: 'https://debb-bucket.s3.ap-south-1.amazonaws.com/converted.gif'
+    gifUrl: '/video/vid3.webp'
   },
   {
     prompt: 'a love story of a poor boy and a rich girl',
-    gifUrl: 'https://debb-bucket.s3.ap-south-1.amazonaws.com/converted.gif'
+    gifUrl: '/video/vid4.webp'
   },
   {
     prompt: 'a love story of a poor boy and a rich girl',
-    gifUrl: 'https://debb-bucket.s3.ap-south-1.amazonaws.com/converted.gif'
+    gifUrl: '/video/vid5.webp'
   },
   {
     prompt: 'a love story of a poor boy and a rich girl',
-    gifUrl: 'https://debb-bucket.s3.ap-south-1.amazonaws.com/converted.gif'
-  },
+    gifUrl: '/video/vid6.webp'
+  }
 ]
 
 export const promptVariations = {
