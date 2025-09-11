@@ -8,8 +8,10 @@ interface VideoPlayerProps {
   width?: number;
   height?: number;
   frames?: any[];
+  withImages?: boolean;
   audioUrl?: string;
   imagesUrl?: any[];
+  videoSnippetsUrl?: any[];
   caption?: any[];
 }
 
@@ -17,8 +19,10 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   width = 380,
   height = 675,
   frames = [],
+  withImages = true,
   audioUrl = "",
   imagesUrl = [],
+  videoSnippetsUrl = [],
   caption = [],
 }) => {
   const [dimensions, setDimensions] = useState({ width, height });
@@ -40,17 +44,17 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
   const calculateDurationFromCaptions = () => {
     if (caption && caption.length > 0) {
       // Find the last word with the highest end time
-      const lastWord = caption.reduce((latest, current) => 
+      const lastWord = caption.reduce((latest, current) =>
         current.end > latest.end ? current : latest
       );
-      
+
       // Convert milliseconds to frames (30fps)
       const durationInSeconds = lastWord.end / 1000;
       const durationInFrames = Math.ceil(durationInSeconds * 30);
-      
+
       return durationInFrames;
     }
-    
+
     // Fallback to frame-based calculation if no captions
     return frames.length > 0 ? frames.length * 90 : 270; // 90 frames per scene (3 seconds at 30fps)
   };
@@ -64,9 +68,11 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
           component={VideoComposition}
           inputProps={{
             frames: frames,
+            withImages,
             audioUrl,
             caption,
             imagesUrl,
+            videoSnippetsUrl,
           }}
           durationInFrames={totalDurationInFrames}
           fps={30}

@@ -29,6 +29,8 @@ import Link from 'next/link';
 import { useCreditStore } from '@/store/store';
 import { authClient } from '@/lib/auth-client';
 
+type VideoTypeProps = 'With Images' | 'With video snippets'
+
 export default function CreateVideoForm() {
   // const { data: session, status } = useSession({ required: true });
   // const router = useRouter();
@@ -72,6 +74,7 @@ export default function CreateVideoForm() {
     label: convertValueToLabel({ type: "VideoDuration", input: duration as string }),
   }))
 
+  const videoType: VideoTypeProps[] = ['With Images', 'With video snippets']
   const [formData, setFormData] = useState({
     prompt: '',
     contentType: contentType[0].value,
@@ -79,6 +82,7 @@ export default function CreateVideoForm() {
     voiceType: voiceType[0].value,
     aspectRatio: 'RATIO_9_16', // Default to 9:16 for short videos
     duration: videoDuration[0].value,
+    videoType: videoType[0],
   });
 
   const handleChange = (key: string, value: string) => {
@@ -124,20 +128,23 @@ export default function CreateVideoForm() {
 
     try {
       // Calculate required credits based on video duration
-      const getRequiredCredits = (duration: string) => {
+      const getRequiredCredits = (duration: string, videoType: VideoTypeProps) => {
+
+        const scale = videoType === 'With Images' ? 1 : 2
+
         switch (duration) {
           case 'DURATION_15':
-            return 5;
+            return 5 * scale;
           case 'DURATION_30':
-            return 10;
+            return 10 * scale;
           case 'DURATION_60':
-            return 20;
+            return 20 * scale;
           default:
-            return 5;
+            return 5 * scale;
         }
       };
 
-      const requiredCredits = getRequiredCredits(formData.duration);
+      const requiredCredits = getRequiredCredits(formData.duration, formData.videoType);
 
       // Check if user has enough credits for the selected duration
       const creditCheckRes = await axios.post('/api/check-credits', {
@@ -209,22 +216,46 @@ export default function CreateVideoForm() {
       // setAudioScriptUrl(audioUrl)
 
       // generate images
-      const imageRes = await axios.post('/api/generate-images', {
-        videoId: videoId,
-        videoScript: script?.scenes,
-        style: formData.style,
-        aspectRatio: convertValueToLabel({ type: "AspectRatio", input: formData.aspectRatio as string }),
-      });
+      let imagesUrl: string[] = []
+      if (formData.videoType === 'With Images') {
+        const imageRes = await axios.post('/api/generate-images', {
+          videoId: videoId,
+          videoScript: script?.scenes,
+          style: formData.style,
+          aspectRatio: convertValueToLabel({ type: "AspectRatio", input: formData.aspectRatio as string }),
+        });
 
-      if (imageRes.status !== 200) {
-        const errorData = await imageRes.data;
-        throw new Error(errorData?.error || 'Failed to generate images');
+        if (imageRes.status !== 200) {
+          const errorData = await imageRes.data;
+          throw new Error(errorData?.error || 'Failed to generate images');
+        }
+
+        imagesUrl = imageRes.data.imagesUrl;
+        console.log({ imagesUrl });
+
+        // setVideoImagesUrl(imagesUrl)
       }
 
-      const imagesUrl = imageRes.data.imagesUrl;
-      console.log({ imagesUrl });
+      if (formData.videoType === 'With video snippets') {
+        const videoSnippetsRes = await axios.post('/api/v2/generate-video-snippets', {
+          videoId: videoId,
+          videoScript: script?.scenes,
+          style: formData.style,
+          aspectRatio: convertValueToLabel({ type: "AspectRatio", input: formData.aspectRatio as string }),
+        });
 
-      // setVideoImagesUrl(imagesUrl)
+        if (videoSnippetsRes.status !== 200) {
+          const errorData = await videoSnippetsRes.data;
+          throw new Error(errorData?.error || 'Failed to generate video snippets');
+        }
+
+        console.log({ videoSnippetsRes });
+
+        // const videoSnippetsUrl = videoSnippetsRes.data.videoSnippetsUrl;
+        // console.log({ videoSnippetsUrl });
+
+        // setVideoSnippetsUrl(videoSnippetsUrl)
+      }
 
       //generate captions file for captions
       const captionRes = await axios.post('/api/generate-caption', {
@@ -244,22 +275,20 @@ export default function CreateVideoForm() {
       // setVideoCaption(caption)
 
       // start video render
-      const renderVideoRes = await axios.post('/api/remotion/render-video', {
-        videoId: videoId,
-        frames: script?.scenes,
-        audioUrl: audioUrl,
-        caption: caption,
-        imagesUrl: imagesUrl,
-      });
+      if (formData.videoType === 'With Images') {
+        const renderVideoRes = await axios.post('/api/remotion/render-video', {
+          videoId: videoId,
+        });
 
-      if (renderVideoRes.status !== 200) {
-        const errorData = await renderVideoRes.data;
-        throw new Error(errorData?.error || 'Failed to render video');
+        if (renderVideoRes.status !== 200) {
+          const errorData = await renderVideoRes.data;
+          throw new Error(errorData?.error || 'Failed to render video');
+        }
+
+        const renderId = renderVideoRes.data.renderId
+
+        console.log({ renderId })
       }
-
-      const renderId = renderVideoRes.data.renderId
-
-      console.log({ renderId })
 
       // decreament credits
       const { data: ingested } = await authClient.usage.ingest({
@@ -343,6 +372,14 @@ export default function CreateVideoForm() {
                     onChange={(val) => handleChange('style', val)}
                   />
 
+                  <SelectInput
+                    label="Video Type"
+                    id="style"
+                    value={formData.videoType}
+                    options={videoType}
+                    onChange={(val) => handleChange('videoType', val)}
+                  />
+
                   <div className="space-y-2 sm:space-y-3">
                     <Label htmlFor="voiceType" className="text-sm sm:text-base font-medium">
                       Voice Type
@@ -392,9 +429,11 @@ export default function CreateVideoForm() {
                   <div className="col-span-2 flex items-center justify-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                     <Coins className="h-5 w-5 text-blue-600 dark:text-blue-400 mr-2" />
                     <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
-                      {formData.duration === 'DURATION_15' ? '5 credits' :
+                      {formData.videoType === 'With Images' ? (formData.duration === 'DURATION_15' ? '5 credits' :
                         formData.duration === 'DURATION_30' ? '10 credits' :
-                          formData.duration === 'DURATION_60' ? '20 credits' : '5 credits'} required for this video duration
+                          formData.duration === 'DURATION_60' ? '20 credits' : '5 credits') : (formData.duration === 'DURATION_15' ? '10 credits' :
+                            formData.duration === 'DURATION_30' ? '20 credits' :
+                              formData.duration === 'DURATION_60' ? '40 credits' : '10 credits')} required for this video duration
                     </span>
                   </div>
                 </div>

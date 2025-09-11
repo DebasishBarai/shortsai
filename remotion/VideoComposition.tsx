@@ -7,7 +7,13 @@ import {
   Sequence,
   useCurrentFrame,
   useVideoConfig,
+  Video,
 } from 'remotion';
+
+type VideoSnippetProps = {
+  url: string;
+  index: number;
+}
 
 interface CaptionItem {
   text: string;
@@ -26,13 +32,17 @@ interface VideoCompositionProps extends Record<string, unknown> {
   frames: Frame[];
   audioUrl: string;
   caption: CaptionItem[];
-  imagesUrl: string[];
+  imagesUrl?: string[];
+  videoSnippetsUrl?: VideoSnippetProps[];
+  withImages?: boolean;
   zoomEffect?: 'none' | 'in' | 'out';
 }
 
 export const VideoComposition: React.FC<VideoCompositionProps> = ({
   frames,
   audioUrl,
+  videoSnippetsUrl,
+  withImages = true,
   caption,
   zoomEffect = 'none',
   imagesUrl
@@ -177,6 +187,9 @@ export const VideoComposition: React.FC<VideoCompositionProps> = ({
     );
   };
 
+  console.log('video composition')
+  console.log({ videoSnippetsUrl })
+
   return (
     <AbsoluteFill style={{ backgroundColor: '#000' }}>
       {/* Audio */}
@@ -184,25 +197,30 @@ export const VideoComposition: React.FC<VideoCompositionProps> = ({
 
       {/* Background Images with Smooth Transitions */}
       <AbsoluteFill>
-        {imagesUrl && imagesUrl.length > 0 ? (
+        {withImages ? (imagesUrl && imagesUrl.length > 0 ? (
           <>
             {/* Current Image */}
-            {imagesUrl[currentImageIndex] && (
-              <Img
-                src={imagesUrl[currentImageIndex]}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  opacity: currentImageOpacity,
-                  transform: `scale(${getImageScale(currentImageIndex)})`,
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                }}
-              />
-            )}
-
+            {imagesUrl.map((imageUrl, index) => (
+              <Sequence
+                from={index * framesPerImage}
+                durationInFrames={framesPerImage}
+                key={index}
+              >
+                <Img
+                  src={imageUrl}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    opacity: currentImageOpacity, // You may need to calculate this per sequence
+                    transform: `scale(${getImageScale(index)})`, // Pass index instead of currentImageIndex
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                  }}
+                />
+              </Sequence>
+            ))}
             {/* Next Image (for transition) */}
             {!isLastImage && imagesUrl[nextImageIndex] && nextImageOpacity > 0 && (
               <Img
@@ -233,7 +251,31 @@ export const VideoComposition: React.FC<VideoCompositionProps> = ({
           }}>
             No Image Available
           </div>
-        )}
+        )) : (videoSnippetsUrl && videoSnippetsUrl.length > 0 ? (
+          <>
+            {videoSnippetsUrl.map((videoSnippetUrl, index) => (
+              <Sequence
+                from={index * framesPerImage}
+                durationInFrames={framesPerImage}
+                key={index}>
+                <Video src={videoSnippetUrl.url} />
+              </Sequence>
+            ))}
+          </>
+        ) : (
+          <div style={{
+            width: '100%',
+            height: '100%',
+            backgroundColor: '#000',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+            fontSize: '24px'
+          }}>
+            No video snippets available
+          </div>
+        ))}
       </AbsoluteFill>
 
       {/* Current Word Overlay */}
@@ -248,10 +290,10 @@ export const VideoComposition: React.FC<VideoCompositionProps> = ({
         <div
           style={{
             color: 'white',
-            fontSize: '48px',
+            fontSize: '96px',
             fontWeight: 'bold',
             textAlign: 'center',
-            lineHeight: '1.2',
+            lineHeight: '2',
             fontFamily: 'Arial, sans-serif',
             textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
             maxWidth: '90%',
@@ -269,7 +311,7 @@ export const VideoComposition: React.FC<VideoCompositionProps> = ({
 export const calculateVideoDurationFromCaptions = (
   captions: CaptionItem[],
   fps: number,
-  paddingMs: number = 500 // Add 500ms padding after last word
+  paddingMs: number = 5000 // Add 500ms padding after last word
 ): number => {
   if (!captions || captions.length === 0) {
     return 30 * fps; // Default to 30 seconds if no captions

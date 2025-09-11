@@ -127,27 +127,28 @@ model Verification {
 }
 
 model Video {
-  id          String         @id @default(cuid())
-  url         String?
-  title       String?
-  description String?
-  userId      String
-  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  contentType ContentType?   @default(historicalFacts)
-  prompt      String?        @db.Text
-  style       VideoStyle?    @default(realistic)
-  voiceType   VoiceType?     @default(Joanna)
-  aspectRatio AspectRatio?   @default(RATIO_9_16)
-  duration    VideoDuration? @default(DURATION_60)
-  frames      Json?
-  audioUrl    String?
-  imagesUrl   String[]
-  script      String?
-  caption     Json?
-  error       Boolean        @default(false)
-  completed   Boolean        @default(false)
-  renderId    String?
-  bucketName  String?
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  id               String         @id @default(cuid())
+  url              String?
+  title            String?
+  description      String?
+  userId           String
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contentType      ContentType?   @default(historicalFacts)
+  prompt           String?        @db.Text
+  style            VideoStyle?    @default(realistic)
+  voiceType        VoiceType?     @default(Joanna)
+  aspectRatio      AspectRatio?   @default(RATIO_9_16)
+  duration         VideoDuration? @default(DURATION_60)
+  frames           Json?
+  audioUrl         String?
+  imagesUrl        String[]
+  videoSnippetsUrl Json?
+  script           String?
+  caption          Json?
+  error            Boolean        @default(false)
+  completed        Boolean        @default(false)
+  renderId         String?
+  bucketName       String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
 }

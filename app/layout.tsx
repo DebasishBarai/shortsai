@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
-import NavbarComponent from "@/components/NavbarComponent";
-import Footer from "@/components/Footer";
 import Script from "next/script";
 
 const geistSans = Geist({
@@ -19,6 +17,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'ShortsAI – Instantly Create Viral Videos with AI',
   description: 'Create viral short videos instantly using AI-powered tools',
+  icons: {
+    icon: '/logo.png',
+  }
 };
 
 export default function RootLayout({
@@ -45,11 +46,9 @@ export default function RootLayout({
       >
         <Providers>
           <div className="flex flex-col min-h-screen">
-            <NavbarComponent />
             <main className="flex-1">
               {children}
             </main>
-            <Footer />
           </div>
         </Providers>
       </body>

@@ -224,9 +224,9 @@ export function LoginForm() {
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
-                  <EyeOff className="h-4 w-4 text-gray-400" />
+                  <EyeOff className="h-4 w-4 text-gray-400 cursor-pointer" />
                 ) : (
-                  <Eye className="h-4 w-4 text-gray-400" />
+                  <Eye className="h-4 w-4 text-gray-400 cursor-pointer" />
                 )}
               </button>
             </div>
@@ -278,7 +278,7 @@ export function LoginForm() {
               setError("");
               setRegistrationError("");
             }}
-            className="text-primary hover:underline"
+            className="text-primary hover:underline cursor-pointer"
           >
             {isRegistering
               ? "Already have an account? Sign in"

@@ -85,9 +85,9 @@ export async function POST(request: Request) {
       );
     }
 
-    const noOfScenes = duration === VideoDuration.DURATION_60 ? 20 : duration === VideoDuration.DURATION_30 ? 10 : 5;
+    const noOfScenes = duration === VideoDuration.DURATION_60 ? 12 : duration === VideoDuration.DURATION_30 ? 6 : 3;
 
-    const aiPrompt = `Generate a script for each scene to generate a ${convertValueToLabel({ type: "VideoDuration", input: duration })} video. The scenes should be each of approximately 3 seconds long. Hence, for ${convertValueToLabel({ type: "VideoDuration", input: duration })} video, there should be approximately ${noOfScenes} no of scenes. 
+    const aiPrompt = `Generate a script for each scene to generate a ${convertValueToLabel({ type: "VideoDuration", input: duration })} video. The scenes should be each of approximately 5 seconds long. Hence, for ${convertValueToLabel({ type: "VideoDuration", input: duration })} video, there should be approximately ${noOfScenes} no of scenes. 
 
 Give me the result in JSON format with the following structure:
 - title: An engaging title for the video (max 60 characters)
@@ -127,6 +127,10 @@ Return only valid JSON with no additional text or formatting.`;
         voiceType: voiceType,
         aspectRatio: aspectRatio,
         duration: duration,
+        videoSnippetsUrl: script.scenes.map((_, idx) => ({
+          index: idx,
+          url: "", // initially empty
+        })),
       }
     });
 

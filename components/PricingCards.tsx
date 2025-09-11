@@ -3,8 +3,7 @@
 import { Check, Star, Zap, Coins, Video } from "lucide-react";
 import { authClient, useSession } from "@/lib/auth-client";
 import { Button } from "./ui/button";
-import { useRouter } from "next/navigation";
-import axios from "axios";
+
 
 export function PricingCards() {
 

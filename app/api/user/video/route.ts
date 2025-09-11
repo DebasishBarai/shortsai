@@ -46,6 +46,7 @@ export async function POST(request: NextRequest) {
         prompt: true,
         frames: true,
         audioUrl: true,
+        videoSnippetsUrl: true,
         caption: true,
         error: true,
         completed: true,
@@ -54,7 +55,7 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    console.log("Found video:", video); // Debug log
+    console.log("Found video successfully"); // Debug log
 
     return NextResponse.json(video);
   } catch (error) {

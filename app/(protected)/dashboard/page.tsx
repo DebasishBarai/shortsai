@@ -1,7 +1,6 @@
 "use client";
 
 import { useSession } from '@/lib/auth-client';
-import { redirect } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CalendarDays, Bell, Plus, Trash2, Video, Play } from 'lucide-react';
@@ -112,7 +111,7 @@ export default function DashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
+      <div className="flex w-full items-center justify-center min-h-[calc(100vh-4rem)]">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
