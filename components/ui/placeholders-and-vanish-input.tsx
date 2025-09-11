@@ -5,6 +5,14 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
 
+// Define the pixel data type
+interface PixelData {
+  x: number;
+  y: number;
+  r: number;
+  color: string;
+}
+
 export function PlaceholdersAndVanishInput({
   placeholders,
 }: {
@@ -40,7 +48,7 @@ export function PlaceholdersAndVanishInput({
   }, [placeholders]);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const newDataRef = useRef<any[]>([]);
+  const newDataRef = useRef<PixelData[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const [value, setValue] = useState("");
   const [animating, setAnimating] = useState(false);
@@ -64,7 +72,11 @@ export function PlaceholdersAndVanishInput({
 
     const imageData = ctx.getImageData(0, 0, 800, 800);
     const pixelData = imageData.data;
-    const newData: any[] = [];
+    const newData: Array<{
+      x: number;
+      y: number;
+      color: [number, number, number, number];
+    }> = [];
 
     for (let t = 0; t < 800; t++) {
       const i = 4 * t * 800;
@@ -104,7 +116,7 @@ export function PlaceholdersAndVanishInput({
   const animate = (start: number) => {
     const animateFrame = (pos: number = 0) => {
       requestAnimationFrame(() => {
-        const newArr = [];
+        const newArr: PixelData[] = [];
         for (let i = 0; i < newDataRef.current.length; i++) {
           const current = newDataRef.current[i];
           if (current.x < pos) {
@@ -186,6 +198,7 @@ export function PlaceholdersAndVanishInput({
         ref={canvasRef}
       />
       <input
+        onChange={(e) => setValue(e.target.value)}
         onKeyDown={handleKeyDown}
         ref={inputRef}
         value={value}

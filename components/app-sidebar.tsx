@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useCreditStore } from "@/store/store";
+import { useUserStore } from "@/store/store";
 import { signOut } from "@/lib/auth-client";
 import {
   Sidebar,
@@ -80,7 +80,9 @@ export function AppSidebar() {
 
   const router = useRouter();
 
-  const credits = useCreditStore((state) => state.credits);
+  const user = useUserStore((state) => state.user);
+
+  console.log('sidebar updated');
 
   return (
     <Sidebar>
@@ -155,7 +157,7 @@ export function AppSidebar() {
         <div className="p-4 border-t bg-muted rounded-md">
           <div className="mb-2 text-sm font-medium text-muted-foreground flex gap-2 items-center">
             <Coins className="h-4 w-4 text-yellow-400" />
-            {`Remaining Credits: ${credits || 0}`}
+            {`Remaining Credits: ${user?.credits || 0}`}
           </div>
           <Link href="/pricing">
             <button className="inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-colors bg-primary text-primary-foreground shadow hover:bg-primary/90 h-8 rounded-md px-3 text-xs w-full cursor-pointer">
@@ -167,7 +169,8 @@ export function AppSidebar() {
         {/* User Info Section */}
         <div className="flex gap-3 items-center">
           <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-            <User className="w-4 h-4 text-primary-foreground" />
+            {user?.image ? <Image src={user.image} alt="user" width={40} height={40} className="rounded-full" />
+              : <User className="w-4 h-4 text-primary-foreground" />}
           </div>
           <h2 className="p-2 text-xs opacity-40">Copyright @AI Shorts</h2>
         </div>

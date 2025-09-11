@@ -23,8 +23,12 @@ export async function POST() {
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
       select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
         credits: true,
-        createdAt: true,
+        polarCustomerId: true,
       },
     });
 

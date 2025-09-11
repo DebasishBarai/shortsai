@@ -19,8 +19,11 @@ export default async function AuthenticatedLayout({
     redirect('/login')
   }
 
-  return <SidebarProvider>
-    <AppSidebar />
-    <SidebarTrigger className={cn('m-4')} />
-    {children}</SidebarProvider>
+  return (
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarTrigger className={cn('m-4')} />
+      {children}
+    </SidebarProvider>
+  )
 }

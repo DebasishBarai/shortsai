@@ -26,7 +26,7 @@ import { Play, Square, Coins } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { useCreditStore } from '@/store/store';
+import { useUserStore } from '@/store/store';
 import { authClient } from '@/lib/auth-client';
 
 type VideoTypeProps = 'With Images' | 'With video snippets'
@@ -45,7 +45,7 @@ export default function CreateVideoForm() {
   // const [videoImagesUrl, setVideoImagesUrl] = useState([])
   // const [videoCaption, setVideoCaption] = useState([])
 
-  const setCredits = useCreditStore((state) => state.setCredits);
+  const setCredits = useUserStore((state) => state.setCredits);
 
   const audioRef = useRef<HTMLAudioElement>(null);
 
