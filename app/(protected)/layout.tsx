@@ -22,8 +22,10 @@ export default async function AuthenticatedLayout({
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarTrigger className={cn('m-4')} />
-      {children}
+      <SidebarTrigger className={cn('m-4 bg-slate-900')} />
+      <div className="min-h-screen p-4 pt-16">
+        {children}
+      </div>
     </SidebarProvider>
   )
 }

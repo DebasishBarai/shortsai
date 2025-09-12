@@ -1,10 +1,8 @@
 'use client';
 
-import { ArrowRight } from "lucide-react";
 import Marquee from "react-fast-marquee";
 import Image from "next/image";
 import { PlaceholdersAndVanishInput } from "../ui/placeholders-and-vanish-input";
-import { cn } from "@/lib/utils";
 
 export const HeroSection = () => {
   const images = [1, 2, 3, 4, 5, 6, 7];
@@ -54,7 +52,7 @@ export const HeroSection = () => {
       </p>
 
       {/* Call to action */}
-      <div className="pointer-events-none w-full">
+      <div className="w-full">
         <PlaceholdersAndVanishInput
           placeholders={placeholders}
         />

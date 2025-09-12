@@ -38,7 +38,7 @@ const creativeToolsItems = [
   { title: "Home", url: "/dashboard", icon: Home },
   { title: "AI Film", url: "/home", icon: Clapperboard },
   { title: "Short Video", url: "/ai-tools/short-video", icon: Play, badge: "New" },
-  { title: "Product Ads", url: "/ai-tools/products-ads", icon: Package, badge: "New" },
+  { title: "Product Ads", url: "/ai-tools/product-ads", icon: Package, badge: "New" },
   { title: "Explore", url: "/explore", icon: Globe },
 ];
 
