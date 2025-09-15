@@ -101,7 +101,7 @@ export default function CreateAdsPage() {
       <div className='grid grid-cols-1 md:grid-cols-3 gap-5'>
         <div>
           <FormInput
-            onHandleInputChange={(field: string, value: string | File) => onHandleInputChange(field, value)}
+            onHandleInputChange={(field: string, value: string) => onHandleInputChange(field, value)}
             OnGenerate={OnGenerate}
             loading={loading}
           />
