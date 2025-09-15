@@ -5,91 +5,118 @@ import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { FormInput } from '@/components/ai-tools/product-ads/form-input'
-
 import { useUserStore } from '@/store/store'
 import { PreviewResult } from '@/components/ai-tools/product-ads/preview-result'
 
-// Defines the structure for the form data, including an optional file, a description, size, and image URLs.
+// Updated FormData structure - removed file, added base64Image
 type FormData = {
-  file?: File | undefined,
+  base64Image?: string,  // Base64 encoded image string
   description: string,
-  size: string,
-  imageUrl?: string,
-  avatar?: string
+  resolution: string,
+  base64Avatar?: string
 }
 
-function ProductImages({ title, enableAvatar }: any) {
+// Utility function to convert file to base64
+const convertFileToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
 
-  // State to hold the form's data.
+    reader.onload = () => {
+      if (reader.result) {
+        // Remove the data URL prefix (e.g., "data:image/jpeg;base64,") 
+        // and keep only the base64 string
+        const base64String = (reader.result as string).split(',')[1];
+        resolve(base64String);
+      } else {
+        reject(new Error('Failed to read file'));
+      }
+    };
+
+    reader.onerror = () => {
+      reject(new Error('Error reading file'));
+    };
+
+    reader.readAsDataURL(file);
+  });
+};
+
+export default function CreateAdsPage() {
   const [formData, setFormData] = useState<FormData>();
-  // State to manage the loading status during the API call.
   const [loading, setLoading] = useState(false);
-  // Retrieves user information from the authentication context.
   const user = useUserStore((state) => state.user);
-  // Hook to handle client-side navigation.
   const router = useRouter();
 
-  // A handler function to update the form data state based on user input.
-  const onHandleInputChange = (field: string, value: string) => {
-    setFormData((prev: any) => (
-      {
+  // Updated handler to process file uploads and convert to base64
+  const onHandleInputChange = async (field: string, value: string | File) => {
+    if (field === 'file' && value instanceof File) {
+      try {
+        // Convert file to base64
+        const base64Image = await convertFileToBase64(value);
+        setFormData((prev: any) => ({
+          ...prev,
+          base64Image: base64Image
+        }));
+      } catch (error) {
+        console.error('Error converting file to base64:', error);
+        toast.error('Error processing image file');
+      }
+    } else {
+      // Handle other form fields normally
+      setFormData((prev: any) => ({
         ...prev,
         [field]: value
-      }
-    ))
+      }));
+    }
   }
 
-  // The main function that handles the form submission and API call to generate the product image.
   const OnGenerate = async () => {
-
-    // Basic validation: checks if either a file or a direct image URL has been provided.
-    if (!formData?.file && !formData?.imageUrl) {
-      alert('Please upload a Product Image or provide an image URL.');
+    // Updated validation: check for base64Image OR imageUrl
+    if (!formData?.base64Image) {
+      alert('Please upload a Product Image');
       return;
     }
 
     setLoading(true);
 
-    // Creates a new FormData object to prepare the data for the API request. This is standard for sending files.
-    const formData_ = new FormData();
-
-    //@ts-expect-error // This is a TypeScript-specific comment to ignore potential type errors.
-    formData_.append('file', formData?.file);
-    formData_.append('imageUrl', formData?.imageUrl ?? '');
-    formData_.append('description', formData?.description ?? '')
-    formData_?.append('size', formData?.size ?? '1028x1028');
-    formData_?.append('userEmail', user?.email ?? '')
-    formData_?.append('avatar', formData?.avatar ?? '');
+    // Create JSON payload instead of FormData since we're not sending files
+    const payload = {
+      base64Image: formData?.base64Image ?? '',
+      description: formData?.description ?? '',
+      size: formData?.resolution ?? '1028x1028',
+      userEmail: user?.email ?? '',
+      base64Avatar: formData?.base64Avatar ?? ''
+    };
 
     try {
-      // Makes the POST request to the API endpoint.
-      const result = await axios.post('/api/generate-product-image', formData_);
+      // Send JSON payload instead of FormData
+      const result = await axios.post('/api/generate-product-image', payload, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
       console.log(result.data);
 
-      // Checks the API response for an error flag and displays a toast notification if an error occurs.
       if (result.data.error) {
         toast.error('Please Try Again');
       }
     } catch (error) {
-      // Catches any network or API-related errors.
       console.error('API call failed:', error);
       toast.error('An error occurred. Please try again.');
     } finally {
-      // Ensures the loading state is set to false regardless of success or failure.
       setLoading(false);
     }
   }
 
   return (
     <div>
-      <h2 className='font-bold text-2xl mb-3'>{title ? title : 'AI Product Image Generator'}</h2>
+      <h2 className='font-bold text-2xl mb-3'>AI Product Ads Generator</h2>
       <div className='grid grid-cols-1 md:grid-cols-3 gap-5'>
         <div>
           <FormInput
-            onHandleInputChange={(field: string, value: string) => onHandleInputChange(field, value)}
+            onHandleInputChange={(field: string, value: string | File) => onHandleInputChange(field, value)}
             OnGenerate={OnGenerate}
             loading={loading}
-            enableAvatar={enableAvatar}
           />
         </div>
         <div className='md:col-span-2'>
@@ -99,5 +126,3 @@ function ProductImages({ title, enableAvatar }: any) {
     </div>
   )
 }
-
-export default ProductImages
