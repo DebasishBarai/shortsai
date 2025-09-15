@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import React, { useState } from 'react'
-import PreviewResult, { PreviewProduct } from '../../creative-ai-tools/_components/PreviewResult';
+import { PreviewResult, PreviewProduct } from '@/components/ai-tools/product-ads/preview-result';
 import { Play } from 'lucide-react';
 import Link from 'next/link';
 import { useUserStore } from '@/store/store';
