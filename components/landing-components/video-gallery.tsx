@@ -13,7 +13,7 @@ export const VideoGallery = () => {
       </h2>
 
       {/* Marquee of gallery images */}
-      <div className="w-full py-6 bg-secondary/20 rounded-lg">
+      <div className="w-full py-6 bg-secondary/20 rounded-lg overflow-hidden">
         <Marquee gradient={false} speed={40} pauseOnHover>
           {images.map((i) => (
             <div key={i} className="mx-6">
@@ -32,3 +32,4 @@ export const VideoGallery = () => {
     </div>
   );
 };
+
