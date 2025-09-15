@@ -198,7 +198,7 @@ export const FormInput = ({ onHandleInputChange, OnGenerate, loading }: Props) =
             className={cn('rounded-lg h-[100px] w-[80px] cursor-pointer border-2 border-solid flex items-center justify-center bg-transparent', !selectedAvatar && 'border-2 border-primary')}
             onClick={() => {
               setSelectedAvatar(null);
-              onHandleInputChange('avatar', '')
+              onHandleInputChange('base64Avatar', '')
             }}
           >
             <span className='text-xs text-gray-400 text-center'>No Avatar</span>
