@@ -212,7 +212,7 @@ export const FormInput = ({ onHandleInputChange, OnGenerate, loading }: Props) =
               className={`rounded-lg h-[100px] w-[80px] cursor-pointer object-cover
                                 ${avatar.name == selectedAvatar && 'border-2 border-primary'}
                                 `} key={index}
-              onClick={() => {
+              onClick={ async () => {
                 setSelectedAvatar(avatar.name);
 
                 const base64Avatar = await convertImageToBase64(avatar.imageUrl);
