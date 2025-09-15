@@ -1,3 +1,5 @@
+'use client'
+
 import { Textarea } from '@/components/ui/textarea';
 import { ImagePlus, Loader2Icon, Monitor, Smartphone, Sparkles, Square } from 'lucide-react'
 import Image from 'next/image';
@@ -139,6 +141,8 @@ export const FormInput = ({ onHandleInputChange, OnGenerate, loading }: Props) =
       if (typeof input === 'string') {
         const base64Image = await convertImageToBase64(input);
 
+        console.log({ base64Image })
+
         // Clear base64 and store URL if you prefer using URL
         onHandleInputChange('base64Image', base64Image);
 
@@ -210,7 +214,12 @@ export const FormInput = ({ onHandleInputChange, OnGenerate, loading }: Props) =
                                 `} key={index}
               onClick={() => {
                 setSelectedAvatar(avatar.name);
-                onHandleInputChange('avatar', avatar.imageUrl)
+
+                const base64Avatar = await convertImageToBase64(avatar.imageUrl);
+
+                console.log({ base64Avatar })
+                
+                onHandleInputChange('base64Avatar', base64Avatar)
               }}
             />
           ))}
