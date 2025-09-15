@@ -13,10 +13,10 @@ export const VideoGallery = () => {
       </h2>
 
       {/* Marquee of gallery images */}
-      <div className="w-full py-6 bg-secondary/20 rounded-lg overflow-hidden">
+      <div className="w-full py-6 bg-secondary/20 rounded-lg">
         <Marquee gradient={false} speed={40} pauseOnHover>
           {images.map((i) => (
-            <div key={i} className="mx-6">
+            <div key={i} className="overflow-hidden mx-6">
               <Image
                 src={`/gallery/vid${i}.webp`}
                 alt={`Video ${i}`}
@@ -32,4 +32,5 @@ export const VideoGallery = () => {
     </div>
   );
 };
+
 
