@@ -236,7 +236,7 @@ export const FormInput = ({ onHandleInputChange, OnGenerate, loading }: Props) =
 
       <div className='mt-8'>
         <h2 className='font-semibold'>4.Select Image Size</h2>
-        <Select onValueChange={(value) => onHandleInputChange('size', value)}>
+        <Select onValueChange={(value) => onHandleInputChange('resolution', value)}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Select Resolution" />
           </SelectTrigger>
