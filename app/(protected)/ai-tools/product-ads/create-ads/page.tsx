@@ -47,26 +47,13 @@ export default function CreateAdsPage() {
   const router = useRouter();
 
   // Updated handler to process file uploads and convert to base64
-  const onHandleInputChange = async (field: string, value: string | File) => {
-    if (field === 'file' && value instanceof File) {
-      try {
-        // Convert file to base64
-        const base64Image = await convertFileToBase64(value);
-        setFormData((prev: any) => ({
-          ...prev,
-          base64Image: base64Image
-        }));
-      } catch (error) {
-        console.error('Error converting file to base64:', error);
-        toast.error('Error processing image file');
-      }
-    } else {
+  const onHandleInputChange = async (field: string, value: string) => {
+    console.log({ [field]: value })
       // Handle other form fields normally
       setFormData((prev: any) => ({
         ...prev,
         [field]: value
       }));
-    }
   }
 
   const OnGenerate = async () => {
