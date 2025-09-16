@@ -76,7 +76,7 @@ export default function CreateAdsPage() {
 
     try {
       // Send JSON payload instead of FormData
-      const result = await axios.post('/api/generate-product-image', payload, {
+      const result = await axios.post('/api/generate-ads/generate-image', payload, {
         headers: {
           'Content-Type': 'application/json',
         },
