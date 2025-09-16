@@ -49,11 +49,11 @@ export default function CreateAdsPage() {
   // Updated handler to process file uploads and convert to base64
   const onHandleInputChange = async (field: string, value: string) => {
     console.log({ [field]: value })
-      // Handle other form fields normally
-      setFormData((prev: any) => ({
-        ...prev,
-        [field]: value
-      }));
+    // Handle other form fields normally
+    setFormData((prev: any) => ({
+      ...prev,
+      [field]: value
+    }));
   }
 
   const OnGenerate = async () => {
@@ -70,7 +70,6 @@ export default function CreateAdsPage() {
       base64Image: formData?.base64Image ?? '',
       description: formData?.description ?? '',
       size: formData?.resolution ?? '1028x1028',
-      userEmail: user?.email ?? '',
       base64Avatar: formData?.base64Avatar ?? ''
     };
 

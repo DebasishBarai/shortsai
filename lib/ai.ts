@@ -108,16 +108,16 @@ export async function generateImageWithFlash({ prompt, style, aspectRatio }: Gen
 }
 
 
-export async function generateAdsImageWithNanoBanana({ 
-  base64Image, 
-  description, 
-  size, 
-  base64Avatar 
-}: { 
-  base64Image: string; 
-  description?: string; 
-  size?: string; 
-  base64Avatar?: string; 
+export async function generateAdsImageWithNanoBanana({
+  base64Image,
+  description,
+  size,
+  base64Avatar
+}: {
+  base64Image: string;
+  description?: string;
+  size?: string;
+  base64Avatar?: string;
 }) {
   // Direct prompts for image generation
   const PROMPT = `Create a vibrant product showcase image featuring the uploaded product
@@ -145,38 +145,54 @@ export async function generateAdsImageWithNanoBanana({
       finalPrompt += ` Resolution: ${size}`;
     }
     const prompt = base64Avatar ? [
-    { text: `${finalPrompt}` },
-    {
-      inlineData: {
-        mimeType: "image/png",
-        data: base64Image,
-      },
-    },
+      { text: `${finalPrompt}` },
       {
-      inlineData: {
-        mimeType: "image/png",
-        data: base64Avatar,
+        inlineData: {
+          mimeType: "image/png",
+          data: base64Image,
+        },
       },
-    },
-      
-  ] : [
-    { text: `${finalPrompt}` },
-    {
-      inlineData: {
-        mimeType: "image/png",
-        data: base64Image,
+      {
+        inlineData: {
+          mimeType: "image/png",
+          data: base64Avatar,
+        },
       },
-    },
-  ];
+
+    ] : [
+      { text: `${finalPrompt}` },
+      {
+        inlineData: {
+          mimeType: "image/png",
+          data: base64Image,
+        },
+      },
+    ];
 
     const response = await genai.models.generateContent({
-    model: "gemini-2.5-flash-image-preview",
-    contents: prompt,
-  });
+      model: "gemini-2.5-flash-image-preview",
+      contents: prompt,
+      config: {
+        responseModalities: [Modality.TEXT, Modality.IMAGE],
+      },
+    });
 
-    return {
-      data: imageResult.data, // base64 image
-    };
+    // Check if response has candidates
+    if (!response.candidates || response.candidates.length === 0) {
+      throw new Error("No candidates returned in response");
+    }
+
+    // Find and return the first (and only) generated image
+    for (const part of response.candidates[0].content?.parts || []) {
+      if (part.inlineData) {
+        return {
+          data: part.inlineData.data,
+          mimeType: part.inlineData.mimeType,
+        };
+      }
+    }
+
+    throw new Error("No image generated in response");
 
   } catch (error) {
     console.error('generateAdsImageWithNanoBanana error:', error);
