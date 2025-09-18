@@ -16,7 +16,9 @@ export const PreviewAds = () => {
 
   const ads: Ad[] = useAdStore((state) => state.ads);
 
-  const [loading, setLoading] = useState(false);
+  const updateAd = useAdStore((state) => state.updateAd);
+
+  const [loadingId, setLoadingId] = useState('');
 
   const DownloadImage = async (imageUrl: string) => {
     try {
@@ -54,15 +56,21 @@ export const PreviewAds = () => {
     }
   };
 
-  const GenerateVideo = async (config: any) => {
-    setLoading(true);
-    const result = await axios.post('/api/generate-product-video', {
-      imageUrl: config?.finalProductImageUrl,
-      imageToVideoPromot: config?.imageToVideoPrompt,
-      uid: user?.id,
-      docId: config?.id
+  const GenerateVideo = async (adId: string) => {
+    setLoadingId(adId);
+    const result = await axios.post('/api/generate-ads/generate-video', {
+      adId
     });
-    setLoading(false);
+
+    if (result.status !== 200 && result.data.success) {
+      throw new Error('Failed to generate video');
+    }
+
+    updateAd(result.data.id, {
+      adVideoUrl: result.data.video
+    });
+
+    setLoadingId('');
 
     console.log(result.data);
   }
@@ -94,7 +102,8 @@ export const PreviewAds = () => {
                   </div>
 
                   {!product?.adVideoUrl && <Button
-                    onClick={() => GenerateVideo(product)}>
+                    onClick={() => GenerateVideo(product.id)}>
+                    {product.id === loadingId ? <LoaderCircle className='animate-spin' /> : <Sparkles />}
                     Animate</Button>}
                 </div>
               </div>
