@@ -2,13 +2,13 @@
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import React, { useState } from 'react'
-import { PreviewResult, PreviewProduct } from '@/components/ai-tools/product-ads/preview-result';
+import { PreviewResult, PreviewAd } from '@/components/ai-tools/product-ads/preview-result';
 import { Play } from 'lucide-react';
 import Link from 'next/link';
 import { useUserStore } from '@/store/store';
 
 export const UsersAdsList = () => {
-  const [adsList, setAdsList] = useState<PreviewProduct[]>([]);
+  const [adsList, setAdsList] = useState<PreviewAd[]>([]);
 
   const user = useUserStore((state) => state.user);
   const [loading, setLoading] = useState(false);

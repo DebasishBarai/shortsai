@@ -3,6 +3,15 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { headers } from 'next/headers';
 import { generateAdsImageWithNanoBanana } from "@/lib/ai";
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+
+const s3 = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_PUBLIC_ACCESS_KEY || '',
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
+  }
+})
 
 export async function POST(request: Request) {
   try {
@@ -18,6 +27,18 @@ export async function POST(request: Request) {
       });
     }
 
+    const body = await request.json();
+
+    const { base64Image, description, size, avatarName, base64Avatar } = body;
+
+    // Validate required fields
+    if (!base64Image) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
     // Get user
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
@@ -31,16 +52,20 @@ export async function POST(request: Request) {
       );
     }
 
-    const body = await request.json();
+    const productBytes = Buffer.from(base64Image, 'base64');
 
-    const { base64Image, description, size, base64Avatar } = body;
+    // create ad in database
+    const ad = await prisma.ad.create({
+      data: {
+        userId: user.id,
+        productData: productBytes,
+        description,
+        avatar: avatarName,
+      },
+    })
 
-    // Validate required fields
-    if (!base64Image) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 }
-      );
+    if (!ad) {
+      return NextResponse.json({ error: "Failed to create ad" });
     }
 
     // Generate ads image
@@ -48,6 +73,7 @@ export async function POST(request: Request) {
       base64Image,
       description,
       size,
+      avatarName,
       base64Avatar,
     });
 
@@ -55,9 +81,32 @@ export async function POST(request: Request) {
       throw new Error('No image generated');
     }
 
+    // Convert base64 to buffer for S3 upload
+    const imgBytes = Buffer.from(image.data, 'base64');
+
+    // s3 uploads
+    const key = `shortsai/${user.id}/${ad.id}/images/ad.png`; // or .png based on your image format
+
+    const command = new PutObjectCommand({
+      Bucket: process.env.AWS_BUCKET_NAME || '',
+      Key: key,
+      Body: imgBytes,
+      ContentType: "image/png", // or "image/png"
+      ACL: "public-read",
+    });
+
+    await s3.send(command);
+
+    await prisma.ad.update({
+      where: { id: ad.id },
+      data: {
+        adImageUrl: `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${key}`,
+      },
+    });
+
     return NextResponse.json({
       success: true,
-      image,
+      image: `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${key}`,
     });
   } catch (error) {
     console.log({ error });

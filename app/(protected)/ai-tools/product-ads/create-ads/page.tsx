@@ -2,10 +2,8 @@
 
 import { useState } from 'react'
 import axios from 'axios'
-import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { FormInput } from '@/components/ai-tools/product-ads/form-input'
-import { useUserStore } from '@/store/store'
 import { PreviewResult } from '@/components/ai-tools/product-ads/preview-result'
 
 // Updated FormData structure - removed file, added base64Image
@@ -13,6 +11,7 @@ type FormData = {
   base64Image?: string,  // Base64 encoded image string
   description: string,
   resolution: string,
+  avatarName?: string,
   base64Avatar?: string
 }
 
@@ -43,8 +42,6 @@ const convertFileToBase64 = (file: File): Promise<string> => {
 export default function CreateAdsPage() {
   const [formData, setFormData] = useState<FormData>();
   const [loading, setLoading] = useState(false);
-  const user = useUserStore((state) => state.user);
-  const router = useRouter();
 
   // Updated handler to process file uploads and convert to base64
   const onHandleInputChange = async (field: string, value: string) => {
@@ -70,7 +67,8 @@ export default function CreateAdsPage() {
       base64Image: formData?.base64Image ?? '',
       description: formData?.description ?? '',
       size: formData?.resolution ?? '1028x1028',
-      base64Avatar: formData?.base64Avatar ?? ''
+      avatarName: formData?.avatarName ?? '',
+      base64Avatar: formData?.base64Avatar ?? '',
     };
 
     try {

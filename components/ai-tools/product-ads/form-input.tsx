@@ -198,7 +198,7 @@ export const FormInput = ({ onHandleInputChange, OnGenerate, loading }: Props) =
             className={cn('rounded-lg h-[100px] w-[80px] cursor-pointer border-2 border-solid flex items-center justify-center bg-transparent', !selectedAvatar && 'border-2 border-primary')}
             onClick={() => {
               setSelectedAvatar(null);
-              onHandleInputChange('base64Avatar', '')
+              onHandleInputChange('avatarName', '')
             }}
           >
             <span className='text-xs text-gray-400 text-center'>No Avatar</span>
@@ -210,12 +210,10 @@ export const FormInput = ({ onHandleInputChange, OnGenerate, loading }: Props) =
               className={`rounded-lg h-[100px] w-[80px] cursor-pointer object-cover
                                 ${avatar.name == selectedAvatar && 'border-2 border-primary'}
                                 `} key={index}
-              onClick={ async () => {
+              onClick={async () => {
                 setSelectedAvatar(avatar.name);
 
-                const base64Avatar = await convertImageToBase64(avatar.imageUrl);
-                
-                onHandleInputChange('base64Avatar', base64Avatar)
+                onHandleInputChange('avatarName', avatar.name)
               }}
             />
           ))}

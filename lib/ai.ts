@@ -1,5 +1,7 @@
 import { GoogleGenAI, Modality } from "@google/genai"
 import { BedrockRuntimeClient, InvokeModelCommand } from "@aws-sdk/client-bedrock-runtime";
+import { promises as fs } from 'fs';
+import path from 'path';
 
 const genai = new GoogleGenAI({
   apiKey: process.env.GOOGLE_API_KEY,
@@ -107,16 +109,62 @@ export async function generateImageWithFlash({ prompt, style, aspectRatio }: Gen
   }
 }
 
+const AvatarList = [
+  {
+    name: 'Avatar 1',
+    imageUrl: '/products/avatar1.avif'
+  },
+  {
+    name: 'Avatar 2',
+    imageUrl: '/products/avatar2.webp'
+  },
+  {
+    name: 'Avatar 3',
+    imageUrl: '/products/avatar3.avif'
+  },
+  {
+    name: 'Avatar 4',
+    imageUrl: '/products/avatar4.webp'
+  },
+  {
+    name: 'Avatar 5',
+    imageUrl: '/products/avatar5.webp'
+  },
+  {
+    name: 'Avatar 6',
+    imageUrl: '/products/avatar6.webp'
+  },
+
+]
+
+async function avatarToBase64(avatarName: string): Promise<string> {
+  const avatar = AvatarList.find(item => item.name === avatarName)
+  if (avatar) {
+    // Remove leading slash and construct file path
+    const filePath = path.join(process.cwd(), 'public', avatar.imageUrl.substring(1));
+
+    try {
+      const imageBuffer = await fs.readFile(filePath);
+      return imageBuffer.toString('base64');
+    } catch (error) {
+      throw new Error(`Failed to read file: ${filePath}`);
+    }
+  }
+  throw new Error(`Avatar not found: ${avatarName}`);
+}
+
 
 export async function generateAdsImageWithNanoBanana({
   base64Image,
   description,
   size,
-  base64Avatar
+  avatarName = '',
+  base64Avatar = ''
 }: {
   base64Image: string;
   description?: string;
   size?: string;
+  avatarName?: string;
   base64Avatar?: string;
 }) {
   // Direct prompts for image generation
@@ -134,9 +182,25 @@ export async function generateAdsImageWithNanoBanana({
   ingredients, or theme for added context, if relevant. Ensure both the person and product are sharp, well-lit, and in focus, 
   conveying a polished and professional look.`;
 
+  let enableAvatar = true
+  let finalBase64Avatar = ''
+
+  if (avatarName === '' && base64Avatar === '') {
+    enableAvatar = false
+  }
+
+  if (enableAvatar && base64Avatar !== '') {
+    finalBase64Avatar = base64Avatar
+  }
+
+  if (enableAvatar && avatarName !== '') {
+    finalBase64Avatar = await avatarToBase64(avatarName)
+  }
+
   try {
+
     // Create the final prompt with description if provided
-    let finalPrompt = base64Avatar ? AVATAR_PROMPT : PROMPT;
+    let finalPrompt = enableAvatar ? AVATAR_PROMPT : PROMPT;
     if (description) {
       finalPrompt += ` Additional context: ${description}`;
     }
@@ -144,7 +208,7 @@ export async function generateAdsImageWithNanoBanana({
     if (size) {
       finalPrompt += ` Resolution: ${size}`;
     }
-    const prompt = base64Avatar ? [
+    const prompt = enableAvatar ? [
       { text: `${finalPrompt}` },
       {
         inlineData: {
@@ -155,7 +219,7 @@ export async function generateAdsImageWithNanoBanana({
       {
         inlineData: {
           mimeType: "image/png",
-          data: base64Avatar,
+          data: finalBase64Avatar,
         },
       },
 

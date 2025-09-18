@@ -74,6 +74,7 @@ model User {
   accounts Account[]
   sessions Session[]
   videos   Video[]
+  ads      Ad[]
 
   @@map("user")
 }
@@ -151,4 +152,18 @@ model Video {
   bucketName       String?
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
+}
+
+model Ad {
+  id              String   @id @default(cuid())
+  productData     Bytes?
+  productImageUrl String?
+  adImageUrl      String?
+  adVideoUrl      String?
+  avatar          String?
+  description     String?
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }

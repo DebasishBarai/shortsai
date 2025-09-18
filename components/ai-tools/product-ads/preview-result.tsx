@@ -1,3 +1,4 @@
+'use client'
 
 import { Button } from '@/components/ui/button';
 import axios from 'axios';
@@ -8,39 +9,63 @@ import React, { useEffect, useState } from 'react'
 
 import { useUserStore } from '@/store/store';
 
-export type PreviewProduct = {
+export type PreviewAd = {
   id: string,
-  finalProductImageUrl: string,
-  productImageUrl: string,
-  description: string,
-  size: string,
-  status: string,
-  imageToVideoStatus: string,
-  videoUrl: string
+  adImageUrl: string,
+  adVideoUrl: string,
 }
 
 export const PreviewResult = () => {
 
   const user = useUserStore((state) => state.user);
 
-  const [productList, setProductList] = useState<PreviewProduct[]>();
+  const [adList, setAdList] = useState<PreviewAd[]>();
   const [loading, setLoading] = useState(false);
 
   const DownloadImage = async (imageUrl: string) => {
-    const result = await fetch(imageUrl);
-    const blob = await result.blob();
-    const blobUrl = window.URL.createObjectURL(blob);
+    try {
+      // Fetch the image
+      const response = await fetch(imageUrl);
 
-    const a = document.createElement('a');
-    a.href = blobUrl;
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.status}`);
+      }
 
-    a.setAttribute('download', 'tubeguruji');
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(blobUrl);
+      // Get the image blob
+      const blob = await response.blob();
 
-  }
+      // Create a temporary URL for the blob
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      // Extract filename from URL or use a default
+      const urlPath = new URL(imageUrl).pathname;
+      const filename = urlPath.split('/').pop() || 'downloaded-image.jpg';
+
+      // Create a temporary anchor element and trigger download
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+
+      // Clean up
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+
+    } catch (error) {
+      console.error('Error downloading image:', error);
+      alert('Failed to download image. Please try again.');
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await axios.post('/api/user/ads');
+      console.log(result.data);
+      setAdList(result.data);
+    }
+    fetchData();
+  }, []);
 
 
 
@@ -63,11 +88,11 @@ export const PreviewResult = () => {
       <h2 className="font-bold text-2xl">Generated Result</h2>
 
       <div className='grid grid-cols-2 mt-4 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3 h-[90vh] overflow-auto'>
-        {productList?.map((product, index) => (
+        {adList?.map((product, index) => (
           <div key={index}>
-            {product?.status == 'completed' ?
+            {product?.adImageUrl ?
               <div>
-                <Image src={product.finalProductImageUrl}
+                <Image src={product.adImageUrl}
                   alt={product.id}
                   width={500}
                   height={500}
@@ -75,20 +100,18 @@ export const PreviewResult = () => {
                 />
                 <div className='flex justify-between items-center mt-2'>
                   <div className='flex items-center gap-2'>
-                    <Button variant={'ghost'} onClick={() => DownloadImage(product.finalProductImageUrl)}> <Download /> </Button>
-                    <Link href={product.finalProductImageUrl} target='_blank'>
+                    <Button variant={'ghost'} onClick={() => DownloadImage(product.adImageUrl)}> <Download /> </Button>
+                    <Link href={product.adImageUrl} target='_blank'>
                       <Button variant={'ghost'}>View</Button>
                     </Link>
-                    {product?.videoUrl && <Link href={product?.videoUrl} target='_blank'>
+                    {product?.adVideoUrl && <Link href={product?.adVideoUrl} target='_blank'>
                       <Button variant={'ghost'}><Play /></Button>
                     </Link>}
                   </div>
 
-                  {!product?.videoUrl && <Button
-                    disabled={product?.imageToVideoStatus == 'pending'}
+                  {!product?.adVideoUrl && <Button
                     onClick={() => GenerateVideo(product)}>
-                    {product?.imageToVideoStatus == 'pending' ? <LoaderCircle className='animate-spin' /> :
-                      <Sparkles />} Animate</Button>}
+                    Animate</Button>}
                 </div>
               </div>
               : <div className='flex flex-col items-center justify-center border rounded-xl
