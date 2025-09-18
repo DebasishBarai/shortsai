@@ -106,6 +106,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       success: true,
+      id: ad.id,
       image: `https://${process.env.AWS_BUCKET_NAME}.s3.amazonaws.com/${key}`,
     });
   } catch (error) {

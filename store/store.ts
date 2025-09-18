@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import axios from 'axios';
 
-interface User {
+export interface User {
   id: string;
   name?: string;
   email: string;
@@ -26,6 +26,26 @@ interface UserStore {
   refreshUser: () => Promise<void>;
 }
 
+export interface Ad {
+  id: string;
+  adImageUrl: string;
+  adVideoUrl: string;
+}
+
+interface AdStore {
+  ads: Ad[];
+  loading: boolean;
+  error: string | null;
+  initialized: boolean;
+
+  setAds: (ads: Ad[]) => void;
+  addAd: (ad: Ad) => void;
+  updateAd: (id: string, updates: Partial<Ad>) => void;
+  removeAd: (id: string) => void;
+  clearAds: () => void;
+  refreshAds: () => Promise<void>;
+}
+
 // Function to fetch user data
 const fetchUserData = async (): Promise<User | null> => {
   try {
@@ -40,6 +60,24 @@ const fetchUserData = async (): Promise<User | null> => {
     return userData;
   } catch (error) {
     console.error('Error fetching user:', error);
+    return null;
+  }
+};
+
+// Function to fetch ads data
+const fetchAdData = async (): Promise<Ad[] | null> => {
+  try {
+    const adRes = await axios.post('/api/user/ads');
+    const adData = adRes.data;
+
+    if (adRes.status !== 200) {
+      console.log('error fetching ad data');
+      return null;
+    }
+
+    return adData;
+  } catch (error) {
+    console.error('Error fetching ads:', error);
     return null;
   }
 };
@@ -80,6 +118,39 @@ export const useUserStore = create<UserStore>((set, get) => ({
   },
 }));
 
+
+export const useAdStore = create<AdStore>((set, get) => ({
+  ads: [],
+  loading: true, // Start with loading true
+  error: null,
+  initialized: false,
+
+  setAds: (ads) => set({ ads, error: null }),
+  addAd: (ad) => set((state) => ({
+    ads: [ad, ...state.ads]
+  })),
+  updateAd: (id, updates) => set((state) => ({
+    ads: state.ads.map(ad =>
+      ad.id === id ? { ...ad, ...updates } : ad
+    )
+  })),
+  removeAd: (id) => set((state) => ({
+    ads: state.ads.filter(ad => ad.id !== id)
+  })),
+  clearAds: () => set({ ads: [], error: null }),
+
+  refreshAds: async () => {
+    set({ loading: true, error: null });
+    const adData = await fetchAdData();
+
+    if (adData) {
+      set({ ads: adData, loading: false, initialized: true });
+    } else {
+      set({ ads: [], loading: false, initialized: true, error: 'Failed to fetch ads' });
+    }
+  },
+}));
+
 // Initialize the store by fetching user data
 const initializeStore = async () => {
   const store = useUserStore.getState();
@@ -87,12 +158,22 @@ const initializeStore = async () => {
   if (!store.initialized) {
     const userData = await fetchUserData();
 
+    const adData = await fetchAdData();
+
     useUserStore.setState({
       user: userData,
       loading: false,
       initialized: true,
       error: userData ? null : 'Failed to fetch user data'
     });
+
+    useAdStore.setState({
+      ads: adData || [],
+      loading: false,
+      initialized: true,
+      error: adData ? null : 'Failed to fetch ad data'
+    });
+
   }
 };
 

@@ -4,7 +4,9 @@ import { useState } from 'react'
 import axios from 'axios'
 import { toast } from 'sonner'
 import { FormInput } from '@/components/ai-tools/product-ads/form-input'
-import { PreviewResult } from '@/components/ai-tools/product-ads/preview-result'
+import { PreviewAds } from '@/components/ai-tools/product-ads/preview-ads'
+
+import { useAdStore } from '@/store/store';
 
 // Updated FormData structure - removed file, added base64Image
 type FormData = {
@@ -42,6 +44,8 @@ const convertFileToBase64 = (file: File): Promise<string> => {
 export default function CreateAdsPage() {
   const [formData, setFormData] = useState<FormData>();
   const [loading, setLoading] = useState(false);
+
+  const addAd = useAdStore((state) => state.addAd);
 
   // Updated handler to process file uploads and convert to base64
   const onHandleInputChange = async (field: string, value: string) => {
@@ -84,6 +88,14 @@ export default function CreateAdsPage() {
       if (result.data.error) {
         toast.error('Please Try Again');
       }
+
+      const newAd = {
+        id: result.data.id,
+        adImageUrl: result.data.image,
+        adVideoUrl: '',
+      }
+
+      addAd(newAd);
     } catch (error) {
       console.error('API call failed:', error);
       toast.error('An error occurred. Please try again.');
@@ -104,7 +116,7 @@ export default function CreateAdsPage() {
           />
         </div>
         <div className='md:col-span-2'>
-          <PreviewResult />
+          <PreviewAds />
         </div>
       </div>
     </div>

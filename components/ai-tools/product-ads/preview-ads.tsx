@@ -5,21 +5,17 @@ import axios from 'axios';
 import { Download, Loader2Icon, LoaderCircle, Play, Sparkles } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
+import { Ad, useAdStore } from '@/store/store';
 
 import { useUserStore } from '@/store/store';
 
-export type PreviewAd = {
-  id: string,
-  adImageUrl: string,
-  adVideoUrl: string,
-}
-
-export const PreviewResult = () => {
+export const PreviewAds = () => {
 
   const user = useUserStore((state) => state.user);
 
-  const [adList, setAdList] = useState<PreviewAd[]>();
+  const ads: Ad[] = useAdStore((state) => state.ads);
+
   const [loading, setLoading] = useState(false);
 
   const DownloadImage = async (imageUrl: string) => {
@@ -58,17 +54,6 @@ export const PreviewResult = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const result = await axios.post('/api/user/ads');
-      console.log(result.data);
-      setAdList(result.data);
-    }
-    fetchData();
-  }, []);
-
-
-
   const GenerateVideo = async (config: any) => {
     setLoading(true);
     const result = await axios.post('/api/generate-product-video', {
@@ -82,13 +67,12 @@ export const PreviewResult = () => {
     console.log(result.data);
   }
 
-
   return (
     <div className='p-5 rounded-2xl border'>
       <h2 className="font-bold text-2xl">Generated Result</h2>
 
       <div className='grid grid-cols-2 mt-4 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3 h-[90vh] overflow-auto'>
-        {adList?.map((product, index) => (
+        {ads?.map((product, index) => (
           <div key={index}>
             {product?.adImageUrl ?
               <div>
