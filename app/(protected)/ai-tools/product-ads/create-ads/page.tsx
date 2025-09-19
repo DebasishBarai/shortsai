@@ -6,7 +6,8 @@ import { toast } from 'sonner'
 import { FormInput } from '@/components/ai-tools/product-ads/form-input'
 import { PreviewAds } from '@/components/ai-tools/product-ads/preview-ads'
 
-import { useAdStore } from '@/store/store';
+import { useUserStore, useAdStore } from '@/store/store';
+import { authClient } from '@/lib/auth-client';
 
 // Updated FormData structure - removed file, added base64Image
 type FormData = {
@@ -47,6 +48,8 @@ export default function CreateAdsPage() {
 
   const addAd = useAdStore((state) => state.addAd);
 
+  const setCredits = useUserStore((state) => state.setCredits);
+
   // Updated handler to process file uploads and convert to base64
   const onHandleInputChange = async (field: string, value: string) => {
     console.log({ [field]: value })
@@ -76,6 +79,26 @@ export default function CreateAdsPage() {
     };
 
     try {
+
+      // Check if user has enough credits for the selected duration
+      const creditCheckRes = await axios.post('/api/check-credits', {
+        requiredCredits: 5
+      });
+
+      if (creditCheckRes.status !== 200) {
+        throw new Error('Failed to check credits');
+      }
+      const { hasEnoughCredits, currentCredits } = creditCheckRes.data;
+
+      setCredits(currentCredits)
+
+      if (!hasEnoughCredits) {
+        toast.error(`Insufficient credits. You have ${currentCredits} credits but need 5 credits to create an ad. Please purchase more credits.`);
+        setLoading(false);
+        return;
+      }
+
+
       // Send JSON payload instead of FormData
       const result = await axios.post('/api/generate-ads/generate-image', payload, {
         headers: {
@@ -96,6 +119,26 @@ export default function CreateAdsPage() {
       }
 
       addAd(newAd);
+
+      // decreament credits
+      const { data: ingested } = await authClient.usage.ingest({
+        event: "ai_ad_generation",
+        metadata: {
+          credits_consumed: 5,
+        },
+      });
+      const removeCreditsRes = await axios.post('/api/remove-credits', {
+        credits: 5,
+      });
+
+      if (removeCreditsRes.status !== 200) {
+        const errorData = await removeCreditsRes.data;
+        throw new Error(errorData?.error || 'Failed to decrement credits');
+      }
+
+      setCredits(removeCreditsRes.data.currentCredits)
+
+
     } catch (error) {
       console.error('API call failed:', error);
       toast.error('An error occurred. Please try again.');

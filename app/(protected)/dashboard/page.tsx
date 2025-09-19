@@ -153,7 +153,7 @@ export default function DashboardPage() {
             <p className="text-white text-sm opacity-70">
               Create cinematic product visuals with AI generation.
             </p>
-            <Link href="/ai-tools/product-ads/product-to-video">
+            <Link href="/ai-tools/product-ads">
               <Button className="bg-black hover:bg-white hover:text-black text-white mt-2 transition-all">
                 Create Now
               </Button>
