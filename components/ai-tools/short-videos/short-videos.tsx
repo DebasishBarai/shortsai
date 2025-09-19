@@ -6,7 +6,7 @@ import Link from 'next/link'
 import React from 'react'
 import { useUserStore } from '@/store/store'
 
-const AdDemos = [
+const ShortVideoDemos = [
   {
     name: 'AI Products Images',
     desc: 'Generate high-quality, professional product images instantly with AI. ',
@@ -29,7 +29,7 @@ const AdDemos = [
   }
 ]
 
-export const AdDemoList = () => {
+export const ShortVideoDemoList = () => {
 
   const user = useUserStore((state) => state.user);
 
@@ -37,7 +37,7 @@ export const AdDemoList = () => {
     <div>
       <h2 className='font-bold text-2xl mb-2'>AI Product Ads Generator</h2>
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3'>
-        {AdDemos.map((tool, index) => (
+        {ShortVideoDemos.map((tool, index) => (
           <div key={index} className='grid grid-cols-1 lg:grid-cols-2 items-center justify-between 
                     p-7 bg-zinc-800 rounded-2xl'>
             <div>

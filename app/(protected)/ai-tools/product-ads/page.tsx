@@ -1,10 +1,10 @@
-import { AiToolList } from '@/components/ai-tools/product-ads/product-ads'
-import { UsersAdsList } from '@/components/ai-tools/product-ads/UsersAdsList'
+import { AdDemoList } from '@/components/ai-tools/product-ads/product-ads'
+import { UsersAdsList } from '@/components/ai-tools/product-ads/user-ads-list'
 
 export default function Page() {
   return (
     <>
-      <AiToolList />
+      <AdDemoList />
       <UsersAdsList />
     </>
   )
